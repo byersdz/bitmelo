@@ -1,0 +1,40 @@
+{
+  "coverage": "4.54%",
+  "expectCount": 22,
+  "actualCount": 1,
+  "files": {
+    "src/Engine.js": {
+      "expectCount": 4,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        4,
+        5,
+        8
+      ]
+    },
+    "src/Screen.js": {
+      "expectCount": 18,
+      "actualCount": 1,
+      "undocumentLines": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        18,
+        19,
+        20,
+        21,
+        23,
+        26,
+        68,
+        96,
+        103,
+        107,
+        111,
+        115
+      ]
+    }
+  }
+}

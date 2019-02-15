@@ -2,9 +2,11 @@
   "name": "minnow-engine",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/minnow.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --config config/webpack.config.lib.js",
+    "build-min": "webpack --config config/webpack.config.lib.min.js",
+    "build-docs": "esdoc"
   },
   "repository": {
     "type": "git",
@@ -16,5 +18,16 @@
   "bugs": {
     "url": "https://github.com/byersdz/minnow-engine/issues"
   },
-  "homepage": "https://github.com/byersdz/minnow-engine#readme"
+  "homepage": "https://github.com/byersdz/minnow-engine#readme",
+  "devDependencies": {
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^5.14.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-import": "^2.16.0",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
+    "webpack-merge": "^4.2.1"
+  }
 }
