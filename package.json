@@ -1,0 +1,20 @@
+{
+  "name": "minnow-engine",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byersdz/minnow-engine.git"
+  },
+  "keywords": [],
+  "author": "David Byers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/byersdz/minnow-engine/issues"
+  },
+  "homepage": "https://github.com/byersdz/minnow-engine#readme"
+}
