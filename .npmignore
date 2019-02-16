@@ -83,3 +83,10 @@ typings/
 demo/
 docs/
 
+.editorconfig
+.esdoc.json
+.eslintignore
+.eslintrc.js
+.gitattributes
+.gitignore
+
