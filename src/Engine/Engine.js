@@ -1,13 +1,34 @@
 import Screen from '../Screen/Screen';
+import Input from '../Input/Input';
 
 class Engine {
   constructor() {
-    this.screen = null;
+    this.onInit = null;
+    this.onUpdate = null;
+    this.screen = new Screen();
+    this.input = new Input();
+
+    this._update = this._update.bind( this );
   }
 
-  create() {
-    this.screen = new Screen();
-    this.screen.create();
+  begin() {
+    if ( this.onInit ) {
+      this.onInit();
+    }
+
+    this.screen.init();
+    requestAnimationFrame( this._update );
+  }
+
+  _update() {
+    this.input.pollInput();
+
+    if ( this.onUpdate ) {
+      this.onUpdate();
+    }
+
+    this.screen.drawScreen();
+    requestAnimationFrame( this._update );
   }
 }
 

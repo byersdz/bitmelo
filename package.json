@@ -1,7 +1,7 @@
 {
   "name": "minnow-engine",
   "version": "0.0.1",
-  "description": "",
+  "description": "A game engine for low resolution games.",
   "main": "lib/minnow.js",
   "scripts": {
     "test": "jest",

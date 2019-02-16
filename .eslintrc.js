@@ -13,6 +13,13 @@ module.exports = {
     "no-bitwise": "off",
     "template-curly-spacing": ["error", "always"],
     "arrow-body-style": "off",
-    "brace-style": ["error", "stroustrup"]
+    "brace-style": ["error", "stroustrup"],
+    "max-len": ["error", { "code": 120, "ignoreComments": true, "ignoreTrailingComments": true }],
+    "operator-assignment": "off",
+    "no-lonely-if": "off",
+    "no-console": 'off'
+  },
+  "globals": {
+    "minnow": "readonly"
   }
 }

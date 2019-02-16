@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">Home | minnow-engine</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/Input/Input.js | minnow-engine</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -153,7 +153,129 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content">
+<div class="content" data-ice="content"><h1 data-ice="title">src/Input/Input.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import * as Keys from &apos;./Keys&apos;;
+
+class Input {
+  constructor() {
+    this._keysRaw = new Uint8ClampedArray( 256 );
+    this._currentKeys = new Uint8ClampedArray( 256 );
+    this._lastKeys = new Uint8ClampedArray( 256 );
+
+    this._buttonsToKeys = new Uint8ClampedArray( 32 );
+
+    // default button mappings
+    this._buttonsToKeys[Keys.GAME_LEFT] = Keys.LEFT_ARROW;
+    this._buttonsToKeys[Keys.GAME_RIGHT] = Keys.RIGHT_ARROW;
+    this._buttonsToKeys[Keys.GAME_UP] = Keys.UP_ARROW;
+    this._buttonsToKeys[Keys.GAME_DOWN] = Keys.DOWN_ARROW;
+
+    this._buttonsToKeys[Keys.GAME_ACTION_ONE] = Keys.Z_KEY;
+    this._buttonsToKeys[Keys.GAME_ACTION_TWO] = Keys.X_KEY;
+    this._buttonsToKeys[Keys.GAME_ACTION_THREE] = Keys.A_KEY;
+    this._buttonsToKeys[Keys.GAME_ACTION_FOUR] = Keys.S_KEY;
+    this._buttonsToKeys[Keys.GAME_LEFT_TRIGGER] = Keys.Q_KEY;
+    this._buttonsToKeys[Keys.GAME_RIGHT_TRIGGER] = Keys.W_KEY;
+
+    this._buttonsToKeys[Keys.GAME_PAUSE] = Keys.P_KEY;
+
+    this._buttonsToKeys[Keys.MENU_LEFT] = Keys.LEFT_ARROW;
+    this._buttonsToKeys[Keys.MENU_RIGHT] = Keys.RIGHT_ARROW;
+    this._buttonsToKeys[Keys.MENU_UP] = Keys.UP_ARROW;
+    this._buttonsToKeys[Keys.MENU_DOWN] = Keys.DOWN_ARROW;
+
+    this._buttonsToKeys[Keys.MENU_CONFIRM] = Keys.X_KEY;
+    this._buttonsToKeys[Keys.MENU_BACK] = Keys.Z_KEY;
+
+    this._currentButtons = new Uint8ClampedArray( 32 );
+    this._lastButtons = new Uint8ClampedArray( 32 );
+
+    window.addEventListener( &apos;keydown&apos;, this.keyDown.bind( this ), false );
+    window.addEventListener( &apos;keyup&apos;, this.keyUp.bind( this ), false );
+  }
+
+  keyDown( e ) {
+    this._keysRaw[e.keyCode] = 1;
+  }
+
+  keyUp( e ) {
+    this._keysRaw[e.keyCode] = 0;
+  }
+
+  pollInput() {
+    for ( let i = 0; i &lt; 256; i += 1 ) {
+      this._lastKeys[i] = this._currentKeys[i];
+      this._currentKeys[i] = this._keysRaw[i];
+    }
+
+    this._updateButtons();
+  }
+
+  getKeyPressed( keyCode ) {
+    if ( keyCode &lt; 0 || keyCode &gt;= 256 ) {
+      return false;
+    }
+
+    return this._currentKeys[keyCode] &gt; 0;
+  }
+
+  getKeyDown( keyCode ) {
+    if ( keyCode &lt; 0 || keyCode &gt;= 256 ) {
+      return false;
+    }
+
+    const current = this._currentKeys[keyCode] &gt; 0;
+    const last = this._lastKeys[keyCode] &gt; 0;
+    return current &amp;&amp; !last;
+  }
+
+  getKeyUp( keyCode ) {
+    if ( keyCode &lt; 0 || keyCode &gt;= 256 ) {
+      return false;
+    }
+
+    const current = this._currentKeys[keyCode] &gt; 0;
+    const last = this._lastKeys[keyCode] &gt; 0;
+    return !current &amp;&amp; last;
+  }
+
+  _updateButtons() {
+    this._updateButton( &apos;left&apos;, Keys.GAME_LEFT );
+    this._updateButton( &apos;right&apos;, Keys.GAME_RIGHT );
+    this._updateButton( &apos;up&apos;, Keys.GAME_UP );
+    this._updateButton( &apos;down&apos;, Keys.GAME_DOWN );
+
+    this._updateButton( &apos;action1&apos;, Keys.GAME_ACTION_ONE );
+    this._updateButton( &apos;action2&apos;, Keys.GAME_ACTION_TWO );
+    this._updateButton( &apos;action3&apos;, Keys.GAME_ACTION_THREE );
+    this._updateButton( &apos;action4&apos;, Keys.GAME_ACTION_FOUR );
+    this._updateButton( &apos;leftTrigger&apos;, Keys.GAME_LEFT_TRIGGER );
+    this._updateButton( &apos;rightTrigger&apos;, Keys.GAME_RIGHT_TRIGGER );
+
+    this._updateButton( &apos;pause&apos;, Keys.GAME_PAUSE );
+
+    this._updateButton( &apos;menuLeft&apos;, Keys.MENU_LEFT );
+    this._updateButton( &apos;menuRight&apos;, Keys.MENU_RIGHT );
+    this._updateButton( &apos;menuUp&apos;, Keys.MENU_UP );
+    this._updateButton( &apos;menuDown&apos;, Keys.MENU_DOWN );
+
+    this._updateButton( &apos;menuConfirm&apos;, Keys.MENU_CONFIRM );
+    this._updateButton( &apos;menuBack&apos;, Keys.MENU_BACK );
+  }
+
+  _updateButton( name, index ) {
+    const key = this._buttonsToKeys[index];
+    const pressed = this.getKeyPressed( key );
+    const down = this.getKeyDown( key );
+    const up = this.getKeyUp( key );
+
+    this[name] = { pressed, down, up };
+  }
+}
+
+export default Input;
+</code></pre>
+
 </div>
 
 <footer class="footer">
