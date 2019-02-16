@@ -1,8 +1,8 @@
 {
   "name": "minnow-engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A game engine for low resolution games.",
-  "main": "lib/minnow.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "jest",
     "build": "webpack --config config/webpack.config.lib.js",
