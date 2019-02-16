@@ -4,6 +4,7 @@ module.exports = {
   "env": {
     "browser": true,
     "node": true,
+    "jest": true
   },
   "rules": {
     "no-underscore-dangle": "off",

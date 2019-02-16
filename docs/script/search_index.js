@@ -1,14 +1,14 @@
 window.esdocSearchIndex = [
   [
-    "minnow-engine/src/engine.js~engine",
-    "class/src/Engine.js~Engine.html",
-    "<span>Engine</span> <span class=\"search-result-import-path\">minnow-engine/src/Engine.js</span>",
+    "minnow-engine/src/engine/engine.js~engine",
+    "class/src/Engine/Engine.js~Engine.html",
+    "<span>Engine</span> <span class=\"search-result-import-path\">minnow-engine/src/Engine/Engine.js</span>",
     "class"
   ],
   [
-    "minnow-engine/src/screen.js~screen",
-    "class/src/Screen.js~Screen.html",
-    "<span>Screen</span> <span class=\"search-result-import-path\">minnow-engine/src/Screen.js</span>",
+    "minnow-engine/src/screen/screen.js~screen",
+    "class/src/Screen/Screen.js~Screen.html",
+    "<span>Screen</span> <span class=\"search-result-import-path\">minnow-engine/src/Screen/Screen.js</span>",
     "class"
   ],
   [
@@ -294,135 +294,135 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
-    "src/engine.js",
-    "file/src/Engine.js.html",
-    "src/Engine.js",
+    "src/engine/engine.js",
+    "file/src/Engine/Engine.js.html",
+    "src/Engine/Engine.js",
     "file"
   ],
   [
-    "src/engine.js~engine#constructor",
-    "class/src/Engine.js~Engine.html#instance-constructor-constructor",
-    "src/Engine.js~Engine#constructor",
+    "src/engine/engine.js~engine#constructor",
+    "class/src/Engine/Engine.js~Engine.html#instance-constructor-constructor",
+    "src/Engine/Engine.js~Engine#constructor",
     "method"
   ],
   [
-    "src/engine.js~engine#create",
-    "class/src/Engine.js~Engine.html#instance-method-create",
-    "src/Engine.js~Engine#create",
+    "src/engine/engine.js~engine#create",
+    "class/src/Engine/Engine.js~Engine.html#instance-method-create",
+    "src/Engine/Engine.js~Engine#create",
     "method"
   ],
   [
-    "src/engine.js~engine#screen",
-    "class/src/Engine.js~Engine.html#instance-member-screen",
-    "src/Engine.js~Engine#screen",
+    "src/engine/engine.js~engine#screen",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-screen",
+    "src/Engine/Engine.js~Engine#screen",
     "member"
   ],
   [
-    "src/screen.js",
-    "file/src/Screen.js.html",
-    "src/Screen.js",
+    "src/screen/screen.js",
+    "file/src/Screen/Screen.js.html",
+    "src/Screen/Screen.js",
     "file"
   ],
   [
-    "src/screen.js~screen#_buildpalette",
-    "class/src/Screen.js~Screen.html#instance-method-_buildPalette",
-    "src/Screen.js~Screen#_buildPalette",
+    "src/screen/screen.js~screen#_buildpalette",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-_buildPalette",
+    "src/Screen/Screen.js~Screen#_buildPalette",
     "method"
   ],
   [
-    "src/screen.js~screen#_drawscreen",
-    "class/src/Screen.js~Screen.html#instance-method-_drawScreen",
-    "src/Screen.js~Screen#_drawScreen",
+    "src/screen/screen.js~screen#_drawscreen",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-_drawScreen",
+    "src/Screen/Screen.js~Screen#_drawScreen",
     "method"
   ],
   [
-    "src/screen.js~screen#_generatedpalette",
-    "class/src/Screen.js~Screen.html#instance-member-_generatedPalette",
-    "src/Screen.js~Screen#_generatedPalette",
+    "src/screen/screen.js~screen#_generatedpalette",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-_generatedPalette",
+    "src/Screen/Screen.js~Screen#_generatedPalette",
     "member"
   ],
   [
-    "src/screen.js~screen#_islittleendian",
-    "class/src/Screen.js~Screen.html#instance-member-_isLittleEndian",
-    "src/Screen.js~Screen#_isLittleEndian",
+    "src/screen/screen.js~screen#_islittleendian",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-_isLittleEndian",
+    "src/Screen/Screen.js~Screen#_isLittleEndian",
     "member"
   ],
   [
-    "src/screen.js~screen#_screendata",
-    "class/src/Screen.js~Screen.html#instance-member-_screenData",
-    "src/Screen.js~Screen#_screenData",
+    "src/screen/screen.js~screen#_screendata",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-_screenData",
+    "src/Screen/Screen.js~Screen#_screenData",
     "member"
   ],
   [
-    "src/screen.js~screen#canvas",
-    "class/src/Screen.js~Screen.html#instance-member-canvas",
-    "src/Screen.js~Screen#canvas",
+    "src/screen/screen.js~screen#canvas",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-canvas",
+    "src/Screen/Screen.js~Screen#canvas",
     "member"
   ],
   [
-    "src/screen.js~screen#clearscreen",
-    "class/src/Screen.js~Screen.html#instance-method-clearScreen",
-    "src/Screen.js~Screen#clearScreen",
+    "src/screen/screen.js~screen#clearscreen",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-clearScreen",
+    "src/Screen/Screen.js~Screen#clearScreen",
     "method"
   ],
   [
-    "src/screen.js~screen#constructor",
-    "class/src/Screen.js~Screen.html#instance-constructor-constructor",
-    "src/Screen.js~Screen#constructor",
+    "src/screen/screen.js~screen#constructor",
+    "class/src/Screen/Screen.js~Screen.html#instance-constructor-constructor",
+    "src/Screen/Screen.js~Screen#constructor",
     "method"
   ],
   [
-    "src/screen.js~screen#context",
-    "class/src/Screen.js~Screen.html#instance-member-context",
-    "src/Screen.js~Screen#context",
+    "src/screen/screen.js~screen#context",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-context",
+    "src/Screen/Screen.js~Screen#context",
     "member"
   ],
   [
-    "src/screen.js~screen#create",
-    "class/src/Screen.js~Screen.html#instance-method-create",
-    "src/Screen.js~Screen#create",
+    "src/screen/screen.js~screen#create",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-create",
+    "src/Screen/Screen.js~Screen#create",
     "method"
   ],
   [
-    "src/screen.js~screen#getpixel",
-    "class/src/Screen.js~Screen.html#instance-method-getPixel",
-    "src/Screen.js~Screen#getPixel",
+    "src/screen/screen.js~screen#getpixel",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-getPixel",
+    "src/Screen/Screen.js~Screen#getPixel",
     "method"
   ],
   [
-    "src/screen.js~screen#height",
-    "class/src/Screen.js~Screen.html#instance-member-height",
-    "src/Screen.js~Screen#height",
+    "src/screen/screen.js~screen#height",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-height",
+    "src/Screen/Screen.js~Screen#height",
     "member"
   ],
   [
-    "src/screen.js~screen#palette",
-    "class/src/Screen.js~Screen.html#instance-member-palette",
-    "src/Screen.js~Screen#palette",
+    "src/screen/screen.js~screen#palette",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-palette",
+    "src/Screen/Screen.js~Screen#palette",
     "member"
   ],
   [
-    "src/screen.js~screen#scale",
-    "class/src/Screen.js~Screen.html#instance-member-scale",
-    "src/Screen.js~Screen#scale",
+    "src/screen/screen.js~screen#scale",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-scale",
+    "src/Screen/Screen.js~Screen#scale",
     "member"
   ],
   [
-    "src/screen.js~screen#setpixel",
-    "class/src/Screen.js~Screen.html#instance-method-setPixel",
-    "src/Screen.js~Screen#setPixel",
+    "src/screen/screen.js~screen#setpixel",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-setPixel",
+    "src/Screen/Screen.js~Screen#setPixel",
     "method"
   ],
   [
-    "src/screen.js~screen#setpixelunsafe",
-    "class/src/Screen.js~Screen.html#instance-method-setPixelUnsafe",
-    "src/Screen.js~Screen#setPixelUnsafe",
+    "src/screen/screen.js~screen#setpixelunsafe",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-setPixelUnsafe",
+    "src/Screen/Screen.js~Screen#setPixelUnsafe",
     "method"
   ],
   [
-    "src/screen.js~screen#width",
-    "class/src/Screen.js~Screen.html#instance-member-width",
-    "src/Screen.js~Screen#width",
+    "src/screen/screen.js~screen#width",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-width",
+    "src/Screen/Screen.js~Screen#width",
     "member"
   ],
   [

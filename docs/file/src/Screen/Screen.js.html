@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/Screen/Screen.js | minnow-engine</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/byersdz/minnow-engine"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#engine">Engine</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Engine/Engine.js~Engine.html">Engine</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#screen">Screen</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Screen/Screen.js~Screen.html">Screen</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Screen/Screen.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">
+/**
+ * The screen class
+ */
+class Screen {
+  constructor() {
+    this.width = 320;
+    this.height = 180;
+    this.scale = 3;
+    this.palette = [
+      [0x00, 0x00, 0x00],
+      [0xff, 0xff, 0xff],
+      [0xff, 0x00, 0x00],
+      [0x00, 0xff, 0x00],
+      [0x00, 0x00, 0xff],
+    ];
+
+    this.canvas = null;
+    this.context = null;
+    this._screenData = null;
+    this._generatedPalette = null;
+
+    this._isLittleEndian = true;
+  }
+
+  create() {
+    const container = document.createElement( &apos;div&apos; );
+    container.id = &apos;main-container&apos;;
+
+    this.canvas = document.createElement( &apos;canvas&apos; );
+    this.canvas.setAttribute( &apos;id&apos;, &apos;game-device&apos; );
+    this.canvas.setAttribute( &apos;width&apos;, this.width );
+    this.canvas.setAttribute( &apos;height&apos;, this.height );
+
+    let canvasStyle = `width: ${ this.width * this.scale }px;`;
+    canvasStyle += `height: ${ this.height * this.scale }px;`;
+    canvasStyle += &apos;image-rendering: -webkit-optimize-contrast;&apos;;
+    canvasStyle += &apos;image-rendering: crisp-edges;&apos;;
+    canvasStyle += &apos;image-rendering: pixelated;&apos;;
+
+    this.canvas.setAttribute( &apos;style&apos;, canvasStyle );
+
+    container.appendChild( this.canvas );
+    document.body.appendChild( container );
+
+    this.context = this.canvas.getContext( &apos;2d&apos; );
+
+    this._screenData = new Uint8ClampedArray( this.width * this.height );
+
+    // check if we are little endian
+    const buffer = new ArrayBuffer( 4 );
+    const test8 = new Uint8ClampedArray( buffer );
+    const test32 = new Uint32Array( buffer );
+    test32[0] = 0x0a0b0c0d;
+
+    if ( test8[0] === 0x0a
+      &amp;&amp; test8[1] === 0x0b
+      &amp;&amp; test8[2] === 0x0c
+      &amp;&amp; test8[3] === 0x0d
+    ) {
+      this._isLittleEndian = false;
+    }
+
+
+    this._buildPalette();
+  }
+
+  _buildPalette() {
+    this._generatedPalette = new Uint32Array( this.palette.length + 1 );
+    let currentColor = null;
+    this._generatedPalette[0] = 0x00000000;
+    if ( this._isLittleEndian ) {
+      for ( let i = 0; i &lt; this.palette.length; i += 1 ) {
+        currentColor = this.palette[i];
+        this._generatedPalette[i + 1] = (
+          ( 255 &lt;&lt; 24 ) // a
+          | ( currentColor[2] &lt;&lt; 16 ) // b
+          | ( currentColor[1] &lt;&lt; 8 ) // g
+          | currentColor[0] // r
+        );
+      }
+    }
+    else {
+      for ( let i = 0; i &lt; this.palette.length; i += 1 ) {
+        currentColor = this.palette[i];
+        this._generatedPalette[i + 1] = (
+          ( currentColor[0] &lt;&lt; 24 ) // r
+          | ( currentColor[1] &lt;&lt; 16 ) // g
+          | ( currentColor[2] &lt;&lt; 8 ) // b
+          | 255 // a
+        );
+      }
+    }
+  }
+
+  setPixel( x, y, id ) {
+    if ( x &lt; 0 || x &gt;= this.width || y &lt; 0 || y &gt;= this.height ) {
+      return;
+    }
+    this._screenData[y * this.width + x] = id;
+  }
+
+  setPixelUnsafe( x, y, id ) {
+    this._screenData[y * this.width + x] = id;
+  }
+
+  getPixel( x, y ) {
+    return this._screenData[y * this.width + x];
+  }
+
+  clearScreen( id ) {
+    this._screenData.fill( id );
+  }
+
+  _drawScreen() {
+    const imageData = this.context.getImageData( 0, 0, this.width, this.height );
+    const buffer = new ArrayBuffer( imageData.data.length );
+    const data8 = new Uint8ClampedArray( buffer );
+    const data32 = new Uint32Array( buffer );
+
+    let index = 0;
+    let screenY = 0;
+    for ( let y = 0; y &lt; this.height; y += 1 ) {
+      for ( let x = 0; x &lt; this.width; x += 1 ) {
+        screenY = this.height - y - 1; // origin from top left to bottom left
+        index = this._screenData[screenY * this.width + x];
+        data32[y * this.width + x] = this._generatedPalette[index];
+      }
+    }
+    imageData.data.set( data8 );
+    this.context.putImageData( imageData, 0, 0 );
+  }
+}
+
+export default Screen;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

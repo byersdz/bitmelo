@@ -1,4 +1,4 @@
-import Screen from './Screen';
+import Screen from '../Screen/Screen';
 
 class Engine {
   constructor() {

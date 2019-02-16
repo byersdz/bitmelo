@@ -3,7 +3,7 @@
   "expectCount": 22,
   "actualCount": 1,
   "files": {
-    "src/Engine.js": {
+    "src/Engine/Engine.js": {
       "expectCount": 4,
       "actualCount": 0,
       "undocumentLines": [
@@ -13,7 +13,7 @@
         8
       ]
     },
-    "src/Screen.js": {
+    "src/Screen/Screen.js": {
       "expectCount": 18,
       "actualCount": 1,
       "undocumentLines": [

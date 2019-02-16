@@ -4,6 +4,7 @@
   "description": "",
   "main": "lib/minnow.js",
   "scripts": {
+    "test": "jest",
     "build": "webpack --config config/webpack.config.lib.js",
     "build-min": "webpack --config config/webpack.config.lib.min.js",
     "build-docs": "esdoc"
@@ -26,8 +27,14 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-import": "^2.16.0",
+    "jest": "^24.1.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
     "webpack-merge": "^4.2.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^SRC(.*)$": "<rootDir>/src$1"
+    }
   }
 }
