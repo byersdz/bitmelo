@@ -1,6 +1,6 @@
 {
   "name": "minnow-engine",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A game engine for low resolution games.",
   "main": "src/index.js",
   "scripts": {
