@@ -82,6 +82,7 @@ typings/
 # minnow specific
 demo/
 docs/
+config/
 
 .editorconfig
 .esdoc.json

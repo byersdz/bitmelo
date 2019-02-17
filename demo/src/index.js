@@ -1,9 +1,14 @@
+import { Engine } from '../../src/index';
+
+import './style.css';
+
 const position = {
   x: 0,
   y: 0,
 };
 
-const engine = new minnow.Engine();
+const engine = new Engine();
+
 engine.onUpdate = () => {
   if ( engine.input.left.pressed ) {
     position.x -= 1;
@@ -19,9 +24,7 @@ engine.onUpdate = () => {
   }
 
   engine.screen.clear( 1 );
-  engine.screen.setPixel( position.x, position.y, 4 );
+  engine.screen.setPixel( position.x, position.y, 2 );
 };
 
 engine.begin();
-
-console.log( minnow.Keys.GAME_UP );

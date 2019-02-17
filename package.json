@@ -7,7 +7,9 @@
     "test": "jest",
     "build": "webpack --config config/webpack.config.lib.js",
     "build-min": "webpack --config config/webpack.config.lib.min.js",
-    "build-docs": "esdoc"
+    "build-docs": "esdoc",
+    "demo-start": "webpack-dev-server --open --config demo/config/webpack.demo.dev.js",
+    "demo-build": "webpack --config demo/config/webpack.demo.prod.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/byersdz/minnow-engine#readme",
   "devDependencies": {
+    "css-loader": "^2.1.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.14.0",
@@ -28,8 +31,10 @@
     "eslint-loader": "^2.1.2",
     "eslint-plugin-import": "^2.16.0",
     "jest": "^24.1.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
   },
   "jest": {
