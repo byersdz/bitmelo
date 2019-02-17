@@ -35,6 +35,7 @@ class Screen {
     let canvasStyle = `width: ${ this.width * this.scale }px;`;
     canvasStyle += `height: ${ this.height * this.scale }px;`;
     canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
+    canvasStyle += 'image-rendering: -moz-crisp-edges;';
     canvasStyle += 'image-rendering: crisp-edges;';
     canvasStyle += 'image-rendering: pixelated;';
 
@@ -194,31 +195,31 @@ class Screen {
    * @param {*} y1 - first y position
    * @param {*} x2 - second x position
    * @param {*} y2 - second y position
-   * @param {*} id - palette index to be drawn
+   * @param {*} paletteId - palette index to be drawn
    */
-  drawLine( x1, y1, x2, y2, id ) {
+  drawLine( x1, y1, x2, y2, paletteId ) {
     if ( x1 === x2 && y1 === y2 ) {
       // same coordinate, draw a pixel
-      this.setPixel( x1, x2, id );
+      this.setPixel( x1, x2, paletteId );
       return;
     }
 
     if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {
       // slope is less than 1
       if ( x1 > x2 ) {
-        this._drawLineLow( x2, y2, x1, y1, id );
+        this._drawLineLow( x2, y2, x1, y1, paletteId );
       }
       else {
-        this._drawLineLow( x1, y1, x2, y2, id );
+        this._drawLineLow( x1, y1, x2, y2, paletteId );
       }
     }
     else {
       // slope is greater than 1
       if ( y1 > y2 ) {
-        this._drawLineHigh( x2, y2, x1, y1, id );
+        this._drawLineHigh( x2, y2, x1, y1, paletteId );
       }
       else {
-        this._drawLineHigh( x1, y1, x2, y2, id );
+        this._drawLineHigh( x1, y1, x2, y2, paletteId );
       }
     }
   }
@@ -275,6 +276,104 @@ class Screen {
 
       decision = decision + ( 2 * dx );
     }
+  }
+
+  /**
+   * Draw a filled circle
+   *
+   * @param {number} centerX - the x coordinate of the center of the circle
+   * @param {numbe} centerY -  the y coordinate of the center of the circle
+   * @param {number} radius - the radius of the circle
+   * @param {number} paletteId - the palette color to draw
+   */
+  drawCircle( centerX, centerY, radius, paletteId ) {
+    if ( radius <= 0 ) {
+      return;
+    }
+
+    if ( radius === 1 ) {
+      this.drawCircleBorder( centerX, centerY, radius, paletteId );
+      this.setPixel( centerX, centerY, paletteId );
+      return;
+    }
+
+    let x = 0;
+    let y = radius;
+    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );
+
+    let decision = 3 - 2 * radius;
+
+    while ( y >= x ) {
+      x += 1;
+
+      if ( decision > 0 ) {
+        y -= 1;
+        decision = decision + 4 * ( x - y ) + 10;
+      }
+      else {
+        decision = decision + 4 * x + 6;
+      }
+
+      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );
+    }
+  }
+
+  /**
+   * Draw a circle border
+   *
+   * @param {number} centerX - the x coordinate of the center of the circle
+   * @param {numbe} centerY -  the y coordinate of the center of the circle
+   * @param {number} radius - the radius of the circle
+   * @param {number} paletteId - the palette color to draw
+   */
+  drawCircleBorder( centerX, centerY, radius, paletteId ) {
+    if ( radius <= 0 ) {
+      return;
+    }
+
+    let x = 0;
+    let y = radius;
+    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );
+
+    let decision = 3 - 2 * radius;
+
+    while ( y >= x ) {
+      x += 1;
+
+      if ( decision > 0 ) {
+        y -= 1;
+        decision = decision + 4 * ( x - y ) + 10;
+      }
+      else {
+        decision = decision + 4 * x + 6;
+      }
+
+      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );
+    }
+  }
+
+  /**
+   * helper method for drawing filled circles
+   */
+  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {
+    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );
+    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );
+    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );
+    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );
+  }
+
+  /**
+   * helper method for drawing circle borders
+   */
+  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {
+    this.setPixel( centerX + x, centerY + y, paletteId );
+    this.setPixel( centerX - x, centerY + y, paletteId );
+    this.setPixel( centerX + x, centerY - y, paletteId );
+    this.setPixel( centerX - x, centerY - y, paletteId );
+    this.setPixel( centerX + y, centerY + x, paletteId );
+    this.setPixel( centerX - y, centerY + x, paletteId );
+    this.setPixel( centerX + y, centerY - x, paletteId );
+    this.setPixel( centerX - y, centerY - x, paletteId );
   }
 
   /**
