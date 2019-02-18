@@ -17,6 +17,12 @@ class Engine {
     }
 
     this.screen.init();
+    this.input.canvas = this.screen.canvas;
+    this.input.canvasScale = this.screen.scale;
+    this.input.screenWidth = this.screen.width;
+    this.input.screenHeight = this.screen.height;
+    this.input.init();
+
     requestAnimationFrame( this._update );
   }
 

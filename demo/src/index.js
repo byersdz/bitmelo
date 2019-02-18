@@ -11,6 +11,11 @@ const engine = new Engine();
 
 let count = 10;
 let increment = 1;
+
+engine.onInit = () => {
+  engine.screen.hideCursor = true;
+};
+
 engine.onUpdate = () => {
   if ( engine.input.left.pressed ) {
     position.x -= 1;
@@ -35,11 +40,12 @@ engine.onUpdate = () => {
   count += increment;
 
   engine.screen.clear( 1 );
-  // const width = 3;
-  // const height = 3;
-  // engine.screen.drawRect( position.x, position.y, width, height, 4 );
-  // engine.screen.drawRectBorder( position.x, position.y, width, height, 3 );
   engine.screen.drawLine( position.x, position.y, 100, 100, 4 );
+  const color = engine.input.mouse.left.pressed ? 3 : 4;
+  if ( !engine.input.mouse.isOffScreen ) {
+    engine.screen.setPixel( engine.input.mouse.position.x, engine.input.mouse.position.y, color );
+  }
+  console.log( engine.input._lastMouseRight );
 };
 
 engine.begin();

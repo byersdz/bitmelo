@@ -10,8 +10,9 @@ class Screen {
     this.height = 180;
     this.scale = 3;
     this.transparentPaletteIndex = 0;
+    this.hideCursor = false;
 
-    this._canvas = null;
+    this.canvas = null;
     this._context = null;
     this._screenData = null;
     this._palette = null;
@@ -27,10 +28,10 @@ class Screen {
     const container = document.createElement( 'div' );
     container.id = 'main-container';
 
-    this._canvas = document.createElement( 'canvas' );
-    this._canvas.setAttribute( 'id', 'game-device' );
-    this._canvas.setAttribute( 'width', this.width );
-    this._canvas.setAttribute( 'height', this.height );
+    this.canvas = document.createElement( 'canvas' );
+    this.canvas.setAttribute( 'id', 'game-device' );
+    this.canvas.setAttribute( 'width', this.width );
+    this.canvas.setAttribute( 'height', this.height );
 
     let canvasStyle = `width: ${ this.width * this.scale }px;`;
     canvasStyle += `height: ${ this.height * this.scale }px;`;
@@ -39,12 +40,16 @@ class Screen {
     canvasStyle += 'image-rendering: crisp-edges;';
     canvasStyle += 'image-rendering: pixelated;';
 
-    this._canvas.setAttribute( 'style', canvasStyle );
+    if ( this.hideCursor ) {
+      canvasStyle += 'cursor: none';
+    }
 
-    container.appendChild( this._canvas );
+    this.canvas.setAttribute( 'style', canvasStyle );
+
+    container.appendChild( this.canvas );
     document.body.appendChild( container );
 
-    this._context = this._canvas.getContext( '2d' );
+    this._context = this.canvas.getContext( '2d' );
 
     this._screenData = new Uint8ClampedArray( this.width * this.height );
 

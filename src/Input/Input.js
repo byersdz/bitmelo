@@ -2,6 +2,30 @@ import * as Keys from './Keys';
 
 class Input {
   constructor() {
+    this.canvas = null;
+    this.canvasScale = 1;
+    this.screenWidth = 1;
+    this.screenHeight = 1;
+
+    this.mouse = {};
+    this.mouse.isOffScreen = true;
+    this.mouse.position = {
+      x: -1,
+      y: -1,
+    };
+
+    this.mouse.left = {
+      pressed: false,
+      down: false,
+      up: false,
+    };
+
+    this.mouse.right = {
+      pressed: false,
+      down: false,
+      up: false,
+    };
+
     this._keysRaw = new Uint8ClampedArray( 256 );
     this._currentKeys = new Uint8ClampedArray( 256 );
     this._lastKeys = new Uint8ClampedArray( 256 );
@@ -34,16 +58,80 @@ class Input {
     this._currentButtons = new Uint8ClampedArray( 32 );
     this._lastButtons = new Uint8ClampedArray( 32 );
 
-    window.addEventListener( 'keydown', this.keyDown.bind( this ), false );
-    window.addEventListener( 'keyup', this.keyUp.bind( this ), false );
+    this._currentMouseLeft = false;
+    this._lastMouseLeft = false;
+    this._forceMouseLeftDown = false;
+
+    this._currentMouseRight = false;
+    this._lastMouseRight = false;
+    this._forceMouseRightDown = false;
   }
 
-  keyDown( e ) {
+  init() {
+    window.addEventListener( 'keydown', this._keyDown.bind( this ), false );
+    window.addEventListener( 'keyup', this._keyUp.bind( this ), false );
+
+    if ( this.canvas ) {
+      this.canvas.oncontextmenu = ( e ) => {
+        e.preventDefault();
+      };
+
+      this.canvas.addEventListener( 'mouseenter', this._mouseEnter.bind( this ), false );
+      this.canvas.addEventListener( 'mousemove', this._mouseMove.bind( this ), false );
+      this.canvas.addEventListener( 'mousedown', this._mouseDown.bind( this ), false );
+      this.canvas.addEventListener( 'mouseup', this._mouseUp.bind( this ), false );
+      this.canvas.addEventListener( 'mouseleave', this._mouseLeave.bind( this ), false );
+    }
+  }
+
+  _keyDown( e ) {
     this._keysRaw[e.keyCode] = 1;
   }
 
-  keyUp( e ) {
+  _keyUp( e ) {
     this._keysRaw[e.keyCode] = 0;
+  }
+
+  _mouseEnter() {
+    this.mouse.isOffScreen = false;
+    this._currentMouseLeft = false;
+    this._currentMouseRight = false;
+  }
+
+  _mouseMove( e ) {
+    const canvasRect = this.canvas.getBoundingClientRect();
+    this.mouse.position = {
+      x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),
+      y: this.screenHeight - Math.floor( ( e.clientY - canvasRect.top ) / this.canvasScale ) - 1,
+    };
+  }
+
+  _mouseDown( e ) {
+    if ( e.button === 0 ) {
+      // left button
+      this._currentMouseLeft = true;
+      this._forceMouseLeftDown = true;
+    }
+    else if ( e.button === 2 ) {
+      // right button
+      this._currentMouseRight = true;
+      this._forceMouseRightDown = true;
+    }
+  }
+
+  _mouseUp( e ) {
+    if ( e.button === 0 ) {
+      // left button
+      this._currentMouseLeft = false;
+    }
+    else if ( e.button === 2 ) {
+      // right button
+      this._currentMouseRight = false;
+    }
+  }
+
+  _mouseLeave() {
+    this.mouse.isOffScreen = true;
   }
 
   pollInput() {
@@ -53,6 +141,20 @@ class Input {
     }
 
     this._updateButtons();
+
+    this.mouse.left.pressed = this._forceMouseLeftDown ? true : this._currentMouseLeft;
+    this.mouse.left.down = this._forceMouseLeftDown ? true : this._currentMouseLeft && !this._lastMouseLeft;
+    this.mouse.left.up = !this._currentMouseLeft && this._lastMouseLeft;
+
+    this.mouse.right.pressed = this._forceMouseRightDown ? true : this._currentMouseRight;
+    this.mouse.right.down = this._forceMouseRightDown ? true : this._currentMouseRight && !this._lastMouseRight;
+    this.mouse.right.up = !this._currentMouseRight && this._lastMouseRight;
+
+    this._forceMouseLeftDown = false;
+    this._forceMouseRightDown = false;
+
+    this._lastMouseLeft = this._currentMouseLeft;
+    this._lastMouseRight = this._currentMouseRight;
   }
 
   getKeyPressed( keyCode ) {
