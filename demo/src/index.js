@@ -1,4 +1,5 @@
 import { Engine } from '../../src/index';
+import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
 // import { GAME_RIGHT } from '../../src/Input/Input';
 
 import './style.css';
@@ -15,6 +16,8 @@ let increment = 1;
 
 engine.onInit = () => {
   engine.screen.hideCursor = true;
+  engine.screen.scale = 4;
+  engine.screen.scaleMode = SCALE_FIT_WINDOW;
 };
 
 engine.onUpdate = () => {

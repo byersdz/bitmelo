@@ -3,6 +3,7 @@ import Input from '../Input/Input';
 
 class Engine {
   constructor() {
+    this.containerId = 'minnow-container';
     this.onInit = null;
     this.onUpdate = null;
     this.screen = new Screen();
@@ -17,6 +18,10 @@ class Engine {
     }
 
     this.screen.init();
+    this.screen.onScaleChange = ( scale ) => {
+      this.input.canvasScale = scale;
+    };
+
     this.input.canvas = this.screen.canvas;
     this.input.canvasScale = this.screen.scale;
     this.input.screenWidth = this.screen.width;

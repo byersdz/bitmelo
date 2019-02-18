@@ -1,4 +1,7 @@
 
+export const SCALE_CONSTANT = 1;
+export const SCALE_FIT_WINDOW = 2;
+
 /**
  * Represents a game screen for low resolution games.
  * Has simple drawing functions using an indexed palette of a maximum of 256 colors
@@ -6,11 +9,20 @@
  */
 class Screen {
   constructor() {
+    this.conainerId = 'minnow-container';
     this.width = 320;
     this.height = 180;
     this.scale = 3;
+    this.maxScale = -1;
+    this.minScale = 1;
+    this.scaleMode = SCALE_CONSTANT;
+    this.horizontalScaleCushion = 0;
+    this.verticalScaleCushion = 0;
+    this.rescaleOnWindowResize = true;
     this.transparentPaletteIndex = 0;
     this.hideCursor = false;
+
+    this.onScaleChange = null;
 
     this.canvas = null;
     this._context = null;
@@ -25,32 +37,28 @@ class Screen {
    * Do initial setup such as creating the canvas and building the palette
    */
   init() {
-    const container = document.createElement( 'div' );
-    container.id = 'main-container';
+    const container = document.getElementById( this.conainerId );
 
     this.canvas = document.createElement( 'canvas' );
     this.canvas.setAttribute( 'id', 'game-device' );
     this.canvas.setAttribute( 'width', this.width );
     this.canvas.setAttribute( 'height', this.height );
 
-    let canvasStyle = `width: ${ this.width * this.scale }px;`;
-    canvasStyle += `height: ${ this.height * this.scale }px;`;
-    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
-    canvasStyle += 'image-rendering: -moz-crisp-edges;';
-    canvasStyle += 'image-rendering: crisp-edges;';
-    canvasStyle += 'image-rendering: pixelated;';
+    this._setScale();
 
-    if ( this.hideCursor ) {
-      canvasStyle += 'cursor: none';
+    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {
+      window.onresize = () => {
+        this._setScale();
+        this._setCanvasStyle();
+      };
     }
 
-    this.canvas.setAttribute( 'style', canvasStyle );
+    this._setCanvasStyle();
 
     container.appendChild( this.canvas );
-    document.body.appendChild( container );
 
     this._context = this.canvas.getContext( '2d' );
-
+    this._context.imageSmoothingEnabled = false;
     this._screenData = new Uint8ClampedArray( this.width * this.height );
 
     // check if we are little endian
@@ -80,6 +88,43 @@ class Screen {
     }
 
     this._buildPalette();
+  }
+
+  _setScale() {
+    if ( this.scaleMode === SCALE_FIT_WINDOW ) {
+      const maxWidth = window.innerWidth - this.horizontalScaleCushion;
+      const maxHeight = window.innerHeight - this.verticalScaleCushion;
+
+      const maxHorizScale = Math.floor( maxWidth / this.width );
+      const maxVerticalScale = Math.floor( maxHeight / this.height );
+
+      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;
+      if ( this.scale < this.minScale ) {
+        this.scale = this.minScale;
+      }
+      if ( this.maxScale > 0 && this.scale > this.maxScale ) {
+        this.scale = this.maxScale;
+      }
+    }
+
+    if ( this.onScaleChange ) {
+      this.onScaleChange( this.scale );
+    }
+  }
+
+  _setCanvasStyle() {
+    let canvasStyle = `width: ${ this.width * this.scale }px;`;
+    canvasStyle += `height: ${ this.height * this.scale }px;`;
+    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
+    canvasStyle += 'image-rendering: -moz-crisp-edges;';
+    canvasStyle += 'image-rendering: crisp-edges;';
+    canvasStyle += 'image-rendering: pixelated;';
+
+    if ( this.hideCursor ) {
+      canvasStyle += 'cursor: none';
+    }
+
+    this.canvas.setAttribute( 'style', canvasStyle );
   }
 
   /**
@@ -156,6 +201,9 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixel( x, y, paletteId ) {
+    if ( paletteId === this.transparentPaletteIndex ) {
+      return;
+    }
     if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {
       return;
     }
@@ -169,6 +217,9 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixelUnsafe( x, y, paletteId ) {
+    if ( paletteId === this.transparentPaletteIndex ) {
+      return;
+    }
     this._screenData[y * this.width + x] = paletteId;
   }
 
