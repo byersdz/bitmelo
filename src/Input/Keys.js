@@ -99,25 +99,6 @@ export const BACK_SLASH = 220;
 export const CLOSE_BRACKET = 221;
 export const SINGLE_QUOTE = 222;
 
-export const GAME_LEFT = 0;
-export const GAME_RIGHT = 1;
-export const GAME_UP = 2;
-export const GAME_DOWN = 3;
-export const GAME_ACTION_ONE = 4;
-export const GAME_ACTION_TWO = 5;
-export const GAME_ACTION_THREE = 6;
-export const GAME_ACTION_FOUR = 7;
-export const GAME_PAUSE = 8;
-export const GAME_LEFT_TRIGGER = 9;
-export const GAME_RIGHT_TRIGGER = 10;
-
-export const MENU_LEFT = 11;
-export const MENU_RIGHT = 12;
-export const MENU_UP = 13;
-export const MENU_DOWN = 14;
-export const MENU_CONFIRM = 15;
-export const MENU_BACK = 16;
-
 export const codesToKeyCodes = {
   Backspace: BACKSPACE,
   Tab: TAB,
