@@ -204,6 +204,62 @@ class Screen {
       return;
     }
 
+    if ( x1 === x2 ) {
+      // vertical line
+      if ( x1 < 0 || x1 >= this.width ) {
+        return;
+      }
+
+      let firstY = y1 < y2 ? y1 : y2;
+      let secondY = y1 < y2 ? y2 : y1;
+      if ( secondY < 0 ) {
+        return;
+      }
+      if ( firstY >= this.height ) {
+        return;
+      }
+
+      if ( firstY < 0 ) {
+        firstY = 0;
+      }
+      if ( secondY >= this.height ) {
+        secondY = this.height - 1;
+      }
+      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {
+        this.setPixelUnsafe( x1, currentY, paletteId );
+      }
+
+      return;
+    }
+
+    if ( y1 === y2 ) {
+      // horizontal line
+      if ( y1 < 0 || y1 >= this.height ) {
+        return;
+      }
+
+      let firstX = x1 < x2 ? x1 : x2;
+      let secondX = x1 < x2 ? x2 : x1;
+      if ( secondX < 0 ) {
+        return;
+      }
+      if ( firstX >= this.width ) {
+        return;
+      }
+
+      if ( firstX < 0 ) {
+        firstX = 0;
+      }
+      if ( secondX >= this.width ) {
+        secondX = this.width - 1;
+      }
+      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {
+        this.setPixelUnsafe( currentX, y1, paletteId );
+      }
+
+      return;
+    }
+
     if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {
       // slope is less than 1
       if ( x1 > x2 ) {
@@ -276,6 +332,107 @@ class Screen {
 
       decision = decision + ( 2 * dx );
     }
+  }
+
+  /**
+   * Draw a filled rectangle
+   *
+   * @param {*} x - bottom left x position
+   * @param {*} y - bottom left y position
+   * @param {*} width - width of the rectangle
+   * @param {*} height - height of the rectangle
+   * @param {*} paletteId - the palette color to draw
+   */
+  drawRect( x, y, width, height, paletteId ) {
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
+    let x1 = x;
+    let y1 = y;
+    let x2 = x + width - 1;
+    let y2 = y + height - 1;
+
+    if ( x2 < 0 ) {
+      return;
+    }
+    if ( y2 < 0 ) {
+      return;
+    }
+
+    if ( x1 < 0 ) {
+      x1 = 0;
+    }
+    if ( y1 < 0 ) {
+      y1 = 0;
+    }
+
+    if ( x2 >= this.width ) {
+      x2 = this.width - 1;
+    }
+
+    if ( y2 >= this.height ) {
+      y2 = this.height - 1;
+    }
+
+    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {
+      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {
+        this.setPixelUnsafe( currentX, currentY, paletteId );
+      }
+    }
+  }
+
+  /**
+   * Draw a rectangle border
+   *
+   * @param {*} x - bottom left x position
+   * @param {*} y - bottom left y position
+   * @param {*} width - width of the rectangle
+   * @param {*} height - height of the rectangle
+   * @param {*} paletteId - the palette color to draw
+   */
+  drawRectBorder( x, y, width, height, paletteId ) {
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
+    if ( width === 1 && height === 1 ) {
+      this.setPixel( x, y, paletteId );
+      return;
+    }
+
+    const x2 = x + width - 1;
+    const y2 = y + height - 1;
+
+    if ( x2 < 0 ) {
+      return;
+    }
+    if ( y2 < 0 ) {
+      return;
+    }
+
+    if ( width === 1 ) {
+      this.drawLine( x, y, x, y2, paletteId );
+      return;
+    }
+
+    if ( height === 1 ) {
+      this.drawLine( x, y, x2, y, paletteId );
+      return;
+    }
+
+    this.drawLine( x, y, x, y2, paletteId ); // left
+    this.drawLine( x, y2, x2, y2, paletteId ); // top
+    this.drawLine( x2, y2, x2, y, paletteId ); // right
+    this.drawLine( x2, y, x, y, paletteId ); // bottom
   }
 
   /**
