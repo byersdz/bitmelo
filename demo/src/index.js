@@ -45,7 +45,6 @@ engine.onUpdate = () => {
   if ( !engine.input.mouse.isOffScreen ) {
     engine.screen.setPixel( engine.input.mouse.position.x, engine.input.mouse.position.y, color );
   }
-  console.log( engine.input._lastMouseRight );
 };
 
 engine.begin();

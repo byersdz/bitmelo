@@ -85,11 +85,21 @@ class Input {
   }
 
   _keyDown( e ) {
-    this._keysRaw[e.keyCode] = 1;
+    if ( e.code ) {
+      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;
+    }
+    else {
+      this._keysRaw[e.keyCode] = 1;
+    }
   }
 
   _keyUp( e ) {
-    this._keysRaw[e.keyCode] = 0;
+    if ( e.code ) {
+      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 0;
+    }
+    else {
+      this._keysRaw[e.keyCode] = 0;
+    }
   }
 
   _mouseEnter() {
