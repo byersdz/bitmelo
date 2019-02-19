@@ -10,6 +10,7 @@ export const SCALE_FIT_WINDOW = 2;
 class Screen {
   constructor() {
     this.conainerId = 'minnow-container';
+    this.container = null;
     this.width = 320;
     this.height = 180;
     this.scale = 3;
@@ -37,7 +38,7 @@ class Screen {
    * Do initial setup such as creating the canvas and building the palette
    */
   init() {
-    const container = document.getElementById( this.conainerId );
+    this.container = document.getElementById( this.conainerId );
 
     this.canvas = document.createElement( 'canvas' );
     this.canvas.setAttribute( 'id', 'game-device' );
@@ -55,9 +56,9 @@ class Screen {
 
     this._setCanvasStyle();
 
-    container.appendChild( this.canvas );
+    this.container.appendChild( this.canvas );
 
-    this._context = this.canvas.getContext( '2d' );
+    this._context = this.canvas.getContext( '2d', { alpha: false } );
     this._context.imageSmoothingEnabled = false;
     this._screenData = new Uint8ClampedArray( this.width * this.height );
 
@@ -113,12 +114,20 @@ class Screen {
   }
 
   _setCanvasStyle() {
-    let canvasStyle = `width: ${ this.width * this.scale }px;`;
-    canvasStyle += `height: ${ this.height * this.scale }px;`;
+    let containerStyle = '';
+    containerStyle += `width: ${ this.width * this.scale }px;`;
+    containerStyle += `height: ${ this.height * this.scale }px;`;
+
+    this.container.setAttribute( 'style', containerStyle );
+
+    let canvasStyle = '';
+    canvasStyle += 'transform-origin: 50% 0%;';
+    canvasStyle += `transform: scale(${ this.scale });`;
     canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
     canvasStyle += 'image-rendering: -moz-crisp-edges;';
     canvasStyle += 'image-rendering: crisp-edges;';
     canvasStyle += 'image-rendering: pixelated;';
+
 
     if ( this.hideCursor ) {
       canvasStyle += 'cursor: none';
