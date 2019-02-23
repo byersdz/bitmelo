@@ -1,5 +1,6 @@
 import Screen from '../Screen/Screen';
 import Input from '../Input/Input';
+import TileData from '../TileData/TileData';
 
 class Engine {
   constructor() {
@@ -8,6 +9,7 @@ class Engine {
     this.onUpdate = null;
     this.screen = new Screen();
     this.input = new Input();
+    this.tileData = new TileData();
 
     this._update = this._update.bind( this );
   }
@@ -27,7 +29,8 @@ class Engine {
     this.input.screenWidth = this.screen.width;
     this.input.screenHeight = this.screen.height;
     this.input.init();
-
+    this.tileData.init();
+    this.screen.tileData = this.tileData;
     requestAnimationFrame( this._update );
   }
 

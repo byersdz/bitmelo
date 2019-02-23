@@ -22,6 +22,7 @@ class Screen {
     this.rescaleOnWindowResize = true;
     this.transparentPaletteIndex = 0;
     this.hideCursor = false;
+    this.tileData = null;
 
     this.onScaleChange = null;
 
@@ -596,6 +597,17 @@ class Screen {
     this.setPixel( centerX - y, centerY + x, paletteId );
     this.setPixel( centerX + y, centerY - x, paletteId );
     this.setPixel( centerX - y, centerY - x, paletteId );
+  }
+
+  drawTile( gid, x, y ) {
+    const { tileSize } = this.tileData;
+    const basePosition = ( gid - 1 ) * tileSize * tileSize;
+    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
+      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
+        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];
+        this.setPixel( x + tileX, y + tileY, paletteId );
+      }
+    }
   }
 
   /**
