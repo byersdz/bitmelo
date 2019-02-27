@@ -20,9 +20,9 @@ class Screen {
     this.horizontalScaleCushion = 0;
     this.verticalScaleCushion = 0;
     this.rescaleOnWindowResize = true;
-    this.transparentPaletteIndex = 0;
     this.hideCursor = false;
     this.tileData = null;
+    this.mapData = null;
 
     this.onScaleChange = null;
 
@@ -139,11 +139,11 @@ class Screen {
 
   /**
    * Set the palette that will used by the Screen.
-   * All colors are drawn fully opaque exept for the palette index specified at {@link transparentPaletteIndex}
+   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent
    *
    * @example
    * const palette = [
-   *  [0, 0, 0], // black, by default the 0 index is transparent
+   *  [0, 0, 0], // black, the 0 index is transparent
    *  [0, 0, 0], // black
    *  [255, 255, 255], // white
    *  [255, 0, 0], // red
@@ -211,7 +211,7 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixel( x, y, paletteId ) {
-    if ( paletteId === this.transparentPaletteIndex ) {
+    if ( !paletteId ) {
       return;
     }
     if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {
@@ -227,7 +227,7 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixelUnsafe( x, y, paletteId ) {
-    if ( paletteId === this.transparentPaletteIndex ) {
+    if ( !paletteId ) {
       return;
     }
     this._screenData[y * this.width + x] = paletteId;
@@ -606,6 +606,20 @@ class Screen {
       for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
         const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];
         this.setPixel( x + tileX, y + tileY, paletteId );
+      }
+    }
+  }
+
+  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {
+    const tileMap = this.mapData.tileMaps[map];
+    const layerData = tileMap.layers[layer];
+    const { tileSize } = this.tileData;
+    for ( let currentY = y; currentY <= y + height; currentY += 1 ) {
+      for ( let currentX = x; currentX <= x + width; currentX += 1 ) {
+        const gid = layerData[currentY * tileMap.width + currentX];
+        if ( gid ) {
+          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+        }
       }
     }
   }
