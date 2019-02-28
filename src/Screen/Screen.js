@@ -28,6 +28,7 @@ class Screen {
 
     this.canvas = null;
     this._context = null;
+    this._imageData = null;
     this._screenData = null;
     this._palette = null;
     this._generatedPalette = null;
@@ -62,6 +63,7 @@ class Screen {
     this._context = this.canvas.getContext( '2d', { alpha: false } );
     this._context.imageSmoothingEnabled = false;
     this._screenData = new Uint8ClampedArray( this.width * this.height );
+    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );
 
     // check if we are little endian
     const buffer = new ArrayBuffer( 4 );
@@ -600,7 +602,28 @@ class Screen {
   }
 
   drawTile( gid, x, y ) {
+    if ( !gid ) {
+      return;
+    }
+
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
     const { tileSize } = this.tileData;
+
+    if ( x + tileSize < 0 ) {
+      return;
+    }
+
+    if ( y + tileSize < 0 ) {
+      return;
+    }
+
     const basePosition = ( gid - 1 ) * tileSize * tileSize;
     for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
       for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
@@ -614,8 +637,18 @@ class Screen {
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
-    for ( let currentY = y; currentY <= y + height; currentY += 1 ) {
-      for ( let currentX = x; currentX <= x + width; currentX += 1 ) {
+    let maxX = x + height;
+    let maxY = y + height;
+
+    if ( maxX >= tileMap.width ) {
+      maxX = tileMap.width - 1;
+    }
+    if ( maxY >= tileMap.height ) {
+      maxY = tileMap.height - 1;
+    }
+
+    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {
+      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
           this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
@@ -628,8 +661,7 @@ class Screen {
    * draw the data from {@link _screenData} to the canvas
    */
   drawScreen() {
-    const imageData = this._context.getImageData( 0, 0, this.width, this.height );
-    const buffer = new ArrayBuffer( imageData.data.length );
+    const buffer = new ArrayBuffer( this._imageData.data.length );
     const data8 = new Uint8ClampedArray( buffer );
     const data32 = new Uint32Array( buffer );
 
@@ -642,8 +674,8 @@ class Screen {
         data32[y * this.width + x] = this._generatedPalette[index];
       }
     }
-    imageData.data.set( data8 );
-    this._context.putImageData( imageData, 0, 0 );
+    this._imageData.data.set( data8 );
+    this._context.putImageData( this._imageData, 0, 0 );
   }
 }
 

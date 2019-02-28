@@ -54,7 +54,7 @@ engine.onUpdate = () => {
   if ( !engine.input.mouse.isOffScreen ) {
     engine.screen.setPixel( engine.input.mouse.position.x, engine.input.mouse.position.y, color );
   }
-  engine.screen.drawMap( 0, 0, 16, 16, position.x, position.y );
+  engine.screen.drawMap( 0, 0, 40, 40, position.x, position.y );
   /*
   for ( let x = 0; x < 20; x += 1 ) {
     for ( let y = 0; y < 20; y += 1 ) {
