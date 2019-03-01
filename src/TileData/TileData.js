@@ -36,7 +36,7 @@ class TileData {
           runPosition += 2;
         }
       }
-      currentGID += currentTileset.width * currentTileset.height;
+      currentGID += currentTileset.width * currentTileset.height * this.tileSize * this.tileSize;
     }
   }
 

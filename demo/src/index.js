@@ -1,6 +1,7 @@
 import { Engine } from '../../src/index';
 import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
 import tileset from '../data/test.tileset.json';
+import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
 
 // import { GAME_RIGHT } from '../../src/Input/Input';
@@ -22,6 +23,7 @@ engine.onInit = () => {
   engine.screen.scale = 4;
   engine.screen.scaleMode = SCALE_FIT_WINDOW;
   engine.tileData.addTileset( tileset );
+  engine.tileData.addTileset( tileset2 );
   engine.mapData.addTileMap( tileMap );
 };
 
@@ -55,6 +57,8 @@ engine.onUpdate = () => {
     engine.screen.setPixel( engine.input.mouse.position.x, engine.input.mouse.position.y, color );
   }
   engine.screen.drawMap( 0, 0, 40, 40, position.x, position.y );
+  engine.screen.drawMap( 0, 0, 40, 40, 0, 0, 0, 1 );
+  // engine.screen.drawTile( 1, 0, 0 );
   /*
   for ( let x = 0; x < 20; x += 1 ) {
     for ( let y = 0; y < 20; y += 1 ) {

@@ -34,6 +34,7 @@ class Engine {
     this.tileData.init();
     this.screen.tileData = this.tileData;
     this.screen.mapData = this.mapData;
+
     requestAnimationFrame( this._update );
   }
 
