@@ -58,17 +58,6 @@ engine.onUpdate = () => {
   }
   engine.screen.drawMap( 0, 0, 40, 40, position.x, position.y );
   engine.screen.drawMap( 0, 0, 40, 40, 0, 0, 0, 1 );
-  // engine.screen.drawTile( 1, 0, 0 );
-  /*
-  for ( let x = 0; x < 20; x += 1 ) {
-    for ( let y = 0; y < 20; y += 1 ) {
-      engine.screen.drawTile( ( x % 16 ) + 1, position.x + x * 16, position.y + y * 16 );
-      // engine.screen.drawTile( 14, position.x + x * 16, position.y + y * 16 );
-      // engine.screen.drawTile( 13, position.x + x * 16, position.y + y * 16 );
-      // engine.screen.drawTile( 12, position.x + x * 16, position.y + y * 16 );
-    }
-  }
-  */
 };
 
 engine.begin();
