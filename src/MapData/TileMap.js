@@ -58,6 +58,18 @@ class TileMap {
     }
     return result;
   }
+
+  getTile( x, y, layer = 0 ) {
+    const currentLayer = this.layers[layer];
+    const index = y * this.width + x;
+    return currentLayer[index];
+  }
+
+  setTile( gid, x, y, layer = 0 ) {
+    const currentLayer = this.layers[layer];
+    const index = y * this.width + x;
+    currentLayer[index] = gid;
+  }
 }
 
 export default TileMap;
