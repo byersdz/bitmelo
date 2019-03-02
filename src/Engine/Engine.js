@@ -16,6 +16,9 @@ class Engine {
     this._update = this._update.bind( this );
   }
 
+  /**
+   * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop
+   */
   begin() {
     if ( this.onInit ) {
       this.onInit();
@@ -38,6 +41,9 @@ class Engine {
     requestAnimationFrame( this._update );
   }
 
+  /**
+   * Game loop
+   */
   _update() {
     this.input.pollInput();
 

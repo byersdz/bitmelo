@@ -19,6 +19,9 @@ export const MENU_DOWN = 14;
 export const MENU_CONFIRM = 15;
 export const MENU_BACK = 16;
 
+/**
+ * Handle game input
+ */
 class Input {
   constructor() {
     this.canvas = null;
@@ -86,6 +89,9 @@ class Input {
     this._forceMouseRightDown = false;
   }
 
+  /**
+   * Do initial setup. Add event listeners.
+   */
   init() {
     window.addEventListener( 'keydown', this._keyDown.bind( this ), false );
     window.addEventListener( 'keyup', this._keyUp.bind( this ), false );
@@ -163,6 +169,9 @@ class Input {
     this.mouse.isOffScreen = true;
   }
 
+  /**
+   * Update the input, should be done first thing in the game loop.
+   */
   pollInput() {
     for ( let i = 0; i < 256; i += 1 ) {
       this._lastKeys[i] = this._currentKeys[i];
@@ -186,6 +195,10 @@ class Input {
     this._lastMouseRight = this._currentMouseRight;
   }
 
+  /**
+   * return true if the key is currently held down
+   * @param {number} keyCode
+   */
   getKeyPressed( keyCode ) {
     if ( keyCode < 0 || keyCode >= 256 ) {
       return false;
@@ -194,6 +207,10 @@ class Input {
     return this._currentKeys[keyCode] > 0;
   }
 
+  /**
+   * return true if the key was pressed down this frame
+   * @param {number} keyCode
+   */
   getKeyDown( keyCode ) {
     if ( keyCode < 0 || keyCode >= 256 ) {
       return false;
@@ -204,6 +221,10 @@ class Input {
     return current && !last;
   }
 
+  /**
+   * return true if the key was released this frame
+   * @param {number} keyCode
+   */
   getKeyUp( keyCode ) {
     if ( keyCode < 0 || keyCode >= 256 ) {
       return false;
@@ -214,14 +235,26 @@ class Input {
     return !current && last;
   }
 
+  /**
+   * return true if the button is currently held down
+   * @param {number} buttonCode
+   */
   getButtonPressed( buttonCode ) {
     return this.getKeyPressed( this._buttonsToKeys[buttonCode] );
   }
 
+  /**
+   * return true if the button was pressed down this frame
+   * @param {number} buttonCode
+   */
   getButtonDown( buttonCode ) {
     return this.getKeyDown( this._buttonsToKeys[buttonCode] );
   }
 
+  /**
+   * return true if the button was released this frame
+   * @param {number} buttonCode
+   */
   getButtonUp( buttonCode ) {
     return this.getKeyUp( this._buttonsToKeys[buttonCode] );
   }

@@ -1,4 +1,7 @@
 
+/**
+ * Holds all of the tile data.
+ */
 class TileData {
   constructor() {
     this.tileSize = 16;
@@ -6,6 +9,9 @@ class TileData {
     this.data = null;
   }
 
+  /**
+   * Parse all of the tilesets and add them to the data array
+   */
   init() {
     let numberOfTiles = 0;
     for ( let i = 0; i < this.tilesets.length; i += 1 ) {
@@ -43,10 +49,20 @@ class TileData {
     }
   }
 
+  /**
+   * Add a tileset
+   * @param {Object} tileset - the tileset data
+   */
   addTileset( tileset ) {
     this.tilesets.push( tileset );
   }
 
+  /**
+   * Get the GID for a tile
+   * @param {number} x - x position of the tile
+   * @param {number} y - y position of the tile
+   * @param {number} tileset - the index of the tileset
+   */
   getGid( x, y, tileset = 0 ) {
     if ( x < 0 || y < 0 ) {
       return -1;

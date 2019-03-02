@@ -601,6 +601,12 @@ class Screen {
     this.setPixel( centerX - y, centerY - x, paletteId );
   }
 
+  /**
+   * Draw a tile
+   * @param {number} gid - the gid of the tile
+   * @param {*} x - the x position on the screen
+   * @param {*} y - the y position on the screen
+   */
   drawTile( gid, x, y ) {
     if ( !gid ) {
       return;
@@ -633,11 +639,22 @@ class Screen {
     }
   }
 
+  /**
+   * Draw a TileMap layer to the screen
+   * @param {number} x - origin x position on the TileMap
+   * @param {number} y - origin y position on the TileMap
+   * @param {number} width - how many tiles wide to draw
+   * @param {number} height - how many tiles high to draw
+   * @param {number} screenX - origin x position on the screen
+   * @param {number} screenY - origin y position on the screen
+   * @param {number} map - the index of the tilemap to draw
+   * @param {number} layer - the index of the layer to draw
+   */
   drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
-    let maxX = x + height;
+    let maxX = x + width;
     let maxY = y + height;
 
     if ( maxX >= tileMap.width ) {
