@@ -1,4 +1,7 @@
 
+export const SCALE_CONSTANT = 1;
+export const SCALE_FIT_WINDOW = 2;
+
 /**
  * Represents a game screen for low resolution games.
  * Has simple drawing functions using an indexed palette of a maximum of 256 colors
@@ -6,13 +9,26 @@
  */
 class Screen {
   constructor() {
+    this.conainerId = 'minnow-container';
+    this.container = null;
     this.width = 320;
     this.height = 180;
     this.scale = 3;
-    this.transparentPaletteIndex = 0;
+    this.maxScale = -1;
+    this.minScale = 1;
+    this.scaleMode = SCALE_CONSTANT;
+    this.horizontalScaleCushion = 0;
+    this.verticalScaleCushion = 0;
+    this.rescaleOnWindowResize = true;
+    this.hideCursor = false;
+    this.tileData = null;
+    this.mapData = null;
 
-    this._canvas = null;
+    this.onScaleChange = null;
+
+    this.canvas = null;
     this._context = null;
+    this._imageData = null;
     this._screenData = null;
     this._palette = null;
     this._generatedPalette = null;
@@ -24,28 +40,30 @@ class Screen {
    * Do initial setup such as creating the canvas and building the palette
    */
   init() {
-    const container = document.createElement( 'div' );
-    container.id = 'main-container';
+    this.container = document.getElementById( this.conainerId );
 
-    this._canvas = document.createElement( 'canvas' );
-    this._canvas.setAttribute( 'id', 'game-device' );
-    this._canvas.setAttribute( 'width', this.width );
-    this._canvas.setAttribute( 'height', this.height );
+    this.canvas = document.createElement( 'canvas' );
+    this.canvas.setAttribute( 'id', 'game-device' );
+    this.canvas.setAttribute( 'width', this.width );
+    this.canvas.setAttribute( 'height', this.height );
 
-    let canvasStyle = `width: ${ this.width * this.scale }px;`;
-    canvasStyle += `height: ${ this.height * this.scale }px;`;
-    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
-    canvasStyle += 'image-rendering: crisp-edges;';
-    canvasStyle += 'image-rendering: pixelated;';
+    this._setScale();
 
-    this._canvas.setAttribute( 'style', canvasStyle );
+    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {
+      window.onresize = () => {
+        this._setScale();
+        this._setCanvasStyle();
+      };
+    }
 
-    container.appendChild( this._canvas );
-    document.body.appendChild( container );
+    this._setCanvasStyle();
 
-    this._context = this._canvas.getContext( '2d' );
+    this.container.appendChild( this.canvas );
 
+    this._context = this.canvas.getContext( '2d', { alpha: false } );
+    this._context.imageSmoothingEnabled = false;
     this._screenData = new Uint8ClampedArray( this.width * this.height );
+    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );
 
     // check if we are little endian
     const buffer = new ArrayBuffer( 4 );
@@ -76,13 +94,58 @@ class Screen {
     this._buildPalette();
   }
 
+  _setScale() {
+    if ( this.scaleMode === SCALE_FIT_WINDOW ) {
+      const maxWidth = window.innerWidth - this.horizontalScaleCushion;
+      const maxHeight = window.innerHeight - this.verticalScaleCushion;
+
+      const maxHorizScale = Math.floor( maxWidth / this.width );
+      const maxVerticalScale = Math.floor( maxHeight / this.height );
+
+      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;
+      if ( this.scale < this.minScale ) {
+        this.scale = this.minScale;
+      }
+      if ( this.maxScale > 0 && this.scale > this.maxScale ) {
+        this.scale = this.maxScale;
+      }
+    }
+
+    if ( this.onScaleChange ) {
+      this.onScaleChange( this.scale );
+    }
+  }
+
+  _setCanvasStyle() {
+    let containerStyle = '';
+    containerStyle += `width: ${ this.width * this.scale }px;`;
+    containerStyle += `height: ${ this.height * this.scale }px;`;
+
+    this.container.setAttribute( 'style', containerStyle );
+
+    let canvasStyle = '';
+    canvasStyle += 'transform-origin: 50% 0%;';
+    canvasStyle += `transform: scale(${ this.scale });`;
+    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';
+    canvasStyle += 'image-rendering: -moz-crisp-edges;';
+    canvasStyle += 'image-rendering: crisp-edges;';
+    canvasStyle += 'image-rendering: pixelated;';
+
+
+    if ( this.hideCursor ) {
+      canvasStyle += 'cursor: none';
+    }
+
+    this.canvas.setAttribute( 'style', canvasStyle );
+  }
+
   /**
    * Set the palette that will used by the Screen.
-   * All colors are drawn fully opaque exept for the palette index specified at {@link transparentPaletteIndex}
+   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent
    *
    * @example
    * const palette = [
-   *  [0, 0, 0], // black, by default the 0 index is transparent
+   *  [0, 0, 0], // black, the 0 index is transparent
    *  [0, 0, 0], // black
    *  [255, 255, 255], // white
    *  [255, 0, 0], // red
@@ -150,6 +213,9 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixel( x, y, paletteId ) {
+    if ( !paletteId ) {
+      return;
+    }
     if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {
       return;
     }
@@ -163,6 +229,9 @@ class Screen {
    * @param {number} paletteId - palette color index
    */
   setPixelUnsafe( x, y, paletteId ) {
+    if ( !paletteId ) {
+      return;
+    }
     this._screenData[y * this.width + x] = paletteId;
   }
 
@@ -194,31 +263,87 @@ class Screen {
    * @param {*} y1 - first y position
    * @param {*} x2 - second x position
    * @param {*} y2 - second y position
-   * @param {*} id - palette index to be drawn
+   * @param {*} paletteId - palette index to be drawn
    */
-  drawLine( x1, y1, x2, y2, id ) {
+  drawLine( x1, y1, x2, y2, paletteId ) {
     if ( x1 === x2 && y1 === y2 ) {
       // same coordinate, draw a pixel
-      this.setPixel( x1, x2, id );
+      this.setPixel( x1, x2, paletteId );
+      return;
+    }
+
+    if ( x1 === x2 ) {
+      // vertical line
+      if ( x1 < 0 || x1 >= this.width ) {
+        return;
+      }
+
+      let firstY = y1 < y2 ? y1 : y2;
+      let secondY = y1 < y2 ? y2 : y1;
+      if ( secondY < 0 ) {
+        return;
+      }
+      if ( firstY >= this.height ) {
+        return;
+      }
+
+      if ( firstY < 0 ) {
+        firstY = 0;
+      }
+      if ( secondY >= this.height ) {
+        secondY = this.height - 1;
+      }
+      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {
+        this.setPixelUnsafe( x1, currentY, paletteId );
+      }
+
+      return;
+    }
+
+    if ( y1 === y2 ) {
+      // horizontal line
+      if ( y1 < 0 || y1 >= this.height ) {
+        return;
+      }
+
+      let firstX = x1 < x2 ? x1 : x2;
+      let secondX = x1 < x2 ? x2 : x1;
+      if ( secondX < 0 ) {
+        return;
+      }
+      if ( firstX >= this.width ) {
+        return;
+      }
+
+      if ( firstX < 0 ) {
+        firstX = 0;
+      }
+      if ( secondX >= this.width ) {
+        secondX = this.width - 1;
+      }
+      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {
+        this.setPixelUnsafe( currentX, y1, paletteId );
+      }
+
       return;
     }
 
     if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {
       // slope is less than 1
       if ( x1 > x2 ) {
-        this._drawLineLow( x2, y2, x1, y1, id );
+        this._drawLineLow( x2, y2, x1, y1, paletteId );
       }
       else {
-        this._drawLineLow( x1, y1, x2, y2, id );
+        this._drawLineLow( x1, y1, x2, y2, paletteId );
       }
     }
     else {
       // slope is greater than 1
       if ( y1 > y2 ) {
-        this._drawLineHigh( x2, y2, x1, y1, id );
+        this._drawLineHigh( x2, y2, x1, y1, paletteId );
       }
       else {
-        this._drawLineHigh( x1, y1, x2, y2, id );
+        this._drawLineHigh( x1, y1, x2, y2, paletteId );
       }
     }
   }
@@ -278,11 +403,282 @@ class Screen {
   }
 
   /**
+   * Draw a filled rectangle
+   *
+   * @param {*} x - bottom left x position
+   * @param {*} y - bottom left y position
+   * @param {*} width - width of the rectangle
+   * @param {*} height - height of the rectangle
+   * @param {*} paletteId - the palette color to draw
+   */
+  drawRect( x, y, width, height, paletteId ) {
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
+    let x1 = x;
+    let y1 = y;
+    let x2 = x + width - 1;
+    let y2 = y + height - 1;
+
+    if ( x2 < 0 ) {
+      return;
+    }
+    if ( y2 < 0 ) {
+      return;
+    }
+
+    if ( x1 < 0 ) {
+      x1 = 0;
+    }
+    if ( y1 < 0 ) {
+      y1 = 0;
+    }
+
+    if ( x2 >= this.width ) {
+      x2 = this.width - 1;
+    }
+
+    if ( y2 >= this.height ) {
+      y2 = this.height - 1;
+    }
+
+    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {
+      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {
+        this.setPixelUnsafe( currentX, currentY, paletteId );
+      }
+    }
+  }
+
+  /**
+   * Draw a rectangle border
+   *
+   * @param {*} x - bottom left x position
+   * @param {*} y - bottom left y position
+   * @param {*} width - width of the rectangle
+   * @param {*} height - height of the rectangle
+   * @param {*} paletteId - the palette color to draw
+   */
+  drawRectBorder( x, y, width, height, paletteId ) {
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
+    if ( width === 1 && height === 1 ) {
+      this.setPixel( x, y, paletteId );
+      return;
+    }
+
+    const x2 = x + width - 1;
+    const y2 = y + height - 1;
+
+    if ( x2 < 0 ) {
+      return;
+    }
+    if ( y2 < 0 ) {
+      return;
+    }
+
+    if ( width === 1 ) {
+      this.drawLine( x, y, x, y2, paletteId );
+      return;
+    }
+
+    if ( height === 1 ) {
+      this.drawLine( x, y, x2, y, paletteId );
+      return;
+    }
+
+    this.drawLine( x, y, x, y2, paletteId ); // left
+    this.drawLine( x, y2, x2, y2, paletteId ); // top
+    this.drawLine( x2, y2, x2, y, paletteId ); // right
+    this.drawLine( x2, y, x, y, paletteId ); // bottom
+  }
+
+  /**
+   * Draw a filled circle
+   *
+   * @param {number} centerX - the x coordinate of the center of the circle
+   * @param {numbe} centerY -  the y coordinate of the center of the circle
+   * @param {number} radius - the radius of the circle
+   * @param {number} paletteId - the palette color to draw
+   */
+  drawCircle( centerX, centerY, radius, paletteId ) {
+    if ( radius <= 0 ) {
+      return;
+    }
+
+    if ( radius === 1 ) {
+      this.drawCircleBorder( centerX, centerY, radius, paletteId );
+      this.setPixel( centerX, centerY, paletteId );
+      return;
+    }
+
+    let x = 0;
+    let y = radius;
+    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );
+
+    let decision = 3 - 2 * radius;
+
+    while ( y >= x ) {
+      x += 1;
+
+      if ( decision > 0 ) {
+        y -= 1;
+        decision = decision + 4 * ( x - y ) + 10;
+      }
+      else {
+        decision = decision + 4 * x + 6;
+      }
+
+      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );
+    }
+  }
+
+  /**
+   * Draw a circle border
+   *
+   * @param {number} centerX - the x coordinate of the center of the circle
+   * @param {numbe} centerY -  the y coordinate of the center of the circle
+   * @param {number} radius - the radius of the circle
+   * @param {number} paletteId - the palette color to draw
+   */
+  drawCircleBorder( centerX, centerY, radius, paletteId ) {
+    if ( radius <= 0 ) {
+      return;
+    }
+
+    let x = 0;
+    let y = radius;
+    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );
+
+    let decision = 3 - 2 * radius;
+
+    while ( y >= x ) {
+      x += 1;
+
+      if ( decision > 0 ) {
+        y -= 1;
+        decision = decision + 4 * ( x - y ) + 10;
+      }
+      else {
+        decision = decision + 4 * x + 6;
+      }
+
+      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );
+    }
+  }
+
+  /**
+   * helper method for drawing filled circles
+   */
+  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {
+    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );
+    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );
+    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );
+    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );
+  }
+
+  /**
+   * helper method for drawing circle borders
+   */
+  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {
+    this.setPixel( centerX + x, centerY + y, paletteId );
+    this.setPixel( centerX - x, centerY + y, paletteId );
+    this.setPixel( centerX + x, centerY - y, paletteId );
+    this.setPixel( centerX - x, centerY - y, paletteId );
+    this.setPixel( centerX + y, centerY + x, paletteId );
+    this.setPixel( centerX - y, centerY + x, paletteId );
+    this.setPixel( centerX + y, centerY - x, paletteId );
+    this.setPixel( centerX - y, centerY - x, paletteId );
+  }
+
+  /**
+   * Draw a tile
+   * @param {number} gid - the gid of the tile
+   * @param {*} x - the x position on the screen
+   * @param {*} y - the y position on the screen
+   */
+  drawTile( gid, x, y ) {
+    if ( !gid ) {
+      return;
+    }
+
+    if ( x >= this.width ) {
+      return;
+    }
+
+    if ( y >= this.height ) {
+      return;
+    }
+
+    const { tileSize } = this.tileData;
+
+    if ( x + tileSize < 0 ) {
+      return;
+    }
+
+    if ( y + tileSize < 0 ) {
+      return;
+    }
+
+    const basePosition = ( gid - 1 ) * tileSize * tileSize;
+    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
+      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
+        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];
+        this.setPixel( x + tileX, y + tileY, paletteId );
+      }
+    }
+  }
+
+  /**
+   * Draw a TileMap layer to the screen
+   * @param {number} x - origin x position on the TileMap
+   * @param {number} y - origin y position on the TileMap
+   * @param {number} width - how many tiles wide to draw
+   * @param {number} height - how many tiles high to draw
+   * @param {number} screenX - origin x position on the screen
+   * @param {number} screenY - origin y position on the screen
+   * @param {number} map - the index of the tilemap to draw
+   * @param {number} layer - the index of the layer to draw
+   */
+  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {
+    const tileMap = this.mapData.tileMaps[map];
+    const layerData = tileMap.layers[layer];
+    const { tileSize } = this.tileData;
+    let maxX = x + width;
+    let maxY = y + height;
+
+    if ( maxX >= tileMap.width ) {
+      maxX = tileMap.width - 1;
+    }
+    if ( maxY >= tileMap.height ) {
+      maxY = tileMap.height - 1;
+    }
+
+    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {
+      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {
+        const gid = layerData[currentY * tileMap.width + currentX];
+        if ( gid ) {
+          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+        }
+      }
+    }
+  }
+
+  /**
    * draw the data from {@link _screenData} to the canvas
    */
   drawScreen() {
-    const imageData = this._context.getImageData( 0, 0, this.width, this.height );
-    const buffer = new ArrayBuffer( imageData.data.length );
+    const buffer = new ArrayBuffer( this._imageData.data.length );
     const data8 = new Uint8ClampedArray( buffer );
     const data32 = new Uint32Array( buffer );
 
@@ -295,8 +691,8 @@ class Screen {
         data32[y * this.width + x] = this._generatedPalette[index];
       }
     }
-    imageData.data.set( data8 );
-    this._context.putImageData( imageData, 0, 0 );
+    this._imageData.data.set( data8 );
+    this._context.putImageData( this._imageData, 0, 0 );
   }
 }
 
