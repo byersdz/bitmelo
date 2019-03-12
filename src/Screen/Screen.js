@@ -23,6 +23,7 @@ class Screen {
     this.hideCursor = false;
     this.tileData = null;
     this.mapData = null;
+    this.fontData = null;
 
     this.onScaleChange = null;
 
@@ -669,6 +670,36 @@ class Screen {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
           this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+        }
+      }
+    }
+  }
+
+
+  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    let currentX = x;
+    for ( let i = 0; i < text.length; i += 1 ) {
+      const charCode = text.charCodeAt( i );
+      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );
+      currentX += currentFont.widthForChar( charCode );
+      currentX += currentFont.letterSpacing;
+    }
+  }
+
+
+  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    const { tileSize, originX, originY } = currentFont;
+    const basePosition = charCode * tileSize * tileSize;
+    for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {
+      for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {
+        const id = currentFont.data[basePosition + fontY * tileSize + fontX];
+        if ( id === 1 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );
+        }
+        else if ( id === 2 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );
         }
       }
     }

@@ -2,6 +2,7 @@ import Screen from '../Screen/Screen';
 import Input from '../Input/Input';
 import TileData from '../TileData/TileData';
 import MapData from '../MapData/MapData';
+import FontData from '../FontData/FontData';
 
 class Engine {
   constructor() {
@@ -12,6 +13,7 @@ class Engine {
     this.input = new Input();
     this.tileData = new TileData();
     this.mapData = new MapData();
+    this.fontData = new FontData();
 
     this._update = this._update.bind( this );
   }
@@ -37,6 +39,7 @@ class Engine {
     this.tileData.init();
     this.screen.tileData = this.tileData;
     this.screen.mapData = this.mapData;
+    this.screen.fontData = this.fontData;
 
     requestAnimationFrame( this._update );
   }
