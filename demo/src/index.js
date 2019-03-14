@@ -3,7 +3,7 @@ import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
 import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
-import standardFont from '../data/standard-font.font.json';
+import standardFont from '../data/standard.font.json';
 
 // import { GAME_RIGHT } from '../../src/Input/Input';
 
