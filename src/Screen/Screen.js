@@ -675,7 +675,16 @@ class Screen {
     }
   }
 
-
+  /**
+   * Draw a line of text to the screen.
+   * Newlines are not supported, this will draw just a single line
+   * @param {string} text - the text to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette if for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
   drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
     const currentFont = this.fontData.fonts[font];
     let currentX = x;
@@ -687,11 +696,19 @@ class Screen {
     }
   }
 
-
+  /**
+   * Draw an individual character to the screen
+   * @param {number} charCode - the unicode point to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette id for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
   drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
     const currentFont = this.fontData.fonts[font];
     const { tileSize, originX, originY } = currentFont;
-    const basePosition = charCode * tileSize * tileSize;
+    const basePosition = currentFont.baseIndexForChar( charCode );
     for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {
       for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {
         const id = currentFont.data[basePosition + fontY * tileSize + fontX];

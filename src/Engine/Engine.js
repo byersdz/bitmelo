@@ -4,6 +4,9 @@ import TileData from '../TileData/TileData';
 import MapData from '../MapData/MapData';
 import FontData from '../FontData/FontData';
 
+import standardFont from '../FontData/standard.font.json';
+import smallFont from '../FontData/small.font.json';
+
 class Engine {
   constructor() {
     this.containerId = 'minnow-container';
@@ -14,6 +17,9 @@ class Engine {
     this.tileData = new TileData();
     this.mapData = new MapData();
     this.fontData = new FontData();
+
+    this.fontData.addFont( standardFont );
+    this.fontData.addFont( smallFont );
 
     this._update = this._update.bind( this );
   }

@@ -3,9 +3,6 @@ import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
 import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
-import standardFont from '../data/standard.font.json';
-
-// import { GAME_RIGHT } from '../../src/Input/Input';
 
 import './style.css';
 
@@ -26,7 +23,6 @@ engine.onInit = () => {
   engine.tileData.addTileset( tileset );
   engine.tileData.addTileset( tileset2 );
   engine.mapData.addTileMap( tileMap );
-  engine.fontData.addFont( standardFont );
   console.log( engine.fontData );
 };
 
@@ -61,7 +57,7 @@ engine.onUpdate = () => {
   }
   engine.screen.drawMap( 0, 0, 40, 40, position.x, position.y );
   // engine.screen.drawMap( 0, 0, 40, 40, 0, 0, 0, 1 );
-  engine.screen.drawText( 'The quick, brown! Fox jumps over the lazy. Dog.', 0, 100, 2, 1 );
+  engine.screen.drawText( 'The quick, \u20acbrown! Fox jumps over the lazy. Dog.', 0, 100, 2, 1, 0 );
   engine.screen.drawChar( 'B'.charCodeAt( 0 ), 0, 0, 3 );
 };
 

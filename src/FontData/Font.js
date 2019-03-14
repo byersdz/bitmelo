@@ -1,4 +1,8 @@
 
+/**
+ * Represents a font. Data is stored similarly to tilesets in an array, with the ability to remap characters
+ * that have a unicode point larger than the array can hold.
+ */
 class Font {
   constructor( fontData ) {
     this.standardWidth = 5;
@@ -40,6 +44,29 @@ class Font {
     }
   }
 
+  /**
+   * Get the base index in the data array for the character
+   * @param {number} charCode - the unicode point for the character
+   */
+  baseIndexForChar( charCode ) {
+    let codePoint = charCode;
+    if ( charCode >= this.width * this.height ) {
+      const key = charCode.toString();
+      console.log( key );
+
+      if ( this.charData && this.charData[key] ) {
+        if ( this.charData[key] !== undefined ) {
+          codePoint = this.charData[key].remap;
+        }
+      }
+    }
+    return codePoint * this.tileSize * this.tileSize;
+  }
+
+  /**
+   * Get the width of a character
+   * @param {number} charCode - the unicode point for the character
+   */
   widthForChar( charCode ) {
     const charKey = charCode.toString();
     if ( this.charData && this.charData[charKey] ) {
