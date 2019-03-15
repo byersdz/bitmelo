@@ -23,6 +23,7 @@ class Screen {
     this.hideCursor = false;
     this.tileData = null;
     this.mapData = null;
+    this.fontData = null;
 
     this.onScaleChange = null;
 
@@ -669,6 +670,53 @@ class Screen {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
           this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+        }
+      }
+    }
+  }
+
+  /**
+   * Draw a line of text to the screen.
+   * Newlines are not supported, this will draw just a single line
+   * @param {string} text - the text to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette if for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
+  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    let currentX = x;
+    for ( let i = 0; i < text.length; i += 1 ) {
+      const charCode = text.charCodeAt( i );
+      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );
+      currentX += currentFont.widthForChar( charCode );
+      currentX += currentFont.letterSpacing;
+    }
+  }
+
+  /**
+   * Draw an individual character to the screen
+   * @param {number} charCode - the unicode point to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette id for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
+  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    const { tileSize, originX, originY } = currentFont;
+    const basePosition = currentFont.baseIndexForChar( charCode );
+    for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {
+      for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {
+        const id = currentFont.data[basePosition + fontY * tileSize + fontX];
+        if ( id === 1 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );
+        }
+        else if ( id === 2 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );
         }
       }
     }

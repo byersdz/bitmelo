@@ -282,6 +282,18 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "minnow-engine/src/fontdata/font.js~font",
+    "class/src/FontData/Font.js~Font.html",
+    "<span>Font</span> <span class=\"search-result-import-path\">minnow-engine/src/FontData/Font.js</span>",
+    "class"
+  ],
+  [
+    "minnow-engine/src/fontdata/fontdata.js~fontdata",
+    "class/src/FontData/FontData.js~FontData.html",
+    "<span>FontData</span> <span class=\"search-result-import-path\">minnow-engine/src/FontData/FontData.js</span>",
+    "class"
+  ],
+  [
     "minnow-engine/src/input/input.js~game_action_four",
     "variable/index.html#static-variable-GAME_ACTION_FOUR",
     "<span>GAME_ACTION_FOUR</span> <span class=\"search-result-import-path\">minnow-engine/src/Input/Input.js</span>",
@@ -1122,6 +1134,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/engine/engine.js~engine#fontdata",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-fontData",
+    "src/Engine/Engine.js~Engine#fontData",
+    "member"
+  ],
+  [
     "src/engine/engine.js~engine#input",
     "class/src/Engine/Engine.js~Engine.html#instance-member-input",
     "src/Engine/Engine.js~Engine#input",
@@ -1155,6 +1173,108 @@ window.esdocSearchIndex = [
     "src/engine/engine.js~engine#tiledata",
     "class/src/Engine/Engine.js~Engine.html#instance-member-tileData",
     "src/Engine/Engine.js~Engine#tileData",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js",
+    "file/src/FontData/Font.js.html",
+    "src/FontData/Font.js",
+    "file"
+  ],
+  [
+    "src/fontdata/font.js~font#baseindexforchar",
+    "class/src/FontData/Font.js~Font.html#instance-method-baseIndexForChar",
+    "src/FontData/Font.js~Font#baseIndexForChar",
+    "method"
+  ],
+  [
+    "src/fontdata/font.js~font#chardata",
+    "class/src/FontData/Font.js~Font.html#instance-member-charData",
+    "src/FontData/Font.js~Font#charData",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#constructor",
+    "class/src/FontData/Font.js~Font.html#instance-constructor-constructor",
+    "src/FontData/Font.js~Font#constructor",
+    "method"
+  ],
+  [
+    "src/fontdata/font.js~font#data",
+    "class/src/FontData/Font.js~Font.html#instance-member-data",
+    "src/FontData/Font.js~Font#data",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#height",
+    "class/src/FontData/Font.js~Font.html#instance-member-height",
+    "src/FontData/Font.js~Font#height",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#letterspacing",
+    "class/src/FontData/Font.js~Font.html#instance-member-letterSpacing",
+    "src/FontData/Font.js~Font#letterSpacing",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#originx",
+    "class/src/FontData/Font.js~Font.html#instance-member-originX",
+    "src/FontData/Font.js~Font#originX",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#originy",
+    "class/src/FontData/Font.js~Font.html#instance-member-originY",
+    "src/FontData/Font.js~Font#originY",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#standardwidth",
+    "class/src/FontData/Font.js~Font.html#instance-member-standardWidth",
+    "src/FontData/Font.js~Font#standardWidth",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#tilesize",
+    "class/src/FontData/Font.js~Font.html#instance-member-tileSize",
+    "src/FontData/Font.js~Font#tileSize",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#width",
+    "class/src/FontData/Font.js~Font.html#instance-member-width",
+    "src/FontData/Font.js~Font#width",
+    "member"
+  ],
+  [
+    "src/fontdata/font.js~font#widthforchar",
+    "class/src/FontData/Font.js~Font.html#instance-method-widthForChar",
+    "src/FontData/Font.js~Font#widthForChar",
+    "method"
+  ],
+  [
+    "src/fontdata/fontdata.js",
+    "file/src/FontData/FontData.js.html",
+    "src/FontData/FontData.js",
+    "file"
+  ],
+  [
+    "src/fontdata/fontdata.js~fontdata#addfont",
+    "class/src/FontData/FontData.js~FontData.html#instance-method-addFont",
+    "src/FontData/FontData.js~FontData#addFont",
+    "method"
+  ],
+  [
+    "src/fontdata/fontdata.js~fontdata#constructor",
+    "class/src/FontData/FontData.js~FontData.html#instance-constructor-constructor",
+    "src/FontData/FontData.js~FontData#constructor",
+    "method"
+  ],
+  [
+    "src/fontdata/fontdata.js~fontdata#fonts",
+    "class/src/FontData/FontData.js~FontData.html#instance-member-fonts",
+    "src/FontData/FontData.js~FontData#fonts",
     "member"
   ],
   [
@@ -1590,6 +1710,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/screen/screen.js~screen#drawchar",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-drawChar",
+    "src/Screen/Screen.js~Screen#drawChar",
+    "method"
+  ],
+  [
     "src/screen/screen.js~screen#drawcircle",
     "class/src/Screen/Screen.js~Screen.html#instance-method-drawCircle",
     "src/Screen/Screen.js~Screen#drawCircle",
@@ -1632,10 +1758,22 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/screen/screen.js~screen#drawtext",
+    "class/src/Screen/Screen.js~Screen.html#instance-method-drawText",
+    "src/Screen/Screen.js~Screen#drawText",
+    "method"
+  ],
+  [
     "src/screen/screen.js~screen#drawtile",
     "class/src/Screen/Screen.js~Screen.html#instance-method-drawTile",
     "src/Screen/Screen.js~Screen#drawTile",
     "method"
+  ],
+  [
+    "src/screen/screen.js~screen#fontdata",
+    "class/src/Screen/Screen.js~Screen.html#instance-member-fontData",
+    "src/Screen/Screen.js~Screen#fontData",
+    "member"
   ],
   [
     "src/screen/screen.js~screen#getpixel",
