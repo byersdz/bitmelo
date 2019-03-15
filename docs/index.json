@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/Engine/Engine.js",
-    "content": "import Screen from '../Screen/Screen';\nimport Input from '../Input/Input';\nimport TileData from '../TileData/TileData';\nimport MapData from '../MapData/MapData';\n\nclass Engine {\n  constructor() {\n    this.containerId = 'minnow-container';\n    this.onInit = null;\n    this.onUpdate = null;\n    this.screen = new Screen();\n    this.input = new Input();\n    this.tileData = new TileData();\n    this.mapData = new MapData();\n\n    this._update = this._update.bind( this );\n  }\n\n  /**\n   * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop\n   */\n  begin() {\n    if ( this.onInit ) {\n      this.onInit();\n    }\n\n    this.screen.init();\n    this.screen.onScaleChange = ( scale ) => {\n      this.input.canvasScale = scale;\n    };\n\n    this.input.canvas = this.screen.canvas;\n    this.input.canvasScale = this.screen.scale;\n    this.input.screenWidth = this.screen.width;\n    this.input.screenHeight = this.screen.height;\n    this.input.init();\n    this.tileData.init();\n    this.screen.tileData = this.tileData;\n    this.screen.mapData = this.mapData;\n\n    requestAnimationFrame( this._update );\n  }\n\n  /**\n   * Game loop\n   */\n  _update() {\n    this.input.pollInput();\n\n    if ( this.onUpdate ) {\n      this.onUpdate();\n    }\n\n    this.screen.drawScreen();\n    requestAnimationFrame( this._update );\n  }\n}\n\nexport default Engine;\n",
+    "content": "import Screen from '../Screen/Screen';\nimport Input from '../Input/Input';\nimport TileData from '../TileData/TileData';\nimport MapData from '../MapData/MapData';\nimport FontData from '../FontData/FontData';\n\nimport standardFont from '../FontData/standard.font.json';\nimport smallFont from '../FontData/small.font.json';\n\nclass Engine {\n  constructor() {\n    this.containerId = 'minnow-container';\n    this.onInit = null;\n    this.onUpdate = null;\n    this.screen = new Screen();\n    this.input = new Input();\n    this.tileData = new TileData();\n    this.mapData = new MapData();\n    this.fontData = new FontData();\n\n    this.fontData.addFont( standardFont );\n    this.fontData.addFont( smallFont );\n\n    this._update = this._update.bind( this );\n  }\n\n  /**\n   * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop\n   */\n  begin() {\n    if ( this.onInit ) {\n      this.onInit();\n    }\n\n    this.screen.init();\n    this.screen.onScaleChange = ( scale ) => {\n      this.input.canvasScale = scale;\n    };\n\n    this.input.canvas = this.screen.canvas;\n    this.input.canvasScale = this.screen.scale;\n    this.input.screenWidth = this.screen.width;\n    this.input.screenHeight = this.screen.height;\n    this.input.init();\n    this.tileData.init();\n    this.screen.tileData = this.tileData;\n    this.screen.mapData = this.mapData;\n    this.screen.fontData = this.fontData;\n\n    requestAnimationFrame( this._update );\n  }\n\n  /**\n   * Game loop\n   */\n  _update() {\n    this.input.pollInput();\n\n    if ( this.onUpdate ) {\n      this.onUpdate();\n    }\n\n    this.screen.drawScreen();\n    requestAnimationFrame( this._update );\n  }\n}\n\nexport default Engine;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/minnow-engine/src/Engine/Engine.js",
     "access": "public",
@@ -586,7 +586,7 @@
     "importPath": "minnow-engine/src/Engine/Engine.js",
     "importStyle": "Engine",
     "description": null,
-    "lineNumber": 6,
+    "lineNumber": 10,
     "undocument": true,
     "interface": false
   },
@@ -601,7 +601,7 @@
     "longname": "src/Engine/Engine.js~Engine#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 11,
     "undocument": true
   },
   {
@@ -613,7 +613,7 @@
     "longname": "src/Engine/Engine.js~Engine#containerId",
     "access": "public",
     "description": null,
-    "lineNumber": 8,
+    "lineNumber": 12,
     "undocument": true,
     "type": {
       "types": [
@@ -630,7 +630,7 @@
     "longname": "src/Engine/Engine.js~Engine#onInit",
     "access": "public",
     "description": null,
-    "lineNumber": 9,
+    "lineNumber": 13,
     "undocument": true,
     "type": {
       "types": [
@@ -647,7 +647,7 @@
     "longname": "src/Engine/Engine.js~Engine#onUpdate",
     "access": "public",
     "description": null,
-    "lineNumber": 10,
+    "lineNumber": 14,
     "undocument": true,
     "type": {
       "types": [
@@ -664,7 +664,7 @@
     "longname": "src/Engine/Engine.js~Engine#screen",
     "access": "public",
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 15,
     "undocument": true,
     "type": {
       "types": [
@@ -681,7 +681,7 @@
     "longname": "src/Engine/Engine.js~Engine#input",
     "access": "public",
     "description": null,
-    "lineNumber": 12,
+    "lineNumber": 16,
     "undocument": true,
     "type": {
       "types": [
@@ -698,7 +698,7 @@
     "longname": "src/Engine/Engine.js~Engine#tileData",
     "access": "public",
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 17,
     "undocument": true,
     "type": {
       "types": [
@@ -715,7 +715,7 @@
     "longname": "src/Engine/Engine.js~Engine#mapData",
     "access": "public",
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 18,
     "undocument": true,
     "type": {
       "types": [
@@ -724,7 +724,24 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 58,
+    "kind": "member",
+    "name": "fontData",
+    "memberof": "src/Engine/Engine.js~Engine",
+    "static": false,
+    "longname": "src/Engine/Engine.js~Engine#fontData",
+    "access": "public",
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 60,
     "kind": "method",
     "name": "begin",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -734,12 +751,12 @@
     "longname": "src/Engine/Engine.js~Engine#begin",
     "access": "public",
     "description": "Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop",
-    "lineNumber": 22,
+    "lineNumber": 30,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "method",
     "name": "_update",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -749,12 +766,345 @@
     "longname": "src/Engine/Engine.js~Engine#_update",
     "access": "private",
     "description": "Game loop",
-    "lineNumber": 47,
+    "lineNumber": 56,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
+    "kind": "file",
+    "name": "src/FontData/Font.js",
+    "content": "\n/**\n * Represents a font. Data is stored similarly to tilesets in an array, with the ability to remap characters\n * that have a unicode point larger than the array can hold.\n */\nclass Font {\n  constructor( fontData ) {\n    this.standardWidth = 5;\n    this.letterSpacing = 1;\n\n    this.tileSize = 16;\n    this.width = 16;\n    this.height = 16;\n    this.originX = 1;\n    this.originY = 3;\n\n    this.charData = null;\n    this.data = null;\n\n    if ( fontData ) {\n      this.standardWidth = fontData.standardWidth;\n      this.letterSpacing = fontData.letterSpacing;\n\n      this.tileSize = fontData.tileSize;\n      this.width = fontData.width;\n      this.height = fontData.height;\n      this.originX = fontData.originX;\n      this.originY = fontData.originY;\n      this.charData = fontData.charData;\n\n      this.data = new Uint8ClampedArray( this.width * this.height * this.tileSize * this.tileSize );\n      const { data } = fontData;\n      let runPosition = 0;\n      let dataPosition = 0;\n      while ( runPosition < data.length ) {\n        const runLength = data[runPosition];\n        const paletteId = parseInt( data[runPosition + 1], 10 );\n        for ( let j = 0; j < runLength; j += 1 ) {\n          this.data[dataPosition] = paletteId;\n          dataPosition += 1;\n        }\n        runPosition += 2;\n      }\n    }\n  }\n\n  /**\n   * Get the base index in the data array for the character\n   * @param {number} charCode - the unicode point for the character\n   */\n  baseIndexForChar( charCode ) {\n    let codePoint = charCode;\n    if ( charCode >= this.width * this.height ) {\n      const key = charCode.toString();\n\n      if ( this.charData && this.charData[key] ) {\n        if ( this.charData[key] !== undefined ) {\n          codePoint = this.charData[key].remap;\n        }\n      }\n    }\n    return codePoint * this.tileSize * this.tileSize;\n  }\n\n  /**\n   * Get the width of a character\n   * @param {number} charCode - the unicode point for the character\n   */\n  widthForChar( charCode ) {\n    const charKey = charCode.toString();\n    if ( this.charData && this.charData[charKey] ) {\n      if ( this.charData[charKey].width !== undefined ) {\n        return this.charData[charKey].width;\n      }\n    }\n    return this.standardWidth;\n  }\n}\n\nexport default Font;\n",
+    "static": true,
+    "longname": "C:/Users/byers/Development/Projects/minnow-engine/src/FontData/Font.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 63,
+    "kind": "class",
+    "name": "Font",
+    "memberof": "src/FontData/Font.js",
+    "static": true,
+    "longname": "src/FontData/Font.js~Font",
+    "access": "public",
+    "export": true,
+    "importPath": "minnow-engine/src/FontData/Font.js",
+    "importStyle": "Font",
+    "description": "Represents a font. Data is stored similarly to tilesets in an array, with the ability to remap characters\nthat have a unicode point larger than the array can hold.",
+    "lineNumber": 6,
+    "interface": false
+  },
+  {
+    "__docId__": 64,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/FontData/Font.js~Font",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "member",
+    "name": "standardWidth",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#standardWidth",
+    "access": "public",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "member",
+    "name": "letterSpacing",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#letterSpacing",
+    "access": "public",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "member",
+    "name": "tileSize",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#tileSize",
+    "access": "public",
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "member",
+    "name": "width",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#width",
+    "access": "public",
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "member",
+    "name": "height",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#height",
+    "access": "public",
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "member",
+    "name": "originX",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#originX",
+    "access": "public",
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "member",
+    "name": "originY",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#originY",
+    "access": "public",
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "member",
+    "name": "charData",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#charData",
+    "access": "public",
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "member",
+    "name": "data",
+    "memberof": "src/FontData/Font.js~Font",
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#data",
+    "access": "public",
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 83,
+    "kind": "method",
+    "name": "baseIndexForChar",
+    "memberof": "src/FontData/Font.js~Font",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#baseIndexForChar",
+    "access": "public",
+    "description": "Get the base index in the data array for the character",
+    "lineNumber": 51,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "charCode",
+        "description": "the unicode point for the character"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "method",
+    "name": "widthForChar",
+    "memberof": "src/FontData/Font.js~Font",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/FontData/Font.js~Font#widthForChar",
+    "access": "public",
+    "description": "Get the width of a character",
+    "lineNumber": 69,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "charCode",
+        "description": "the unicode point for the character"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "file",
+    "name": "src/FontData/FontData.js",
+    "content": "\nimport Font from './Font';\n\n/**\n * Holds all of the font data\n */\nclass FontData {\n  constructor() {\n    this.fonts = [];\n  }\n\n  addFont( fontData ) {\n    this.fonts.push( new Font( fontData ) );\n  }\n}\n\nexport default FontData;\n",
+    "static": true,
+    "longname": "C:/Users/byers/Development/Projects/minnow-engine/src/FontData/FontData.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 86,
+    "kind": "class",
+    "name": "FontData",
+    "memberof": "src/FontData/FontData.js",
+    "static": true,
+    "longname": "src/FontData/FontData.js~FontData",
+    "access": "public",
+    "export": true,
+    "importPath": "minnow-engine/src/FontData/FontData.js",
+    "importStyle": "FontData",
+    "description": "Holds all of the font data",
+    "lineNumber": 7,
+    "interface": false
+  },
+  {
+    "__docId__": 87,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/FontData/FontData.js~FontData",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/FontData/FontData.js~FontData#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "member",
+    "name": "fonts",
+    "memberof": "src/FontData/FontData.js~FontData",
+    "static": false,
+    "longname": "src/FontData/FontData.js~FontData#fonts",
+    "access": "public",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 89,
+    "kind": "method",
+    "name": "addFont",
+    "memberof": "src/FontData/FontData.js~FontData",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/FontData/FontData.js~FontData#addFont",
+    "access": "public",
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "params": [
+      {
+        "name": "fontData",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 90,
     "kind": "file",
     "name": "src/index.js",
     "content": "import * as keysImport from './Input/Keys';\n\nexport { default } from './Engine/Engine';\nexport { default as Engine } from './Engine/Engine';\n\nexport { default as Screen } from './Screen/Screen';\nexport { default as Input } from './Input/Input';\nexport { default as TileData } from './TileData/TileData';\nexport { default as MapData } from './MapData/MapData';\nexport { default as TileMap } from './MapData/TileMap';\n\nexport const Keys = keysImport;\n",
@@ -765,7 +1115,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 62,
+    "__docId__": 91,
     "kind": "variable",
     "name": "Keys",
     "memberof": "src/index.js",
@@ -785,7 +1135,7 @@
     }
   },
   {
-    "__docId__": 63,
+    "__docId__": 92,
     "kind": "file",
     "name": "src/Input/Input.js",
     "content": "import * as Keys from './Keys';\n\nexport const GAME_LEFT = 0;\nexport const GAME_RIGHT = 1;\nexport const GAME_UP = 2;\nexport const GAME_DOWN = 3;\nexport const GAME_ACTION_ONE = 4;\nexport const GAME_ACTION_TWO = 5;\nexport const GAME_ACTION_THREE = 6;\nexport const GAME_ACTION_FOUR = 7;\nexport const GAME_PAUSE = 8;\nexport const GAME_LEFT_TRIGGER = 9;\nexport const GAME_RIGHT_TRIGGER = 10;\n\nexport const MENU_LEFT = 11;\nexport const MENU_RIGHT = 12;\nexport const MENU_UP = 13;\nexport const MENU_DOWN = 14;\nexport const MENU_CONFIRM = 15;\nexport const MENU_BACK = 16;\n\n/**\n * Handle game input\n */\nclass Input {\n  constructor() {\n    this.canvas = null;\n    this.canvasScale = 1;\n    this.screenWidth = 1;\n    this.screenHeight = 1;\n\n    this.mouse = {};\n    this.mouse.isOffScreen = true;\n    this.mouse.position = {\n      x: -1,\n      y: -1,\n    };\n\n    this.mouse.left = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this.mouse.right = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this._keysRaw = new Uint8ClampedArray( 256 );\n    this._currentKeys = new Uint8ClampedArray( 256 );\n    this._lastKeys = new Uint8ClampedArray( 256 );\n\n    this._buttonsToKeys = new Uint8ClampedArray( 32 );\n\n    // default button mappings\n    this._buttonsToKeys[GAME_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[GAME_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[GAME_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[GAME_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[GAME_ACTION_ONE] = Keys.Z_KEY;\n    this._buttonsToKeys[GAME_ACTION_TWO] = Keys.X_KEY;\n    this._buttonsToKeys[GAME_ACTION_THREE] = Keys.A_KEY;\n    this._buttonsToKeys[GAME_ACTION_FOUR] = Keys.S_KEY;\n    this._buttonsToKeys[GAME_LEFT_TRIGGER] = Keys.Q_KEY;\n    this._buttonsToKeys[GAME_RIGHT_TRIGGER] = Keys.W_KEY;\n\n    this._buttonsToKeys[GAME_PAUSE] = Keys.P_KEY;\n\n    this._buttonsToKeys[MENU_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[MENU_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[MENU_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[MENU_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[MENU_CONFIRM] = Keys.X_KEY;\n    this._buttonsToKeys[MENU_BACK] = Keys.Z_KEY;\n\n    this._currentButtons = new Uint8ClampedArray( 32 );\n    this._lastButtons = new Uint8ClampedArray( 32 );\n\n    this._currentMouseLeft = false;\n    this._lastMouseLeft = false;\n    this._forceMouseLeftDown = false;\n\n    this._currentMouseRight = false;\n    this._lastMouseRight = false;\n    this._forceMouseRightDown = false;\n  }\n\n  /**\n   * Do initial setup. Add event listeners.\n   */\n  init() {\n    window.addEventListener( 'keydown', this._keyDown.bind( this ), false );\n    window.addEventListener( 'keyup', this._keyUp.bind( this ), false );\n\n    if ( this.canvas ) {\n      this.canvas.oncontextmenu = ( e ) => {\n        e.preventDefault();\n      };\n\n      this.canvas.addEventListener( 'mouseenter', this._mouseEnter.bind( this ), false );\n      this.canvas.addEventListener( 'mousemove', this._mouseMove.bind( this ), false );\n      this.canvas.addEventListener( 'mousedown', this._mouseDown.bind( this ), false );\n      this.canvas.addEventListener( 'mouseup', this._mouseUp.bind( this ), false );\n      this.canvas.addEventListener( 'mouseleave', this._mouseLeave.bind( this ), false );\n    }\n  }\n\n  _keyDown( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 1;\n    }\n  }\n\n  _keyUp( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 0;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 0;\n    }\n  }\n\n  _mouseEnter() {\n    this.mouse.isOffScreen = false;\n    this._currentMouseLeft = false;\n    this._currentMouseRight = false;\n  }\n\n  _mouseMove( e ) {\n    const canvasRect = this.canvas.getBoundingClientRect();\n    this.mouse.position = {\n      x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),\n      y: this.screenHeight - Math.floor( ( e.clientY - canvasRect.top ) / this.canvasScale ) - 1,\n    };\n  }\n\n  _mouseDown( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = true;\n      this._forceMouseLeftDown = true;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = true;\n      this._forceMouseRightDown = true;\n    }\n  }\n\n  _mouseUp( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = false;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = false;\n    }\n  }\n\n  _mouseLeave() {\n    this.mouse.isOffScreen = true;\n  }\n\n  /**\n   * Update the input, should be done first thing in the game loop.\n   */\n  pollInput() {\n    for ( let i = 0; i < 256; i += 1 ) {\n      this._lastKeys[i] = this._currentKeys[i];\n      this._currentKeys[i] = this._keysRaw[i];\n    }\n\n    this._updateButtons();\n\n    this.mouse.left.pressed = this._forceMouseLeftDown ? true : this._currentMouseLeft;\n    this.mouse.left.down = this._forceMouseLeftDown ? true : this._currentMouseLeft && !this._lastMouseLeft;\n    this.mouse.left.up = !this._currentMouseLeft && this._lastMouseLeft;\n\n    this.mouse.right.pressed = this._forceMouseRightDown ? true : this._currentMouseRight;\n    this.mouse.right.down = this._forceMouseRightDown ? true : this._currentMouseRight && !this._lastMouseRight;\n    this.mouse.right.up = !this._currentMouseRight && this._lastMouseRight;\n\n    this._forceMouseLeftDown = false;\n    this._forceMouseRightDown = false;\n\n    this._lastMouseLeft = this._currentMouseLeft;\n    this._lastMouseRight = this._currentMouseRight;\n  }\n\n  /**\n   * return true if the key is currently held down\n   * @param {number} keyCode\n   */\n  getKeyPressed( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    return this._currentKeys[keyCode] > 0;\n  }\n\n  /**\n   * return true if the key was pressed down this frame\n   * @param {number} keyCode\n   */\n  getKeyDown( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return current && !last;\n  }\n\n  /**\n   * return true if the key was released this frame\n   * @param {number} keyCode\n   */\n  getKeyUp( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return !current && last;\n  }\n\n  /**\n   * return true if the button is currently held down\n   * @param {number} buttonCode\n   */\n  getButtonPressed( buttonCode ) {\n    return this.getKeyPressed( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was pressed down this frame\n   * @param {number} buttonCode\n   */\n  getButtonDown( buttonCode ) {\n    return this.getKeyDown( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was released this frame\n   * @param {number} buttonCode\n   */\n  getButtonUp( buttonCode ) {\n    return this.getKeyUp( this._buttonsToKeys[buttonCode] );\n  }\n\n  _updateButtons() {\n    this._updateButton( 'left', GAME_LEFT );\n    this._updateButton( 'right', GAME_RIGHT );\n    this._updateButton( 'up', GAME_UP );\n    this._updateButton( 'down', GAME_DOWN );\n\n    this._updateButton( 'action1', GAME_ACTION_ONE );\n    this._updateButton( 'action2', GAME_ACTION_TWO );\n    this._updateButton( 'action3', GAME_ACTION_THREE );\n    this._updateButton( 'action4', GAME_ACTION_FOUR );\n    this._updateButton( 'leftTrigger', GAME_LEFT_TRIGGER );\n    this._updateButton( 'rightTrigger', GAME_RIGHT_TRIGGER );\n\n    this._updateButton( 'pause', GAME_PAUSE );\n\n    this._updateButton( 'menuLeft', MENU_LEFT );\n    this._updateButton( 'menuRight', MENU_RIGHT );\n    this._updateButton( 'menuUp', MENU_UP );\n    this._updateButton( 'menuDown', MENU_DOWN );\n\n    this._updateButton( 'menuConfirm', MENU_CONFIRM );\n    this._updateButton( 'menuBack', MENU_BACK );\n  }\n\n  _updateButton( name, index ) {\n    const key = this._buttonsToKeys[index];\n    const pressed = this.getKeyPressed( key );\n    const down = this.getKeyDown( key );\n    const up = this.getKeyUp( key );\n\n    this[name] = { pressed, down, up };\n  }\n}\n\nexport default Input;\n",
@@ -796,7 +1146,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 64,
+    "__docId__": 93,
     "kind": "variable",
     "name": "GAME_LEFT",
     "memberof": "src/Input/Input.js",
@@ -816,7 +1166,7 @@
     }
   },
   {
-    "__docId__": 65,
+    "__docId__": 94,
     "kind": "variable",
     "name": "GAME_RIGHT",
     "memberof": "src/Input/Input.js",
@@ -836,7 +1186,7 @@
     }
   },
   {
-    "__docId__": 66,
+    "__docId__": 95,
     "kind": "variable",
     "name": "GAME_UP",
     "memberof": "src/Input/Input.js",
@@ -856,7 +1206,7 @@
     }
   },
   {
-    "__docId__": 67,
+    "__docId__": 96,
     "kind": "variable",
     "name": "GAME_DOWN",
     "memberof": "src/Input/Input.js",
@@ -876,7 +1226,7 @@
     }
   },
   {
-    "__docId__": 68,
+    "__docId__": 97,
     "kind": "variable",
     "name": "GAME_ACTION_ONE",
     "memberof": "src/Input/Input.js",
@@ -896,7 +1246,7 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 98,
     "kind": "variable",
     "name": "GAME_ACTION_TWO",
     "memberof": "src/Input/Input.js",
@@ -916,7 +1266,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 99,
     "kind": "variable",
     "name": "GAME_ACTION_THREE",
     "memberof": "src/Input/Input.js",
@@ -936,7 +1286,7 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 100,
     "kind": "variable",
     "name": "GAME_ACTION_FOUR",
     "memberof": "src/Input/Input.js",
@@ -956,7 +1306,7 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 101,
     "kind": "variable",
     "name": "GAME_PAUSE",
     "memberof": "src/Input/Input.js",
@@ -976,7 +1326,7 @@
     }
   },
   {
-    "__docId__": 73,
+    "__docId__": 102,
     "kind": "variable",
     "name": "GAME_LEFT_TRIGGER",
     "memberof": "src/Input/Input.js",
@@ -996,7 +1346,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 103,
     "kind": "variable",
     "name": "GAME_RIGHT_TRIGGER",
     "memberof": "src/Input/Input.js",
@@ -1016,7 +1366,7 @@
     }
   },
   {
-    "__docId__": 75,
+    "__docId__": 104,
     "kind": "variable",
     "name": "MENU_LEFT",
     "memberof": "src/Input/Input.js",
@@ -1036,7 +1386,7 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 105,
     "kind": "variable",
     "name": "MENU_RIGHT",
     "memberof": "src/Input/Input.js",
@@ -1056,7 +1406,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 106,
     "kind": "variable",
     "name": "MENU_UP",
     "memberof": "src/Input/Input.js",
@@ -1076,7 +1426,7 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 107,
     "kind": "variable",
     "name": "MENU_DOWN",
     "memberof": "src/Input/Input.js",
@@ -1096,7 +1446,7 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 108,
     "kind": "variable",
     "name": "MENU_CONFIRM",
     "memberof": "src/Input/Input.js",
@@ -1116,7 +1466,7 @@
     }
   },
   {
-    "__docId__": 80,
+    "__docId__": 109,
     "kind": "variable",
     "name": "MENU_BACK",
     "memberof": "src/Input/Input.js",
@@ -1136,7 +1486,7 @@
     }
   },
   {
-    "__docId__": 81,
+    "__docId__": 110,
     "kind": "class",
     "name": "Input",
     "memberof": "src/Input/Input.js",
@@ -1151,7 +1501,7 @@
     "interface": false
   },
   {
-    "__docId__": 82,
+    "__docId__": 111,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Input/Input.js~Input",
@@ -1165,7 +1515,7 @@
     "undocument": true
   },
   {
-    "__docId__": 83,
+    "__docId__": 112,
     "kind": "member",
     "name": "canvas",
     "memberof": "src/Input/Input.js~Input",
@@ -1182,7 +1532,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 113,
     "kind": "member",
     "name": "canvasScale",
     "memberof": "src/Input/Input.js~Input",
@@ -1199,7 +1549,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 114,
     "kind": "member",
     "name": "screenWidth",
     "memberof": "src/Input/Input.js~Input",
@@ -1216,7 +1566,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 115,
     "kind": "member",
     "name": "screenHeight",
     "memberof": "src/Input/Input.js~Input",
@@ -1233,7 +1583,7 @@
     }
   },
   {
-    "__docId__": 87,
+    "__docId__": 116,
     "kind": "member",
     "name": "mouse",
     "memberof": "src/Input/Input.js~Input",
@@ -1250,7 +1600,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 117,
     "kind": "member",
     "name": "_keysRaw",
     "memberof": "src/Input/Input.js~Input",
@@ -1267,7 +1617,7 @@
     }
   },
   {
-    "__docId__": 89,
+    "__docId__": 118,
     "kind": "member",
     "name": "_currentKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -1284,7 +1634,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 119,
     "kind": "member",
     "name": "_lastKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -1301,7 +1651,7 @@
     }
   },
   {
-    "__docId__": 91,
+    "__docId__": 120,
     "kind": "member",
     "name": "_buttonsToKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -1318,7 +1668,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 121,
     "kind": "member",
     "name": "_currentButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -1335,7 +1685,7 @@
     }
   },
   {
-    "__docId__": 93,
+    "__docId__": 122,
     "kind": "member",
     "name": "_lastButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -1352,7 +1702,7 @@
     }
   },
   {
-    "__docId__": 94,
+    "__docId__": 123,
     "kind": "member",
     "name": "_currentMouseLeft",
     "memberof": "src/Input/Input.js~Input",
@@ -1369,7 +1719,7 @@
     }
   },
   {
-    "__docId__": 95,
+    "__docId__": 124,
     "kind": "member",
     "name": "_lastMouseLeft",
     "memberof": "src/Input/Input.js~Input",
@@ -1386,7 +1736,7 @@
     }
   },
   {
-    "__docId__": 96,
+    "__docId__": 125,
     "kind": "member",
     "name": "_forceMouseLeftDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1403,7 +1753,7 @@
     }
   },
   {
-    "__docId__": 97,
+    "__docId__": 126,
     "kind": "member",
     "name": "_currentMouseRight",
     "memberof": "src/Input/Input.js~Input",
@@ -1420,7 +1770,7 @@
     }
   },
   {
-    "__docId__": 98,
+    "__docId__": 127,
     "kind": "member",
     "name": "_lastMouseRight",
     "memberof": "src/Input/Input.js~Input",
@@ -1437,7 +1787,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 128,
     "kind": "member",
     "name": "_forceMouseRightDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1454,7 +1804,7 @@
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 129,
     "kind": "method",
     "name": "init",
     "memberof": "src/Input/Input.js~Input",
@@ -1469,7 +1819,7 @@
     "return": null
   },
   {
-    "__docId__": 101,
+    "__docId__": 130,
     "kind": "method",
     "name": "_keyDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1492,7 +1842,7 @@
     "return": null
   },
   {
-    "__docId__": 102,
+    "__docId__": 131,
     "kind": "method",
     "name": "_keyUp",
     "memberof": "src/Input/Input.js~Input",
@@ -1515,7 +1865,7 @@
     "return": null
   },
   {
-    "__docId__": 103,
+    "__docId__": 132,
     "kind": "method",
     "name": "_mouseEnter",
     "memberof": "src/Input/Input.js~Input",
@@ -1531,7 +1881,7 @@
     "return": null
   },
   {
-    "__docId__": 106,
+    "__docId__": 135,
     "kind": "method",
     "name": "_mouseMove",
     "memberof": "src/Input/Input.js~Input",
@@ -1554,7 +1904,7 @@
     "return": null
   },
   {
-    "__docId__": 107,
+    "__docId__": 136,
     "kind": "method",
     "name": "_mouseDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1577,7 +1927,7 @@
     "return": null
   },
   {
-    "__docId__": 112,
+    "__docId__": 141,
     "kind": "method",
     "name": "_mouseUp",
     "memberof": "src/Input/Input.js~Input",
@@ -1600,7 +1950,7 @@
     "return": null
   },
   {
-    "__docId__": 115,
+    "__docId__": 144,
     "kind": "method",
     "name": "_mouseLeave",
     "memberof": "src/Input/Input.js~Input",
@@ -1616,7 +1966,7 @@
     "return": null
   },
   {
-    "__docId__": 116,
+    "__docId__": 145,
     "kind": "method",
     "name": "pollInput",
     "memberof": "src/Input/Input.js~Input",
@@ -1631,7 +1981,7 @@
     "return": null
   },
   {
-    "__docId__": 121,
+    "__docId__": 150,
     "kind": "method",
     "name": "getKeyPressed",
     "memberof": "src/Input/Input.js~Input",
@@ -1661,7 +2011,7 @@
     }
   },
   {
-    "__docId__": 122,
+    "__docId__": 151,
     "kind": "method",
     "name": "getKeyDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1691,7 +2041,7 @@
     }
   },
   {
-    "__docId__": 123,
+    "__docId__": 152,
     "kind": "method",
     "name": "getKeyUp",
     "memberof": "src/Input/Input.js~Input",
@@ -1721,7 +2071,7 @@
     }
   },
   {
-    "__docId__": 124,
+    "__docId__": 153,
     "kind": "method",
     "name": "getButtonPressed",
     "memberof": "src/Input/Input.js~Input",
@@ -1751,7 +2101,7 @@
     }
   },
   {
-    "__docId__": 125,
+    "__docId__": 154,
     "kind": "method",
     "name": "getButtonDown",
     "memberof": "src/Input/Input.js~Input",
@@ -1781,7 +2131,7 @@
     }
   },
   {
-    "__docId__": 126,
+    "__docId__": 155,
     "kind": "method",
     "name": "getButtonUp",
     "memberof": "src/Input/Input.js~Input",
@@ -1811,7 +2161,7 @@
     }
   },
   {
-    "__docId__": 127,
+    "__docId__": 156,
     "kind": "method",
     "name": "_updateButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -1827,7 +2177,7 @@
     "return": null
   },
   {
-    "__docId__": 128,
+    "__docId__": 157,
     "kind": "method",
     "name": "_updateButton",
     "memberof": "src/Input/Input.js~Input",
@@ -1856,7 +2206,7 @@
     "return": null
   },
   {
-    "__docId__": 129,
+    "__docId__": 158,
     "kind": "member",
     "name": "[name]",
     "memberof": "src/Input/Input.js~Input",
@@ -1873,7 +2223,7 @@
     }
   },
   {
-    "__docId__": 130,
+    "__docId__": 159,
     "kind": "file",
     "name": "src/Input/Keys.js",
     "content": "\nexport const BACKSPACE = 8;\nexport const TAB = 9;\nexport const ENTER = 13;\nexport const SHIFT = 16;\nexport const CTRL = 17;\nexport const ALT = 18;\nexport const PAUSE_BREAK = 19;\nexport const CAPSLOCK = 20;\nexport const ESCAPE = 27;\nexport const SPACE = 32;\nexport const PAGE_UP = 33;\nexport const PAGE_DOWN = 34;\nexport const END = 35;\nexport const HOME = 36;\nexport const LEFT_ARROW = 37;\nexport const UP_ARROW = 38;\nexport const RIGHT_ARROW = 39;\nexport const DOWN_ARROW = 40;\nexport const INSERT = 45;\nexport const DELETE = 46;\nexport const ZERO = 48;\nexport const ONE = 49;\nexport const TWO = 50;\nexport const THREE = 51;\nexport const FOUR = 52;\nexport const FIVE = 53;\nexport const SIX = 54;\nexport const SEVEN = 55;\nexport const EIGHT = 56;\nexport const NINE = 57;\nexport const A_KEY = 65;\nexport const B_KEY = 66;\nexport const C_KEY = 67;\nexport const D_KEY = 68;\nexport const E_KEY = 69;\nexport const F_KEY = 70;\nexport const G_KEY = 71;\nexport const H_KEY = 72;\nexport const I_KEY = 73;\nexport const J_KEY = 74;\nexport const K_KEY = 75;\nexport const L_KEY = 76;\nexport const M_KEY = 77;\nexport const N_KEY = 78;\nexport const O_KEY = 79;\nexport const P_KEY = 80;\nexport const Q_KEY = 81;\nexport const R_KEY = 82;\nexport const S_KEY = 83;\nexport const T_KEY = 84;\nexport const U_KEY = 85;\nexport const V_KEY = 86;\nexport const W_KEY = 87;\nexport const X_KEY = 88;\nexport const Y_KEY = 89;\nexport const Z_KEY = 90;\nexport const LEFT_WINDOW = 91;\nexport const RIGHT_WINDOW = 92;\nexport const SELECT = 93;\nexport const NUM_ZERO = 96;\nexport const NUM_ONE = 97;\nexport const NUM_TWO = 98;\nexport const NUM_THREE = 99;\nexport const NUM_FOUR = 100;\nexport const NUM_FIVE = 101;\nexport const NUM_SIX = 102;\nexport const NUM_SEVEN = 103;\nexport const NUM_EIGHT = 104;\nexport const NUM_NINE = 105;\nexport const MULTIPLY = 106;\nexport const ADD = 107;\nexport const SUBTRACT = 109;\nexport const DECIMAL_POINT = 110;\nexport const DIVIDE = 111;\nexport const F1 = 112;\nexport const F2 = 113;\nexport const F3 = 114;\nexport const F4 = 115;\nexport const F5 = 116;\nexport const F6 = 117;\nexport const F7 = 118;\nexport const F8 = 119;\nexport const F9 = 120;\nexport const F10 = 121;\nexport const F11 = 122;\nexport const F12 = 123;\nexport const NUM_LOCK = 144;\nexport const SCROLL_LOCK = 145;\nexport const SEMI_COLON = 186;\nexport const EQUAL_SIGN = 187;\nexport const COMMA = 188;\nexport const DASH = 189;\nexport const PERIOD = 190;\nexport const FORWARD_SLASH = 191;\nexport const GRAVE_ACCENT = 192;\nexport const OPEN_BRACKET = 219;\nexport const BACK_SLASH = 220;\nexport const CLOSE_BRACKET = 221;\nexport const SINGLE_QUOTE = 222;\n\nexport const codesToKeyCodes = {\n  Backspace: BACKSPACE,\n  Tab: TAB,\n  Enter: ENTER,\n  ShiftLeft: SHIFT,\n  ShiftRight: SHIFT,\n  ControlLeft: CTRL,\n  ControlRight: CTRL,\n  AltLeft: ALT,\n  AltRight: ALT,\n  CapsLock: CAPSLOCK,\n  Escape: ESCAPE,\n  Space: SPACE,\n  PageUp: PAGE_UP,\n  PageDown: PAGE_DOWN,\n  End: END,\n  Home: HOME,\n  ArrowLeft: LEFT_ARROW,\n  ArrowUp: UP_ARROW,\n  ArrowRight: RIGHT_ARROW,\n  ArrowDown: DOWN_ARROW,\n  Insert: INSERT,\n  Delete: DELETE,\n  Digit0: ZERO,\n  Digit1: ONE,\n  Digit2: TWO,\n  Digit3: THREE,\n  Digit4: FOUR,\n  Digit5: FIVE,\n  Digit6: SIX,\n  Digit7: SEVEN,\n  Digit8: EIGHT,\n  Digit9: NINE,\n  KeyA: A_KEY,\n  KeyB: B_KEY,\n  KeyC: C_KEY,\n  KeyD: D_KEY,\n  KeyE: E_KEY,\n  KeyF: F_KEY,\n  KeyG: G_KEY,\n  KeyH: H_KEY,\n  KeyI: I_KEY,\n  KeyJ: J_KEY,\n  KeyK: K_KEY,\n  KeyL: L_KEY,\n  KeyM: M_KEY,\n  KeyN: N_KEY,\n  KeyO: O_KEY,\n  KeyP: P_KEY,\n  KeyQ: Q_KEY,\n  KeyR: R_KEY,\n  KeyS: S_KEY,\n  KeyT: T_KEY,\n  KeyU: U_KEY,\n  KeyV: V_KEY,\n  KeyW: W_KEY,\n  KeyX: X_KEY,\n  KeyY: Y_KEY,\n  KeyZ: Z_KEY,\n  Select: SELECT,\n  Numpad0: NUM_ZERO,\n  Numpad1: NUM_ONE,\n  Numpad2: NUM_TWO,\n  Numpad3: NUM_THREE,\n  Numpad4: NUM_FOUR,\n  Numpad5: NUM_FIVE,\n  Numpad6: NUM_SIX,\n  Numpad7: NUM_SEVEN,\n  Numpad8: NUM_EIGHT,\n  Numpad9: NUM_NINE,\n  NumpadMultiply: MULTIPLY,\n  NumpadAdd: ADD,\n  NumpadSubtract: SUBTRACT,\n  NumpadDecimal: DECIMAL_POINT,\n  NumpadDivide: DIVIDE,\n  F1,\n  F2,\n  F3,\n  F4,\n  F5,\n  F6,\n  F7,\n  F8,\n  F9,\n  F10,\n  F11,\n  F12,\n  NumLock: NUM_LOCK,\n  ScrollLock: SCROLL_LOCK,\n  Semicolon: SEMI_COLON,\n  Equal: EQUAL_SIGN,\n  NumpadEqual: EQUAL_SIGN,\n  Comma: COMMA,\n  NumpadComma: COMMA,\n  Period: PERIOD,\n  Slash: FORWARD_SLASH,\n  Backquote: GRAVE_ACCENT,\n  BracketLeft: OPEN_BRACKET,\n  Backslash: BACK_SLASH,\n  BracketRight: CLOSE_BRACKET,\n  Quote: SINGLE_QUOTE,\n  Minus: DASH,\n  NumpadEnter: ENTER,\n};\n",
@@ -1884,7 +2234,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 131,
+    "__docId__": 160,
     "kind": "variable",
     "name": "BACKSPACE",
     "memberof": "src/Input/Keys.js",
@@ -1904,7 +2254,7 @@
     }
   },
   {
-    "__docId__": 132,
+    "__docId__": 161,
     "kind": "variable",
     "name": "TAB",
     "memberof": "src/Input/Keys.js",
@@ -1924,7 +2274,7 @@
     }
   },
   {
-    "__docId__": 133,
+    "__docId__": 162,
     "kind": "variable",
     "name": "ENTER",
     "memberof": "src/Input/Keys.js",
@@ -1944,7 +2294,7 @@
     }
   },
   {
-    "__docId__": 134,
+    "__docId__": 163,
     "kind": "variable",
     "name": "SHIFT",
     "memberof": "src/Input/Keys.js",
@@ -1964,7 +2314,7 @@
     }
   },
   {
-    "__docId__": 135,
+    "__docId__": 164,
     "kind": "variable",
     "name": "CTRL",
     "memberof": "src/Input/Keys.js",
@@ -1984,7 +2334,7 @@
     }
   },
   {
-    "__docId__": 136,
+    "__docId__": 165,
     "kind": "variable",
     "name": "ALT",
     "memberof": "src/Input/Keys.js",
@@ -2004,7 +2354,7 @@
     }
   },
   {
-    "__docId__": 137,
+    "__docId__": 166,
     "kind": "variable",
     "name": "PAUSE_BREAK",
     "memberof": "src/Input/Keys.js",
@@ -2024,7 +2374,7 @@
     }
   },
   {
-    "__docId__": 138,
+    "__docId__": 167,
     "kind": "variable",
     "name": "CAPSLOCK",
     "memberof": "src/Input/Keys.js",
@@ -2044,7 +2394,7 @@
     }
   },
   {
-    "__docId__": 139,
+    "__docId__": 168,
     "kind": "variable",
     "name": "ESCAPE",
     "memberof": "src/Input/Keys.js",
@@ -2064,7 +2414,7 @@
     }
   },
   {
-    "__docId__": 140,
+    "__docId__": 169,
     "kind": "variable",
     "name": "SPACE",
     "memberof": "src/Input/Keys.js",
@@ -2084,7 +2434,7 @@
     }
   },
   {
-    "__docId__": 141,
+    "__docId__": 170,
     "kind": "variable",
     "name": "PAGE_UP",
     "memberof": "src/Input/Keys.js",
@@ -2104,7 +2454,7 @@
     }
   },
   {
-    "__docId__": 142,
+    "__docId__": 171,
     "kind": "variable",
     "name": "PAGE_DOWN",
     "memberof": "src/Input/Keys.js",
@@ -2124,7 +2474,7 @@
     }
   },
   {
-    "__docId__": 143,
+    "__docId__": 172,
     "kind": "variable",
     "name": "END",
     "memberof": "src/Input/Keys.js",
@@ -2144,7 +2494,7 @@
     }
   },
   {
-    "__docId__": 144,
+    "__docId__": 173,
     "kind": "variable",
     "name": "HOME",
     "memberof": "src/Input/Keys.js",
@@ -2164,7 +2514,7 @@
     }
   },
   {
-    "__docId__": 145,
+    "__docId__": 174,
     "kind": "variable",
     "name": "LEFT_ARROW",
     "memberof": "src/Input/Keys.js",
@@ -2184,7 +2534,7 @@
     }
   },
   {
-    "__docId__": 146,
+    "__docId__": 175,
     "kind": "variable",
     "name": "UP_ARROW",
     "memberof": "src/Input/Keys.js",
@@ -2204,7 +2554,7 @@
     }
   },
   {
-    "__docId__": 147,
+    "__docId__": 176,
     "kind": "variable",
     "name": "RIGHT_ARROW",
     "memberof": "src/Input/Keys.js",
@@ -2224,7 +2574,7 @@
     }
   },
   {
-    "__docId__": 148,
+    "__docId__": 177,
     "kind": "variable",
     "name": "DOWN_ARROW",
     "memberof": "src/Input/Keys.js",
@@ -2244,7 +2594,7 @@
     }
   },
   {
-    "__docId__": 149,
+    "__docId__": 178,
     "kind": "variable",
     "name": "INSERT",
     "memberof": "src/Input/Keys.js",
@@ -2264,7 +2614,7 @@
     }
   },
   {
-    "__docId__": 150,
+    "__docId__": 179,
     "kind": "variable",
     "name": "DELETE",
     "memberof": "src/Input/Keys.js",
@@ -2284,7 +2634,7 @@
     }
   },
   {
-    "__docId__": 151,
+    "__docId__": 180,
     "kind": "variable",
     "name": "ZERO",
     "memberof": "src/Input/Keys.js",
@@ -2304,7 +2654,7 @@
     }
   },
   {
-    "__docId__": 152,
+    "__docId__": 181,
     "kind": "variable",
     "name": "ONE",
     "memberof": "src/Input/Keys.js",
@@ -2324,7 +2674,7 @@
     }
   },
   {
-    "__docId__": 153,
+    "__docId__": 182,
     "kind": "variable",
     "name": "TWO",
     "memberof": "src/Input/Keys.js",
@@ -2344,7 +2694,7 @@
     }
   },
   {
-    "__docId__": 154,
+    "__docId__": 183,
     "kind": "variable",
     "name": "THREE",
     "memberof": "src/Input/Keys.js",
@@ -2364,7 +2714,7 @@
     }
   },
   {
-    "__docId__": 155,
+    "__docId__": 184,
     "kind": "variable",
     "name": "FOUR",
     "memberof": "src/Input/Keys.js",
@@ -2384,7 +2734,7 @@
     }
   },
   {
-    "__docId__": 156,
+    "__docId__": 185,
     "kind": "variable",
     "name": "FIVE",
     "memberof": "src/Input/Keys.js",
@@ -2404,7 +2754,7 @@
     }
   },
   {
-    "__docId__": 157,
+    "__docId__": 186,
     "kind": "variable",
     "name": "SIX",
     "memberof": "src/Input/Keys.js",
@@ -2424,7 +2774,7 @@
     }
   },
   {
-    "__docId__": 158,
+    "__docId__": 187,
     "kind": "variable",
     "name": "SEVEN",
     "memberof": "src/Input/Keys.js",
@@ -2444,7 +2794,7 @@
     }
   },
   {
-    "__docId__": 159,
+    "__docId__": 188,
     "kind": "variable",
     "name": "EIGHT",
     "memberof": "src/Input/Keys.js",
@@ -2464,7 +2814,7 @@
     }
   },
   {
-    "__docId__": 160,
+    "__docId__": 189,
     "kind": "variable",
     "name": "NINE",
     "memberof": "src/Input/Keys.js",
@@ -2484,7 +2834,7 @@
     }
   },
   {
-    "__docId__": 161,
+    "__docId__": 190,
     "kind": "variable",
     "name": "A_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2504,7 +2854,7 @@
     }
   },
   {
-    "__docId__": 162,
+    "__docId__": 191,
     "kind": "variable",
     "name": "B_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2524,7 +2874,7 @@
     }
   },
   {
-    "__docId__": 163,
+    "__docId__": 192,
     "kind": "variable",
     "name": "C_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2544,7 +2894,7 @@
     }
   },
   {
-    "__docId__": 164,
+    "__docId__": 193,
     "kind": "variable",
     "name": "D_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2564,7 +2914,7 @@
     }
   },
   {
-    "__docId__": 165,
+    "__docId__": 194,
     "kind": "variable",
     "name": "E_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2584,7 +2934,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 195,
     "kind": "variable",
     "name": "F_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2604,7 +2954,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 196,
     "kind": "variable",
     "name": "G_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2624,7 +2974,7 @@
     }
   },
   {
-    "__docId__": 168,
+    "__docId__": 197,
     "kind": "variable",
     "name": "H_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2644,7 +2994,7 @@
     }
   },
   {
-    "__docId__": 169,
+    "__docId__": 198,
     "kind": "variable",
     "name": "I_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2664,7 +3014,7 @@
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 199,
     "kind": "variable",
     "name": "J_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2684,7 +3034,7 @@
     }
   },
   {
-    "__docId__": 171,
+    "__docId__": 200,
     "kind": "variable",
     "name": "K_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2704,7 +3054,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 201,
     "kind": "variable",
     "name": "L_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2724,7 +3074,7 @@
     }
   },
   {
-    "__docId__": 173,
+    "__docId__": 202,
     "kind": "variable",
     "name": "M_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2744,7 +3094,7 @@
     }
   },
   {
-    "__docId__": 174,
+    "__docId__": 203,
     "kind": "variable",
     "name": "N_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2764,7 +3114,7 @@
     }
   },
   {
-    "__docId__": 175,
+    "__docId__": 204,
     "kind": "variable",
     "name": "O_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2784,7 +3134,7 @@
     }
   },
   {
-    "__docId__": 176,
+    "__docId__": 205,
     "kind": "variable",
     "name": "P_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2804,7 +3154,7 @@
     }
   },
   {
-    "__docId__": 177,
+    "__docId__": 206,
     "kind": "variable",
     "name": "Q_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2824,7 +3174,7 @@
     }
   },
   {
-    "__docId__": 178,
+    "__docId__": 207,
     "kind": "variable",
     "name": "R_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2844,7 +3194,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 208,
     "kind": "variable",
     "name": "S_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2864,7 +3214,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 209,
     "kind": "variable",
     "name": "T_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2884,7 +3234,7 @@
     }
   },
   {
-    "__docId__": 181,
+    "__docId__": 210,
     "kind": "variable",
     "name": "U_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2904,7 +3254,7 @@
     }
   },
   {
-    "__docId__": 182,
+    "__docId__": 211,
     "kind": "variable",
     "name": "V_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2924,7 +3274,7 @@
     }
   },
   {
-    "__docId__": 183,
+    "__docId__": 212,
     "kind": "variable",
     "name": "W_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2944,7 +3294,7 @@
     }
   },
   {
-    "__docId__": 184,
+    "__docId__": 213,
     "kind": "variable",
     "name": "X_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2964,7 +3314,7 @@
     }
   },
   {
-    "__docId__": 185,
+    "__docId__": 214,
     "kind": "variable",
     "name": "Y_KEY",
     "memberof": "src/Input/Keys.js",
@@ -2984,7 +3334,7 @@
     }
   },
   {
-    "__docId__": 186,
+    "__docId__": 215,
     "kind": "variable",
     "name": "Z_KEY",
     "memberof": "src/Input/Keys.js",
@@ -3004,7 +3354,7 @@
     }
   },
   {
-    "__docId__": 187,
+    "__docId__": 216,
     "kind": "variable",
     "name": "LEFT_WINDOW",
     "memberof": "src/Input/Keys.js",
@@ -3024,7 +3374,7 @@
     }
   },
   {
-    "__docId__": 188,
+    "__docId__": 217,
     "kind": "variable",
     "name": "RIGHT_WINDOW",
     "memberof": "src/Input/Keys.js",
@@ -3044,7 +3394,7 @@
     }
   },
   {
-    "__docId__": 189,
+    "__docId__": 218,
     "kind": "variable",
     "name": "SELECT",
     "memberof": "src/Input/Keys.js",
@@ -3064,7 +3414,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 219,
     "kind": "variable",
     "name": "NUM_ZERO",
     "memberof": "src/Input/Keys.js",
@@ -3084,7 +3434,7 @@
     }
   },
   {
-    "__docId__": 191,
+    "__docId__": 220,
     "kind": "variable",
     "name": "NUM_ONE",
     "memberof": "src/Input/Keys.js",
@@ -3104,7 +3454,7 @@
     }
   },
   {
-    "__docId__": 192,
+    "__docId__": 221,
     "kind": "variable",
     "name": "NUM_TWO",
     "memberof": "src/Input/Keys.js",
@@ -3124,7 +3474,7 @@
     }
   },
   {
-    "__docId__": 193,
+    "__docId__": 222,
     "kind": "variable",
     "name": "NUM_THREE",
     "memberof": "src/Input/Keys.js",
@@ -3144,7 +3494,7 @@
     }
   },
   {
-    "__docId__": 194,
+    "__docId__": 223,
     "kind": "variable",
     "name": "NUM_FOUR",
     "memberof": "src/Input/Keys.js",
@@ -3164,7 +3514,7 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 224,
     "kind": "variable",
     "name": "NUM_FIVE",
     "memberof": "src/Input/Keys.js",
@@ -3184,7 +3534,7 @@
     }
   },
   {
-    "__docId__": 196,
+    "__docId__": 225,
     "kind": "variable",
     "name": "NUM_SIX",
     "memberof": "src/Input/Keys.js",
@@ -3204,7 +3554,7 @@
     }
   },
   {
-    "__docId__": 197,
+    "__docId__": 226,
     "kind": "variable",
     "name": "NUM_SEVEN",
     "memberof": "src/Input/Keys.js",
@@ -3224,7 +3574,7 @@
     }
   },
   {
-    "__docId__": 198,
+    "__docId__": 227,
     "kind": "variable",
     "name": "NUM_EIGHT",
     "memberof": "src/Input/Keys.js",
@@ -3244,7 +3594,7 @@
     }
   },
   {
-    "__docId__": 199,
+    "__docId__": 228,
     "kind": "variable",
     "name": "NUM_NINE",
     "memberof": "src/Input/Keys.js",
@@ -3264,7 +3614,7 @@
     }
   },
   {
-    "__docId__": 200,
+    "__docId__": 229,
     "kind": "variable",
     "name": "MULTIPLY",
     "memberof": "src/Input/Keys.js",
@@ -3284,7 +3634,7 @@
     }
   },
   {
-    "__docId__": 201,
+    "__docId__": 230,
     "kind": "variable",
     "name": "ADD",
     "memberof": "src/Input/Keys.js",
@@ -3304,7 +3654,7 @@
     }
   },
   {
-    "__docId__": 202,
+    "__docId__": 231,
     "kind": "variable",
     "name": "SUBTRACT",
     "memberof": "src/Input/Keys.js",
@@ -3324,7 +3674,7 @@
     }
   },
   {
-    "__docId__": 203,
+    "__docId__": 232,
     "kind": "variable",
     "name": "DECIMAL_POINT",
     "memberof": "src/Input/Keys.js",
@@ -3344,7 +3694,7 @@
     }
   },
   {
-    "__docId__": 204,
+    "__docId__": 233,
     "kind": "variable",
     "name": "DIVIDE",
     "memberof": "src/Input/Keys.js",
@@ -3364,7 +3714,7 @@
     }
   },
   {
-    "__docId__": 205,
+    "__docId__": 234,
     "kind": "variable",
     "name": "F1",
     "memberof": "src/Input/Keys.js",
@@ -3384,7 +3734,7 @@
     }
   },
   {
-    "__docId__": 206,
+    "__docId__": 235,
     "kind": "variable",
     "name": "F2",
     "memberof": "src/Input/Keys.js",
@@ -3404,7 +3754,7 @@
     }
   },
   {
-    "__docId__": 207,
+    "__docId__": 236,
     "kind": "variable",
     "name": "F3",
     "memberof": "src/Input/Keys.js",
@@ -3424,7 +3774,7 @@
     }
   },
   {
-    "__docId__": 208,
+    "__docId__": 237,
     "kind": "variable",
     "name": "F4",
     "memberof": "src/Input/Keys.js",
@@ -3444,7 +3794,7 @@
     }
   },
   {
-    "__docId__": 209,
+    "__docId__": 238,
     "kind": "variable",
     "name": "F5",
     "memberof": "src/Input/Keys.js",
@@ -3464,7 +3814,7 @@
     }
   },
   {
-    "__docId__": 210,
+    "__docId__": 239,
     "kind": "variable",
     "name": "F6",
     "memberof": "src/Input/Keys.js",
@@ -3484,7 +3834,7 @@
     }
   },
   {
-    "__docId__": 211,
+    "__docId__": 240,
     "kind": "variable",
     "name": "F7",
     "memberof": "src/Input/Keys.js",
@@ -3504,7 +3854,7 @@
     }
   },
   {
-    "__docId__": 212,
+    "__docId__": 241,
     "kind": "variable",
     "name": "F8",
     "memberof": "src/Input/Keys.js",
@@ -3524,7 +3874,7 @@
     }
   },
   {
-    "__docId__": 213,
+    "__docId__": 242,
     "kind": "variable",
     "name": "F9",
     "memberof": "src/Input/Keys.js",
@@ -3544,7 +3894,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 243,
     "kind": "variable",
     "name": "F10",
     "memberof": "src/Input/Keys.js",
@@ -3564,7 +3914,7 @@
     }
   },
   {
-    "__docId__": 215,
+    "__docId__": 244,
     "kind": "variable",
     "name": "F11",
     "memberof": "src/Input/Keys.js",
@@ -3584,7 +3934,7 @@
     }
   },
   {
-    "__docId__": 216,
+    "__docId__": 245,
     "kind": "variable",
     "name": "F12",
     "memberof": "src/Input/Keys.js",
@@ -3604,7 +3954,7 @@
     }
   },
   {
-    "__docId__": 217,
+    "__docId__": 246,
     "kind": "variable",
     "name": "NUM_LOCK",
     "memberof": "src/Input/Keys.js",
@@ -3624,7 +3974,7 @@
     }
   },
   {
-    "__docId__": 218,
+    "__docId__": 247,
     "kind": "variable",
     "name": "SCROLL_LOCK",
     "memberof": "src/Input/Keys.js",
@@ -3644,7 +3994,7 @@
     }
   },
   {
-    "__docId__": 219,
+    "__docId__": 248,
     "kind": "variable",
     "name": "SEMI_COLON",
     "memberof": "src/Input/Keys.js",
@@ -3664,7 +4014,7 @@
     }
   },
   {
-    "__docId__": 220,
+    "__docId__": 249,
     "kind": "variable",
     "name": "EQUAL_SIGN",
     "memberof": "src/Input/Keys.js",
@@ -3684,7 +4034,7 @@
     }
   },
   {
-    "__docId__": 221,
+    "__docId__": 250,
     "kind": "variable",
     "name": "COMMA",
     "memberof": "src/Input/Keys.js",
@@ -3704,7 +4054,7 @@
     }
   },
   {
-    "__docId__": 222,
+    "__docId__": 251,
     "kind": "variable",
     "name": "DASH",
     "memberof": "src/Input/Keys.js",
@@ -3724,7 +4074,7 @@
     }
   },
   {
-    "__docId__": 223,
+    "__docId__": 252,
     "kind": "variable",
     "name": "PERIOD",
     "memberof": "src/Input/Keys.js",
@@ -3744,7 +4094,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 253,
     "kind": "variable",
     "name": "FORWARD_SLASH",
     "memberof": "src/Input/Keys.js",
@@ -3764,7 +4114,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 254,
     "kind": "variable",
     "name": "GRAVE_ACCENT",
     "memberof": "src/Input/Keys.js",
@@ -3784,7 +4134,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 255,
     "kind": "variable",
     "name": "OPEN_BRACKET",
     "memberof": "src/Input/Keys.js",
@@ -3804,7 +4154,7 @@
     }
   },
   {
-    "__docId__": 227,
+    "__docId__": 256,
     "kind": "variable",
     "name": "BACK_SLASH",
     "memberof": "src/Input/Keys.js",
@@ -3824,7 +4174,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 257,
     "kind": "variable",
     "name": "CLOSE_BRACKET",
     "memberof": "src/Input/Keys.js",
@@ -3844,7 +4194,7 @@
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 258,
     "kind": "variable",
     "name": "SINGLE_QUOTE",
     "memberof": "src/Input/Keys.js",
@@ -3864,7 +4214,7 @@
     }
   },
   {
-    "__docId__": 230,
+    "__docId__": 259,
     "kind": "variable",
     "name": "codesToKeyCodes",
     "memberof": "src/Input/Keys.js",
@@ -3884,7 +4234,7 @@
     }
   },
   {
-    "__docId__": 231,
+    "__docId__": 260,
     "kind": "file",
     "name": "src/MapData/MapData.js",
     "content": "import TileMap from './TileMap';\n\n/**\n * Holds all of the Tile Map data.\n */\nclass MapData {\n  constructor() {\n    this.tileMaps = [];\n  }\n\n  /**\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   */\n  addTileMap( tileMap ) {\n    this.tileMaps.push( new TileMap( tileMap ) );\n    return this.tileMaps.length - 1;\n  }\n\n  /**\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   */\n  getTile( x, y, tileMap = 0, layer = 0 ) {\n    return this.tileMaps[tileMap].getTile( x, y, layer );\n  }\n\n  /**\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   */\n  setTile( gid, x, y, tileMap = 0, layer = 0 ) {\n    this.tileMaps[tileMap].setTile( gid, x, y, layer );\n  }\n}\n\nexport default MapData;\n",
@@ -3895,7 +4245,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 232,
+    "__docId__": 261,
     "kind": "class",
     "name": "MapData",
     "memberof": "src/MapData/MapData.js",
@@ -3910,7 +4260,7 @@
     "interface": false
   },
   {
-    "__docId__": 233,
+    "__docId__": 262,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -3924,7 +4274,7 @@
     "undocument": true
   },
   {
-    "__docId__": 234,
+    "__docId__": 263,
     "kind": "member",
     "name": "tileMaps",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -3941,7 +4291,7 @@
     }
   },
   {
-    "__docId__": 235,
+    "__docId__": 264,
     "kind": "method",
     "name": "addTileMap",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -3971,7 +4321,7 @@
     }
   },
   {
-    "__docId__": 236,
+    "__docId__": 265,
     "kind": "method",
     "name": "getTile",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -4031,7 +4381,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 266,
     "kind": "method",
     "name": "setTile",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -4097,7 +4447,7 @@
     "return": null
   },
   {
-    "__docId__": 238,
+    "__docId__": 267,
     "kind": "file",
     "name": "src/MapData/TileMap.js",
     "content": "\nexport const MAIN_LAYER = 0;\nexport const BG1_LAYER = 1;\nexport const BG2_LAYER = 2;\nexport const BG3_LAYER = 3;\nexport const FG1_LAYER = 4;\nexport const FG2_LAYER = 5;\nexport const FG3_LAYER = 6;\nexport const COLLISION_LAYER = 7;\nexport const META_LAYER = 8;\n\n/**\n * Represents a Tile Map.\n */\nclass TileMap {\n  constructor( data ) {\n    this.name = '';\n    this.width = 0;\n    this.height = 0;\n    this.layers = new Array( 9 );\n\n    if ( data ) {\n      this.name = data.name;\n      this.width = data.width;\n      this.height = data.height;\n\n      if ( data.main ) {\n        this.layers[MAIN_LAYER] = this._getTypedArrayFromDataLayer( data.main );\n      }\n      if ( data.bg1 ) {\n        this.layers[BG1_LAYER] = this._getTypedArrayFromDataLayer( data.bg1 );\n      }\n      if ( data.bg2 ) {\n        this.layers[BG2_LAYER] = this._getTypedArrayFromDataLayer( data.bg2 );\n      }\n      if ( data.bg3 ) {\n        this.layers[BG3_LAYER] = this._getTypedArrayFromDataLayer( data.bg3 );\n      }\n      if ( data.fg1 ) {\n        this.layers[FG1_LAYER] = this._getTypedArrayFromDataLayer( data.fg1 );\n      }\n      if ( data.fg2 ) {\n        this.layers[FG2_LAYER] = this._getTypedArrayFromDataLayer( data.fg2 );\n      }\n      if ( data.fg3 ) {\n        this.layers[FG3_LAYER] = this._getTypedArrayFromDataLayer( data.fg3 );\n      }\n      if ( data.col ) {\n        this.layers[COLLISION_LAYER] = this._getTypedArrayFromDataLayer( data.col );\n      }\n      if ( data.meta ) {\n        this.layers[META_LAYER] = this._getTypedArrayFromDataLayer( data.meta );\n      }\n    }\n  }\n\n  /**\n   * Convert an array of numbers into a Uint16Array\n   * @param {number[]} dataLayer\n   */\n  _getTypedArrayFromDataLayer( dataLayer ) {\n    const result = new Uint16Array( this.width * this.height );\n    for ( let i = 0; i < dataLayer.length; i += 1 ) {\n      result[i] = dataLayer[i];\n    }\n    return result;\n  }\n\n  /**\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   */\n  getTile( x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    return currentLayer[index];\n  }\n\n  /**\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   */\n  setTile( gid, x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    currentLayer[index] = gid;\n  }\n}\n\nexport default TileMap;\n",
@@ -4108,7 +4458,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 239,
+    "__docId__": 268,
     "kind": "variable",
     "name": "MAIN_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4128,7 +4478,7 @@
     }
   },
   {
-    "__docId__": 240,
+    "__docId__": 269,
     "kind": "variable",
     "name": "BG1_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4148,7 +4498,7 @@
     }
   },
   {
-    "__docId__": 241,
+    "__docId__": 270,
     "kind": "variable",
     "name": "BG2_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4168,7 +4518,7 @@
     }
   },
   {
-    "__docId__": 242,
+    "__docId__": 271,
     "kind": "variable",
     "name": "BG3_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4188,7 +4538,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 272,
     "kind": "variable",
     "name": "FG1_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4208,7 +4558,7 @@
     }
   },
   {
-    "__docId__": 244,
+    "__docId__": 273,
     "kind": "variable",
     "name": "FG2_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4228,7 +4578,7 @@
     }
   },
   {
-    "__docId__": 245,
+    "__docId__": 274,
     "kind": "variable",
     "name": "FG3_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4248,7 +4598,7 @@
     }
   },
   {
-    "__docId__": 246,
+    "__docId__": 275,
     "kind": "variable",
     "name": "COLLISION_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4268,7 +4618,7 @@
     }
   },
   {
-    "__docId__": 247,
+    "__docId__": 276,
     "kind": "variable",
     "name": "META_LAYER",
     "memberof": "src/MapData/TileMap.js",
@@ -4288,7 +4638,7 @@
     }
   },
   {
-    "__docId__": 248,
+    "__docId__": 277,
     "kind": "class",
     "name": "TileMap",
     "memberof": "src/MapData/TileMap.js",
@@ -4303,7 +4653,7 @@
     "interface": false
   },
   {
-    "__docId__": 249,
+    "__docId__": 278,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4317,7 +4667,7 @@
     "undocument": true
   },
   {
-    "__docId__": 250,
+    "__docId__": 279,
     "kind": "member",
     "name": "name",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4334,7 +4684,7 @@
     }
   },
   {
-    "__docId__": 251,
+    "__docId__": 280,
     "kind": "member",
     "name": "width",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4351,7 +4701,7 @@
     }
   },
   {
-    "__docId__": 252,
+    "__docId__": 281,
     "kind": "member",
     "name": "height",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4368,7 +4718,7 @@
     }
   },
   {
-    "__docId__": 253,
+    "__docId__": 282,
     "kind": "member",
     "name": "layers",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4385,7 +4735,7 @@
     }
   },
   {
-    "__docId__": 257,
+    "__docId__": 286,
     "kind": "method",
     "name": "_getTypedArrayFromDataLayer",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4415,7 +4765,7 @@
     }
   },
   {
-    "__docId__": 258,
+    "__docId__": 287,
     "kind": "method",
     "name": "getTile",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4465,7 +4815,7 @@
     }
   },
   {
-    "__docId__": 259,
+    "__docId__": 288,
     "kind": "method",
     "name": "setTile",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -4521,10 +4871,10 @@
     "return": null
   },
   {
-    "__docId__": 260,
+    "__docId__": 289,
     "kind": "file",
     "name": "src/Screen/Screen.js",
-    "content": "\nexport const SCALE_CONSTANT = 1;\nexport const SCALE_FIT_WINDOW = 2;\n\n/**\n * Represents a game screen for low resolution games.\n * Has simple drawing functions using an indexed palette of a maximum of 256 colors\n * The origin (0, 0) position of the screen is on the bottom left\n */\nclass Screen {\n  constructor() {\n    this.conainerId = 'minnow-container';\n    this.container = null;\n    this.width = 320;\n    this.height = 180;\n    this.scale = 3;\n    this.maxScale = -1;\n    this.minScale = 1;\n    this.scaleMode = SCALE_CONSTANT;\n    this.horizontalScaleCushion = 0;\n    this.verticalScaleCushion = 0;\n    this.rescaleOnWindowResize = true;\n    this.hideCursor = false;\n    this.tileData = null;\n    this.mapData = null;\n\n    this.onScaleChange = null;\n\n    this.canvas = null;\n    this._context = null;\n    this._imageData = null;\n    this._screenData = null;\n    this._palette = null;\n    this._generatedPalette = null;\n\n    this._isLittleEndian = true;\n  }\n\n  /**\n   * Do initial setup such as creating the canvas and building the palette\n   */\n  init() {\n    this.container = document.getElementById( this.conainerId );\n\n    this.canvas = document.createElement( 'canvas' );\n    this.canvas.setAttribute( 'id', 'game-device' );\n    this.canvas.setAttribute( 'width', this.width );\n    this.canvas.setAttribute( 'height', this.height );\n\n    this._setScale();\n\n    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {\n      window.onresize = () => {\n        this._setScale();\n        this._setCanvasStyle();\n      };\n    }\n\n    this._setCanvasStyle();\n\n    this.container.appendChild( this.canvas );\n\n    this._context = this.canvas.getContext( '2d', { alpha: false } );\n    this._context.imageSmoothingEnabled = false;\n    this._screenData = new Uint8ClampedArray( this.width * this.height );\n    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );\n\n    // check if we are little endian\n    const buffer = new ArrayBuffer( 4 );\n    const test8 = new Uint8ClampedArray( buffer );\n    const test32 = new Uint32Array( buffer );\n    test32[0] = 0x0a0b0c0d;\n\n    if ( test8[0] === 0x0a\n      && test8[1] === 0x0b\n      && test8[2] === 0x0c\n      && test8[3] === 0x0d\n    ) {\n      this._isLittleEndian = false;\n    }\n\n    if ( !this._palette ) {\n      // set the default palette\n      this._palette = [\n        [0x00, 0x00, 0x00],\n        [0x00, 0x00, 0x00],\n        [0xff, 0xff, 0xff],\n        [0xff, 0x00, 0x00],\n        [0x00, 0xff, 0x00],\n        [0x00, 0x00, 0xff],\n      ];\n    }\n\n    this._buildPalette();\n  }\n\n  _setScale() {\n    if ( this.scaleMode === SCALE_FIT_WINDOW ) {\n      const maxWidth = window.innerWidth - this.horizontalScaleCushion;\n      const maxHeight = window.innerHeight - this.verticalScaleCushion;\n\n      const maxHorizScale = Math.floor( maxWidth / this.width );\n      const maxVerticalScale = Math.floor( maxHeight / this.height );\n\n      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;\n      if ( this.scale < this.minScale ) {\n        this.scale = this.minScale;\n      }\n      if ( this.maxScale > 0 && this.scale > this.maxScale ) {\n        this.scale = this.maxScale;\n      }\n    }\n\n    if ( this.onScaleChange ) {\n      this.onScaleChange( this.scale );\n    }\n  }\n\n  _setCanvasStyle() {\n    let containerStyle = '';\n    containerStyle += `width: ${ this.width * this.scale }px;`;\n    containerStyle += `height: ${ this.height * this.scale }px;`;\n\n    this.container.setAttribute( 'style', containerStyle );\n\n    let canvasStyle = '';\n    canvasStyle += 'transform-origin: 50% 0%;';\n    canvasStyle += `transform: scale(${ this.scale });`;\n    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';\n    canvasStyle += 'image-rendering: -moz-crisp-edges;';\n    canvasStyle += 'image-rendering: crisp-edges;';\n    canvasStyle += 'image-rendering: pixelated;';\n\n\n    if ( this.hideCursor ) {\n      canvasStyle += 'cursor: none';\n    }\n\n    this.canvas.setAttribute( 'style', canvasStyle );\n  }\n\n  /**\n   * Set the palette that will used by the Screen.\n   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent\n   *\n   * @example\n   * const palette = [\n   *  [0, 0, 0], // black, the 0 index is transparent\n   *  [0, 0, 0], // black\n   *  [255, 255, 255], // white\n   *  [255, 0, 0], // red\n   *  [0, 255, 0], // green\n   *  [0, 0, 255] // blue\n   * ];\n   *\n   * screen.setPalette( palette );\n   *\n   * @param {Array.<Array.<number>} palette - The array of colors to be used by the screen.\n   * Each index should be a color described by an array of 3 integers in rgb order.\n   * Each integer has a min value of 0 and a max value of 255.\n   */\n  setPalette( palette ) {\n    this._palette = palette;\n    this._buildPalette();\n  }\n\n  /**\n   * Change a single palette color\n   *\n   * @param {number[]} color - The color we want to add\n   * @param {number} index - this palette index we want to set\n   */\n  setPaletteColorAtIndex( color, index ) {\n    this._palette[index] = color;\n    this._buildPalette();\n  }\n\n  /**\n   * Build the palette by converting _palette to the _generatedPalette we will be using internally\n   */\n  _buildPalette() {\n    this._generatedPalette = new Uint32Array( this._palette.length );\n    let currentColor = null;\n    if ( this._isLittleEndian ) {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        this._generatedPalette[i] = (\n          ( 255 << 24 ) // a\n          | ( currentColor[2] << 16 ) // b\n          | ( currentColor[1] << 8 ) // g\n          | currentColor[0] // r\n        );\n      }\n    }\n    else {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        this._generatedPalette[i] = (\n          ( currentColor[0] << 24 ) // r\n          | ( currentColor[1] << 16 ) // g\n          | ( currentColor[2] << 8 ) // b\n          | 255 // a\n        );\n      }\n    }\n  }\n\n  /**\n   * Set a pixel on the screen.\n   * The origin (0, 0) of the screen is on the bottom left\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixel( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Set a pixel on the screen, without doing any bounds checking\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixelUnsafe( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Get the pallete index at a given position on the screen\n   * @param {*} x - x position\n   * @param {*} y - y position\n   */\n  getPixel( x, y ) {\n    return this._screenData[y * this.width + x];\n  }\n\n  /**\n   * Fill the screen with the given palette index\n   * @param {*} paletteId - the palette index / defaults to 0 if unspecified\n   */\n  clear( paletteId ) {\n    if ( paletteId ) {\n      this._screenData.fill( paletteId );\n    }\n    else {\n      this._screenData.fill( 0 );\n    }\n  }\n\n  /**\n   * Draw a line between 2 positions\n   * @param {*} x1 - first x position\n   * @param {*} y1 - first y position\n   * @param {*} x2 - second x position\n   * @param {*} y2 - second y position\n   * @param {*} paletteId - palette index to be drawn\n   */\n  drawLine( x1, y1, x2, y2, paletteId ) {\n    if ( x1 === x2 && y1 === y2 ) {\n      // same coordinate, draw a pixel\n      this.setPixel( x1, x2, paletteId );\n      return;\n    }\n\n    if ( x1 === x2 ) {\n      // vertical line\n      if ( x1 < 0 || x1 >= this.width ) {\n        return;\n      }\n\n      let firstY = y1 < y2 ? y1 : y2;\n      let secondY = y1 < y2 ? y2 : y1;\n      if ( secondY < 0 ) {\n        return;\n      }\n      if ( firstY >= this.height ) {\n        return;\n      }\n\n      if ( firstY < 0 ) {\n        firstY = 0;\n      }\n      if ( secondY >= this.height ) {\n        secondY = this.height - 1;\n      }\n      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {\n        this.setPixelUnsafe( x1, currentY, paletteId );\n      }\n\n      return;\n    }\n\n    if ( y1 === y2 ) {\n      // horizontal line\n      if ( y1 < 0 || y1 >= this.height ) {\n        return;\n      }\n\n      let firstX = x1 < x2 ? x1 : x2;\n      let secondX = x1 < x2 ? x2 : x1;\n      if ( secondX < 0 ) {\n        return;\n      }\n      if ( firstX >= this.width ) {\n        return;\n      }\n\n      if ( firstX < 0 ) {\n        firstX = 0;\n      }\n      if ( secondX >= this.width ) {\n        secondX = this.width - 1;\n      }\n      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, y1, paletteId );\n      }\n\n      return;\n    }\n\n    if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {\n      // slope is less than 1\n      if ( x1 > x2 ) {\n        this._drawLineLow( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineLow( x1, y1, x2, y2, paletteId );\n      }\n    }\n    else {\n      // slope is greater than 1\n      if ( y1 > y2 ) {\n        this._drawLineHigh( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineHigh( x1, y1, x2, y2, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a line with a slope less than or equal to 1\n   */\n  _drawLineLow( x1, y1, x2, y2, id ) {\n    const dx = x2 - x1;\n    let dy = y2 - y1;\n    let yIncrement = 1;\n    if ( dy < 0 ) {\n      yIncrement = -1;\n      dy = -dy;\n    }\n\n    let decision = 2 * dy - dx;\n    let y = y1;\n\n    for ( let x = x1; x <= x2; x += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        y += yIncrement;\n        decision = decision - ( 2 * dx );\n      }\n\n      decision = decision + ( 2 * dy );\n    }\n  }\n\n  /**\n   * Draw a line with a slope greater than 1\n   */\n  _drawLineHigh( x1, y1, x2, y2, id ) {\n    let dx = x2 - x1;\n    const dy = y2 - y1;\n    let xIncrement = 1;\n    if ( dx < 0 ) {\n      xIncrement = -1;\n      dx = -dx;\n    }\n\n    let decision = 2 * dx - dy;\n    let x = x1;\n\n    for ( let y = y1; y <= y2; y += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        x += xIncrement;\n        decision = decision - ( 2 * dy );\n      }\n\n      decision = decision + ( 2 * dx );\n    }\n  }\n\n  /**\n   * Draw a filled rectangle\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRect( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    let x1 = x;\n    let y1 = y;\n    let x2 = x + width - 1;\n    let y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( x1 < 0 ) {\n      x1 = 0;\n    }\n    if ( y1 < 0 ) {\n      y1 = 0;\n    }\n\n    if ( x2 >= this.width ) {\n      x2 = this.width - 1;\n    }\n\n    if ( y2 >= this.height ) {\n      y2 = this.height - 1;\n    }\n\n    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {\n      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, currentY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a rectangle border\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRectBorder( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    if ( width === 1 && height === 1 ) {\n      this.setPixel( x, y, paletteId );\n      return;\n    }\n\n    const x2 = x + width - 1;\n    const y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( width === 1 ) {\n      this.drawLine( x, y, x, y2, paletteId );\n      return;\n    }\n\n    if ( height === 1 ) {\n      this.drawLine( x, y, x2, y, paletteId );\n      return;\n    }\n\n    this.drawLine( x, y, x, y2, paletteId ); // left\n    this.drawLine( x, y2, x2, y2, paletteId ); // top\n    this.drawLine( x2, y2, x2, y, paletteId ); // right\n    this.drawLine( x2, y, x, y, paletteId ); // bottom\n  }\n\n  /**\n   * Draw a filled circle\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircle( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    if ( radius === 1 ) {\n      this.drawCircleBorder( centerX, centerY, radius, paletteId );\n      this.setPixel( centerX, centerY, paletteId );\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * Draw a circle border\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircleBorder( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * helper method for drawing filled circles\n   */\n  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {\n    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );\n    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );\n    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );\n    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );\n  }\n\n  /**\n   * helper method for drawing circle borders\n   */\n  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {\n    this.setPixel( centerX + x, centerY + y, paletteId );\n    this.setPixel( centerX - x, centerY + y, paletteId );\n    this.setPixel( centerX + x, centerY - y, paletteId );\n    this.setPixel( centerX - x, centerY - y, paletteId );\n    this.setPixel( centerX + y, centerY + x, paletteId );\n    this.setPixel( centerX - y, centerY + x, paletteId );\n    this.setPixel( centerX + y, centerY - x, paletteId );\n    this.setPixel( centerX - y, centerY - x, paletteId );\n  }\n\n  /**\n   * Draw a tile\n   * @param {number} gid - the gid of the tile\n   * @param {*} x - the x position on the screen\n   * @param {*} y - the y position on the screen\n   */\n  drawTile( gid, x, y ) {\n    if ( !gid ) {\n      return;\n    }\n\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    const { tileSize } = this.tileData;\n\n    if ( x + tileSize < 0 ) {\n      return;\n    }\n\n    if ( y + tileSize < 0 ) {\n      return;\n    }\n\n    const basePosition = ( gid - 1 ) * tileSize * tileSize;\n    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {\n      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {\n        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];\n        this.setPixel( x + tileX, y + tileY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a TileMap layer to the screen\n   * @param {number} x - origin x position on the TileMap\n   * @param {number} y - origin y position on the TileMap\n   * @param {number} width - how many tiles wide to draw\n   * @param {number} height - how many tiles high to draw\n   * @param {number} screenX - origin x position on the screen\n   * @param {number} screenY - origin y position on the screen\n   * @param {number} map - the index of the tilemap to draw\n   * @param {number} layer - the index of the layer to draw\n   */\n  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {\n    const tileMap = this.mapData.tileMaps[map];\n    const layerData = tileMap.layers[layer];\n    const { tileSize } = this.tileData;\n    let maxX = x + width;\n    let maxY = y + height;\n\n    if ( maxX >= tileMap.width ) {\n      maxX = tileMap.width - 1;\n    }\n    if ( maxY >= tileMap.height ) {\n      maxY = tileMap.height - 1;\n    }\n\n    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {\n      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {\n        const gid = layerData[currentY * tileMap.width + currentX];\n        if ( gid ) {\n          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );\n        }\n      }\n    }\n  }\n\n  /**\n   * draw the data from {@link _screenData} to the canvas\n   */\n  drawScreen() {\n    const buffer = new ArrayBuffer( this._imageData.data.length );\n    const data8 = new Uint8ClampedArray( buffer );\n    const data32 = new Uint32Array( buffer );\n\n    let index = 0;\n    let screenY = 0;\n    for ( let y = 0; y < this.height; y += 1 ) {\n      for ( let x = 0; x < this.width; x += 1 ) {\n        screenY = this.height - y - 1; // origin from top left to bottom left\n        index = this._screenData[screenY * this.width + x];\n        data32[y * this.width + x] = this._generatedPalette[index];\n      }\n    }\n    this._imageData.data.set( data8 );\n    this._context.putImageData( this._imageData, 0, 0 );\n  }\n}\n\nexport default Screen;\n",
+    "content": "\nexport const SCALE_CONSTANT = 1;\nexport const SCALE_FIT_WINDOW = 2;\n\n/**\n * Represents a game screen for low resolution games.\n * Has simple drawing functions using an indexed palette of a maximum of 256 colors\n * The origin (0, 0) position of the screen is on the bottom left\n */\nclass Screen {\n  constructor() {\n    this.conainerId = 'minnow-container';\n    this.container = null;\n    this.width = 320;\n    this.height = 180;\n    this.scale = 3;\n    this.maxScale = -1;\n    this.minScale = 1;\n    this.scaleMode = SCALE_CONSTANT;\n    this.horizontalScaleCushion = 0;\n    this.verticalScaleCushion = 0;\n    this.rescaleOnWindowResize = true;\n    this.hideCursor = false;\n    this.tileData = null;\n    this.mapData = null;\n    this.fontData = null;\n\n    this.onScaleChange = null;\n\n    this.canvas = null;\n    this._context = null;\n    this._imageData = null;\n    this._screenData = null;\n    this._palette = null;\n    this._generatedPalette = null;\n\n    this._isLittleEndian = true;\n  }\n\n  /**\n   * Do initial setup such as creating the canvas and building the palette\n   */\n  init() {\n    this.container = document.getElementById( this.conainerId );\n\n    this.canvas = document.createElement( 'canvas' );\n    this.canvas.setAttribute( 'id', 'game-device' );\n    this.canvas.setAttribute( 'width', this.width );\n    this.canvas.setAttribute( 'height', this.height );\n\n    this._setScale();\n\n    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {\n      window.onresize = () => {\n        this._setScale();\n        this._setCanvasStyle();\n      };\n    }\n\n    this._setCanvasStyle();\n\n    this.container.appendChild( this.canvas );\n\n    this._context = this.canvas.getContext( '2d', { alpha: false } );\n    this._context.imageSmoothingEnabled = false;\n    this._screenData = new Uint8ClampedArray( this.width * this.height );\n    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );\n\n    // check if we are little endian\n    const buffer = new ArrayBuffer( 4 );\n    const test8 = new Uint8ClampedArray( buffer );\n    const test32 = new Uint32Array( buffer );\n    test32[0] = 0x0a0b0c0d;\n\n    if ( test8[0] === 0x0a\n      && test8[1] === 0x0b\n      && test8[2] === 0x0c\n      && test8[3] === 0x0d\n    ) {\n      this._isLittleEndian = false;\n    }\n\n    if ( !this._palette ) {\n      // set the default palette\n      this._palette = [\n        [0x00, 0x00, 0x00],\n        [0x00, 0x00, 0x00],\n        [0xff, 0xff, 0xff],\n        [0xff, 0x00, 0x00],\n        [0x00, 0xff, 0x00],\n        [0x00, 0x00, 0xff],\n      ];\n    }\n\n    this._buildPalette();\n  }\n\n  _setScale() {\n    if ( this.scaleMode === SCALE_FIT_WINDOW ) {\n      const maxWidth = window.innerWidth - this.horizontalScaleCushion;\n      const maxHeight = window.innerHeight - this.verticalScaleCushion;\n\n      const maxHorizScale = Math.floor( maxWidth / this.width );\n      const maxVerticalScale = Math.floor( maxHeight / this.height );\n\n      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;\n      if ( this.scale < this.minScale ) {\n        this.scale = this.minScale;\n      }\n      if ( this.maxScale > 0 && this.scale > this.maxScale ) {\n        this.scale = this.maxScale;\n      }\n    }\n\n    if ( this.onScaleChange ) {\n      this.onScaleChange( this.scale );\n    }\n  }\n\n  _setCanvasStyle() {\n    let containerStyle = '';\n    containerStyle += `width: ${ this.width * this.scale }px;`;\n    containerStyle += `height: ${ this.height * this.scale }px;`;\n\n    this.container.setAttribute( 'style', containerStyle );\n\n    let canvasStyle = '';\n    canvasStyle += 'transform-origin: 50% 0%;';\n    canvasStyle += `transform: scale(${ this.scale });`;\n    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';\n    canvasStyle += 'image-rendering: -moz-crisp-edges;';\n    canvasStyle += 'image-rendering: crisp-edges;';\n    canvasStyle += 'image-rendering: pixelated;';\n\n\n    if ( this.hideCursor ) {\n      canvasStyle += 'cursor: none';\n    }\n\n    this.canvas.setAttribute( 'style', canvasStyle );\n  }\n\n  /**\n   * Set the palette that will used by the Screen.\n   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent\n   *\n   * @example\n   * const palette = [\n   *  [0, 0, 0], // black, the 0 index is transparent\n   *  [0, 0, 0], // black\n   *  [255, 255, 255], // white\n   *  [255, 0, 0], // red\n   *  [0, 255, 0], // green\n   *  [0, 0, 255] // blue\n   * ];\n   *\n   * screen.setPalette( palette );\n   *\n   * @param {Array.<Array.<number>} palette - The array of colors to be used by the screen.\n   * Each index should be a color described by an array of 3 integers in rgb order.\n   * Each integer has a min value of 0 and a max value of 255.\n   */\n  setPalette( palette ) {\n    this._palette = palette;\n    this._buildPalette();\n  }\n\n  /**\n   * Change a single palette color\n   *\n   * @param {number[]} color - The color we want to add\n   * @param {number} index - this palette index we want to set\n   */\n  setPaletteColorAtIndex( color, index ) {\n    this._palette[index] = color;\n    this._buildPalette();\n  }\n\n  /**\n   * Build the palette by converting _palette to the _generatedPalette we will be using internally\n   */\n  _buildPalette() {\n    this._generatedPalette = new Uint32Array( this._palette.length );\n    let currentColor = null;\n    if ( this._isLittleEndian ) {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        this._generatedPalette[i] = (\n          ( 255 << 24 ) // a\n          | ( currentColor[2] << 16 ) // b\n          | ( currentColor[1] << 8 ) // g\n          | currentColor[0] // r\n        );\n      }\n    }\n    else {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        this._generatedPalette[i] = (\n          ( currentColor[0] << 24 ) // r\n          | ( currentColor[1] << 16 ) // g\n          | ( currentColor[2] << 8 ) // b\n          | 255 // a\n        );\n      }\n    }\n  }\n\n  /**\n   * Set a pixel on the screen.\n   * The origin (0, 0) of the screen is on the bottom left\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixel( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Set a pixel on the screen, without doing any bounds checking\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixelUnsafe( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Get the pallete index at a given position on the screen\n   * @param {*} x - x position\n   * @param {*} y - y position\n   */\n  getPixel( x, y ) {\n    return this._screenData[y * this.width + x];\n  }\n\n  /**\n   * Fill the screen with the given palette index\n   * @param {*} paletteId - the palette index / defaults to 0 if unspecified\n   */\n  clear( paletteId ) {\n    if ( paletteId ) {\n      this._screenData.fill( paletteId );\n    }\n    else {\n      this._screenData.fill( 0 );\n    }\n  }\n\n  /**\n   * Draw a line between 2 positions\n   * @param {*} x1 - first x position\n   * @param {*} y1 - first y position\n   * @param {*} x2 - second x position\n   * @param {*} y2 - second y position\n   * @param {*} paletteId - palette index to be drawn\n   */\n  drawLine( x1, y1, x2, y2, paletteId ) {\n    if ( x1 === x2 && y1 === y2 ) {\n      // same coordinate, draw a pixel\n      this.setPixel( x1, x2, paletteId );\n      return;\n    }\n\n    if ( x1 === x2 ) {\n      // vertical line\n      if ( x1 < 0 || x1 >= this.width ) {\n        return;\n      }\n\n      let firstY = y1 < y2 ? y1 : y2;\n      let secondY = y1 < y2 ? y2 : y1;\n      if ( secondY < 0 ) {\n        return;\n      }\n      if ( firstY >= this.height ) {\n        return;\n      }\n\n      if ( firstY < 0 ) {\n        firstY = 0;\n      }\n      if ( secondY >= this.height ) {\n        secondY = this.height - 1;\n      }\n      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {\n        this.setPixelUnsafe( x1, currentY, paletteId );\n      }\n\n      return;\n    }\n\n    if ( y1 === y2 ) {\n      // horizontal line\n      if ( y1 < 0 || y1 >= this.height ) {\n        return;\n      }\n\n      let firstX = x1 < x2 ? x1 : x2;\n      let secondX = x1 < x2 ? x2 : x1;\n      if ( secondX < 0 ) {\n        return;\n      }\n      if ( firstX >= this.width ) {\n        return;\n      }\n\n      if ( firstX < 0 ) {\n        firstX = 0;\n      }\n      if ( secondX >= this.width ) {\n        secondX = this.width - 1;\n      }\n      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, y1, paletteId );\n      }\n\n      return;\n    }\n\n    if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {\n      // slope is less than 1\n      if ( x1 > x2 ) {\n        this._drawLineLow( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineLow( x1, y1, x2, y2, paletteId );\n      }\n    }\n    else {\n      // slope is greater than 1\n      if ( y1 > y2 ) {\n        this._drawLineHigh( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineHigh( x1, y1, x2, y2, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a line with a slope less than or equal to 1\n   */\n  _drawLineLow( x1, y1, x2, y2, id ) {\n    const dx = x2 - x1;\n    let dy = y2 - y1;\n    let yIncrement = 1;\n    if ( dy < 0 ) {\n      yIncrement = -1;\n      dy = -dy;\n    }\n\n    let decision = 2 * dy - dx;\n    let y = y1;\n\n    for ( let x = x1; x <= x2; x += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        y += yIncrement;\n        decision = decision - ( 2 * dx );\n      }\n\n      decision = decision + ( 2 * dy );\n    }\n  }\n\n  /**\n   * Draw a line with a slope greater than 1\n   */\n  _drawLineHigh( x1, y1, x2, y2, id ) {\n    let dx = x2 - x1;\n    const dy = y2 - y1;\n    let xIncrement = 1;\n    if ( dx < 0 ) {\n      xIncrement = -1;\n      dx = -dx;\n    }\n\n    let decision = 2 * dx - dy;\n    let x = x1;\n\n    for ( let y = y1; y <= y2; y += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        x += xIncrement;\n        decision = decision - ( 2 * dy );\n      }\n\n      decision = decision + ( 2 * dx );\n    }\n  }\n\n  /**\n   * Draw a filled rectangle\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRect( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    let x1 = x;\n    let y1 = y;\n    let x2 = x + width - 1;\n    let y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( x1 < 0 ) {\n      x1 = 0;\n    }\n    if ( y1 < 0 ) {\n      y1 = 0;\n    }\n\n    if ( x2 >= this.width ) {\n      x2 = this.width - 1;\n    }\n\n    if ( y2 >= this.height ) {\n      y2 = this.height - 1;\n    }\n\n    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {\n      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, currentY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a rectangle border\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRectBorder( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    if ( width === 1 && height === 1 ) {\n      this.setPixel( x, y, paletteId );\n      return;\n    }\n\n    const x2 = x + width - 1;\n    const y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( width === 1 ) {\n      this.drawLine( x, y, x, y2, paletteId );\n      return;\n    }\n\n    if ( height === 1 ) {\n      this.drawLine( x, y, x2, y, paletteId );\n      return;\n    }\n\n    this.drawLine( x, y, x, y2, paletteId ); // left\n    this.drawLine( x, y2, x2, y2, paletteId ); // top\n    this.drawLine( x2, y2, x2, y, paletteId ); // right\n    this.drawLine( x2, y, x, y, paletteId ); // bottom\n  }\n\n  /**\n   * Draw a filled circle\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircle( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    if ( radius === 1 ) {\n      this.drawCircleBorder( centerX, centerY, radius, paletteId );\n      this.setPixel( centerX, centerY, paletteId );\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * Draw a circle border\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircleBorder( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * helper method for drawing filled circles\n   */\n  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {\n    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );\n    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );\n    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );\n    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );\n  }\n\n  /**\n   * helper method for drawing circle borders\n   */\n  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {\n    this.setPixel( centerX + x, centerY + y, paletteId );\n    this.setPixel( centerX - x, centerY + y, paletteId );\n    this.setPixel( centerX + x, centerY - y, paletteId );\n    this.setPixel( centerX - x, centerY - y, paletteId );\n    this.setPixel( centerX + y, centerY + x, paletteId );\n    this.setPixel( centerX - y, centerY + x, paletteId );\n    this.setPixel( centerX + y, centerY - x, paletteId );\n    this.setPixel( centerX - y, centerY - x, paletteId );\n  }\n\n  /**\n   * Draw a tile\n   * @param {number} gid - the gid of the tile\n   * @param {*} x - the x position on the screen\n   * @param {*} y - the y position on the screen\n   */\n  drawTile( gid, x, y ) {\n    if ( !gid ) {\n      return;\n    }\n\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    const { tileSize } = this.tileData;\n\n    if ( x + tileSize < 0 ) {\n      return;\n    }\n\n    if ( y + tileSize < 0 ) {\n      return;\n    }\n\n    const basePosition = ( gid - 1 ) * tileSize * tileSize;\n    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {\n      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {\n        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];\n        this.setPixel( x + tileX, y + tileY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a TileMap layer to the screen\n   * @param {number} x - origin x position on the TileMap\n   * @param {number} y - origin y position on the TileMap\n   * @param {number} width - how many tiles wide to draw\n   * @param {number} height - how many tiles high to draw\n   * @param {number} screenX - origin x position on the screen\n   * @param {number} screenY - origin y position on the screen\n   * @param {number} map - the index of the tilemap to draw\n   * @param {number} layer - the index of the layer to draw\n   */\n  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {\n    const tileMap = this.mapData.tileMaps[map];\n    const layerData = tileMap.layers[layer];\n    const { tileSize } = this.tileData;\n    let maxX = x + width;\n    let maxY = y + height;\n\n    if ( maxX >= tileMap.width ) {\n      maxX = tileMap.width - 1;\n    }\n    if ( maxY >= tileMap.height ) {\n      maxY = tileMap.height - 1;\n    }\n\n    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {\n      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {\n        const gid = layerData[currentY * tileMap.width + currentX];\n        if ( gid ) {\n          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );\n        }\n      }\n    }\n  }\n\n  /**\n   * Draw a line of text to the screen.\n   * Newlines are not supported, this will draw just a single line\n   * @param {string} text - the text to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette if for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    let currentX = x;\n    for ( let i = 0; i < text.length; i += 1 ) {\n      const charCode = text.charCodeAt( i );\n      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );\n      currentX += currentFont.widthForChar( charCode );\n      currentX += currentFont.letterSpacing;\n    }\n  }\n\n  /**\n   * Draw an individual character to the screen\n   * @param {number} charCode - the unicode point to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette id for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    const { tileSize, originX, originY } = currentFont;\n    const basePosition = currentFont.baseIndexForChar( charCode );\n    for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {\n      for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {\n        const id = currentFont.data[basePosition + fontY * tileSize + fontX];\n        if ( id === 1 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );\n        }\n        else if ( id === 2 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );\n        }\n      }\n    }\n  }\n\n  /**\n   * draw the data from {@link _screenData} to the canvas\n   */\n  drawScreen() {\n    const buffer = new ArrayBuffer( this._imageData.data.length );\n    const data8 = new Uint8ClampedArray( buffer );\n    const data32 = new Uint32Array( buffer );\n\n    let index = 0;\n    let screenY = 0;\n    for ( let y = 0; y < this.height; y += 1 ) {\n      for ( let x = 0; x < this.width; x += 1 ) {\n        screenY = this.height - y - 1; // origin from top left to bottom left\n        index = this._screenData[screenY * this.width + x];\n        data32[y * this.width + x] = this._generatedPalette[index];\n      }\n    }\n    this._imageData.data.set( data8 );\n    this._context.putImageData( this._imageData, 0, 0 );\n  }\n}\n\nexport default Screen;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/minnow-engine/src/Screen/Screen.js",
     "access": "public",
@@ -4532,7 +4882,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 261,
+    "__docId__": 290,
     "kind": "variable",
     "name": "SCALE_CONSTANT",
     "memberof": "src/Screen/Screen.js",
@@ -4552,7 +4902,7 @@
     }
   },
   {
-    "__docId__": 262,
+    "__docId__": 291,
     "kind": "variable",
     "name": "SCALE_FIT_WINDOW",
     "memberof": "src/Screen/Screen.js",
@@ -4572,7 +4922,7 @@
     }
   },
   {
-    "__docId__": 263,
+    "__docId__": 292,
     "kind": "class",
     "name": "Screen",
     "memberof": "src/Screen/Screen.js",
@@ -4587,7 +4937,7 @@
     "interface": false
   },
   {
-    "__docId__": 264,
+    "__docId__": 293,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4601,7 +4951,7 @@
     "undocument": true
   },
   {
-    "__docId__": 265,
+    "__docId__": 294,
     "kind": "member",
     "name": "conainerId",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4618,7 +4968,7 @@
     }
   },
   {
-    "__docId__": 266,
+    "__docId__": 295,
     "kind": "member",
     "name": "container",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4635,7 +4985,7 @@
     }
   },
   {
-    "__docId__": 267,
+    "__docId__": 296,
     "kind": "member",
     "name": "width",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4652,7 +5002,7 @@
     }
   },
   {
-    "__docId__": 268,
+    "__docId__": 297,
     "kind": "member",
     "name": "height",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4669,7 +5019,7 @@
     }
   },
   {
-    "__docId__": 269,
+    "__docId__": 298,
     "kind": "member",
     "name": "scale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4686,7 +5036,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 299,
     "kind": "member",
     "name": "maxScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4703,7 +5053,7 @@
     }
   },
   {
-    "__docId__": 271,
+    "__docId__": 300,
     "kind": "member",
     "name": "minScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4720,7 +5070,7 @@
     }
   },
   {
-    "__docId__": 272,
+    "__docId__": 301,
     "kind": "member",
     "name": "scaleMode",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4737,7 +5087,7 @@
     }
   },
   {
-    "__docId__": 273,
+    "__docId__": 302,
     "kind": "member",
     "name": "horizontalScaleCushion",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4754,7 +5104,7 @@
     }
   },
   {
-    "__docId__": 274,
+    "__docId__": 303,
     "kind": "member",
     "name": "verticalScaleCushion",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4771,7 +5121,7 @@
     }
   },
   {
-    "__docId__": 275,
+    "__docId__": 304,
     "kind": "member",
     "name": "rescaleOnWindowResize",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4788,7 +5138,7 @@
     }
   },
   {
-    "__docId__": 276,
+    "__docId__": 305,
     "kind": "member",
     "name": "hideCursor",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4805,7 +5155,7 @@
     }
   },
   {
-    "__docId__": 277,
+    "__docId__": 306,
     "kind": "member",
     "name": "tileData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4822,7 +5172,7 @@
     }
   },
   {
-    "__docId__": 278,
+    "__docId__": 307,
     "kind": "member",
     "name": "mapData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4839,7 +5189,24 @@
     }
   },
   {
-    "__docId__": 279,
+    "__docId__": 308,
+    "kind": "member",
+    "name": "fontData",
+    "memberof": "src/Screen/Screen.js~Screen",
+    "static": false,
+    "longname": "src/Screen/Screen.js~Screen#fontData",
+    "access": "public",
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 309,
     "kind": "member",
     "name": "onScaleChange",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4847,7 +5214,7 @@
     "longname": "src/Screen/Screen.js~Screen#onScaleChange",
     "access": "public",
     "description": null,
-    "lineNumber": 27,
+    "lineNumber": 28,
     "undocument": true,
     "type": {
       "types": [
@@ -4856,30 +5223,13 @@
     }
   },
   {
-    "__docId__": 280,
+    "__docId__": 310,
     "kind": "member",
     "name": "canvas",
     "memberof": "src/Screen/Screen.js~Screen",
     "static": false,
     "longname": "src/Screen/Screen.js~Screen#canvas",
     "access": "public",
-    "description": null,
-    "lineNumber": 29,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 281,
-    "kind": "member",
-    "name": "_context",
-    "memberof": "src/Screen/Screen.js~Screen",
-    "static": false,
-    "longname": "src/Screen/Screen.js~Screen#_context",
-    "access": "private",
     "description": null,
     "lineNumber": 30,
     "undocument": true,
@@ -4890,12 +5240,12 @@
     }
   },
   {
-    "__docId__": 282,
+    "__docId__": 311,
     "kind": "member",
-    "name": "_imageData",
+    "name": "_context",
     "memberof": "src/Screen/Screen.js~Screen",
     "static": false,
-    "longname": "src/Screen/Screen.js~Screen#_imageData",
+    "longname": "src/Screen/Screen.js~Screen#_context",
     "access": "private",
     "description": null,
     "lineNumber": 31,
@@ -4907,12 +5257,12 @@
     }
   },
   {
-    "__docId__": 283,
+    "__docId__": 312,
     "kind": "member",
-    "name": "_screenData",
+    "name": "_imageData",
     "memberof": "src/Screen/Screen.js~Screen",
     "static": false,
-    "longname": "src/Screen/Screen.js~Screen#_screenData",
+    "longname": "src/Screen/Screen.js~Screen#_imageData",
     "access": "private",
     "description": null,
     "lineNumber": 32,
@@ -4924,12 +5274,12 @@
     }
   },
   {
-    "__docId__": 284,
+    "__docId__": 313,
     "kind": "member",
-    "name": "_palette",
+    "name": "_screenData",
     "memberof": "src/Screen/Screen.js~Screen",
     "static": false,
-    "longname": "src/Screen/Screen.js~Screen#_palette",
+    "longname": "src/Screen/Screen.js~Screen#_screenData",
     "access": "private",
     "description": null,
     "lineNumber": 33,
@@ -4941,12 +5291,12 @@
     }
   },
   {
-    "__docId__": 285,
+    "__docId__": 314,
     "kind": "member",
-    "name": "_generatedPalette",
+    "name": "_palette",
     "memberof": "src/Screen/Screen.js~Screen",
     "static": false,
-    "longname": "src/Screen/Screen.js~Screen#_generatedPalette",
+    "longname": "src/Screen/Screen.js~Screen#_palette",
     "access": "private",
     "description": null,
     "lineNumber": 34,
@@ -4958,7 +5308,24 @@
     }
   },
   {
-    "__docId__": 286,
+    "__docId__": 315,
+    "kind": "member",
+    "name": "_generatedPalette",
+    "memberof": "src/Screen/Screen.js~Screen",
+    "static": false,
+    "longname": "src/Screen/Screen.js~Screen#_generatedPalette",
+    "access": "private",
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 316,
     "kind": "member",
     "name": "_isLittleEndian",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4966,7 +5333,7 @@
     "longname": "src/Screen/Screen.js~Screen#_isLittleEndian",
     "access": "private",
     "description": null,
-    "lineNumber": 36,
+    "lineNumber": 37,
     "undocument": true,
     "type": {
       "types": [
@@ -4975,7 +5342,7 @@
     }
   },
   {
-    "__docId__": 287,
+    "__docId__": 317,
     "kind": "method",
     "name": "init",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4985,12 +5352,12 @@
     "longname": "src/Screen/Screen.js~Screen#init",
     "access": "public",
     "description": "Do initial setup such as creating the canvas and building the palette",
-    "lineNumber": 42,
+    "lineNumber": 43,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 295,
+    "__docId__": 325,
     "kind": "method",
     "name": "_setScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5000,13 +5367,13 @@
     "longname": "src/Screen/Screen.js~Screen#_setScale",
     "access": "private",
     "description": null,
-    "lineNumber": 97,
+    "lineNumber": 98,
     "undocument": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 299,
+    "__docId__": 329,
     "kind": "method",
     "name": "_setCanvasStyle",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5016,13 +5383,13 @@
     "longname": "src/Screen/Screen.js~Screen#_setCanvasStyle",
     "access": "private",
     "description": null,
-    "lineNumber": 119,
+    "lineNumber": 120,
     "undocument": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 300,
+    "__docId__": 330,
     "kind": "method",
     "name": "setPalette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5035,7 +5402,7 @@
     "examples": [
       "const palette = [\n [0, 0, 0], // black, the 0 index is transparent\n [0, 0, 0], // black\n [255, 255, 255], // white\n [255, 0, 0], // red\n [0, 255, 0], // green\n [0, 0, 255] // blue\n];\n\nscreen.setPalette( palette );"
     ],
-    "lineNumber": 162,
+    "lineNumber": 163,
     "params": [
       {
         "nullable": null,
@@ -5051,7 +5418,7 @@
     "return": null
   },
   {
-    "__docId__": 302,
+    "__docId__": 332,
     "kind": "method",
     "name": "setPaletteColorAtIndex",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5061,7 +5428,7 @@
     "longname": "src/Screen/Screen.js~Screen#setPaletteColorAtIndex",
     "access": "public",
     "description": "Change a single palette color",
-    "lineNumber": 173,
+    "lineNumber": 174,
     "params": [
       {
         "nullable": null,
@@ -5087,7 +5454,7 @@
     "return": null
   },
   {
-    "__docId__": 303,
+    "__docId__": 333,
     "kind": "method",
     "name": "_buildPalette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5097,12 +5464,12 @@
     "longname": "src/Screen/Screen.js~Screen#_buildPalette",
     "access": "private",
     "description": "Build the palette by converting _palette to the _generatedPalette we will be using internally",
-    "lineNumber": 181,
+    "lineNumber": 182,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 305,
+    "__docId__": 335,
     "kind": "method",
     "name": "setPixel",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5112,7 +5479,7 @@
     "longname": "src/Screen/Screen.js~Screen#setPixel",
     "access": "public",
     "description": "Set a pixel on the screen.\nThe origin (0, 0) of the screen is on the bottom left",
-    "lineNumber": 215,
+    "lineNumber": 216,
     "params": [
       {
         "nullable": null,
@@ -5148,7 +5515,7 @@
     "return": null
   },
   {
-    "__docId__": 306,
+    "__docId__": 336,
     "kind": "method",
     "name": "setPixelUnsafe",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5158,7 +5525,7 @@
     "longname": "src/Screen/Screen.js~Screen#setPixelUnsafe",
     "access": "public",
     "description": "Set a pixel on the screen, without doing any bounds checking",
-    "lineNumber": 231,
+    "lineNumber": 232,
     "params": [
       {
         "nullable": null,
@@ -5194,7 +5561,7 @@
     "return": null
   },
   {
-    "__docId__": 307,
+    "__docId__": 337,
     "kind": "method",
     "name": "getPixel",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5204,7 +5571,7 @@
     "longname": "src/Screen/Screen.js~Screen#getPixel",
     "access": "public",
     "description": "Get the pallete index at a given position on the screen",
-    "lineNumber": 243,
+    "lineNumber": 244,
     "params": [
       {
         "nullable": null,
@@ -5234,7 +5601,7 @@
     }
   },
   {
-    "__docId__": 308,
+    "__docId__": 338,
     "kind": "method",
     "name": "clear",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5244,7 +5611,7 @@
     "longname": "src/Screen/Screen.js~Screen#clear",
     "access": "public",
     "description": "Fill the screen with the given palette index",
-    "lineNumber": 251,
+    "lineNumber": 252,
     "params": [
       {
         "nullable": null,
@@ -5260,7 +5627,7 @@
     "return": null
   },
   {
-    "__docId__": 309,
+    "__docId__": 339,
     "kind": "method",
     "name": "drawLine",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5270,7 +5637,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawLine",
     "access": "public",
     "description": "Draw a line between 2 positions",
-    "lineNumber": 268,
+    "lineNumber": 269,
     "params": [
       {
         "nullable": null,
@@ -5326,7 +5693,7 @@
     "return": null
   },
   {
-    "__docId__": 310,
+    "__docId__": 340,
     "kind": "method",
     "name": "_drawLineLow",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5336,7 +5703,7 @@
     "longname": "src/Screen/Screen.js~Screen#_drawLineLow",
     "access": "private",
     "description": "Draw a line with a slope less than or equal to 1",
-    "lineNumber": 354,
+    "lineNumber": 355,
     "params": [
       {
         "name": "x1",
@@ -5372,7 +5739,7 @@
     "return": null
   },
   {
-    "__docId__": 311,
+    "__docId__": 341,
     "kind": "method",
     "name": "_drawLineHigh",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5382,7 +5749,7 @@
     "longname": "src/Screen/Screen.js~Screen#_drawLineHigh",
     "access": "private",
     "description": "Draw a line with a slope greater than 1",
-    "lineNumber": 381,
+    "lineNumber": 382,
     "params": [
       {
         "name": "x1",
@@ -5418,7 +5785,7 @@
     "return": null
   },
   {
-    "__docId__": 312,
+    "__docId__": 342,
     "kind": "method",
     "name": "drawRect",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5428,7 +5795,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawRect",
     "access": "public",
     "description": "Draw a filled rectangle",
-    "lineNumber": 414,
+    "lineNumber": 415,
     "params": [
       {
         "nullable": null,
@@ -5484,7 +5851,7 @@
     "return": null
   },
   {
-    "__docId__": 313,
+    "__docId__": 343,
     "kind": "method",
     "name": "drawRectBorder",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5494,7 +5861,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawRectBorder",
     "access": "public",
     "description": "Draw a rectangle border",
-    "lineNumber": 466,
+    "lineNumber": 467,
     "params": [
       {
         "nullable": null,
@@ -5550,7 +5917,7 @@
     "return": null
   },
   {
-    "__docId__": 314,
+    "__docId__": 344,
     "kind": "method",
     "name": "drawCircle",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5560,7 +5927,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawCircle",
     "access": "public",
     "description": "Draw a filled circle",
-    "lineNumber": 514,
+    "lineNumber": 515,
     "params": [
       {
         "nullable": null,
@@ -5606,7 +5973,7 @@
     "return": null
   },
   {
-    "__docId__": 315,
+    "__docId__": 345,
     "kind": "method",
     "name": "drawCircleBorder",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5616,7 +5983,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawCircleBorder",
     "access": "public",
     "description": "Draw a circle border",
-    "lineNumber": 554,
+    "lineNumber": 555,
     "params": [
       {
         "nullable": null,
@@ -5662,7 +6029,7 @@
     "return": null
   },
   {
-    "__docId__": 316,
+    "__docId__": 346,
     "kind": "method",
     "name": "_drawCircleFilledOctants",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5672,7 +6039,7 @@
     "longname": "src/Screen/Screen.js~Screen#_drawCircleFilledOctants",
     "access": "private",
     "description": "helper method for drawing filled circles",
-    "lineNumber": 583,
+    "lineNumber": 584,
     "params": [
       {
         "name": "centerX",
@@ -5708,7 +6075,7 @@
     "return": null
   },
   {
-    "__docId__": 317,
+    "__docId__": 347,
     "kind": "method",
     "name": "_drawCircleBorderOctants",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5718,7 +6085,7 @@
     "longname": "src/Screen/Screen.js~Screen#_drawCircleBorderOctants",
     "access": "private",
     "description": "helper method for drawing circle borders",
-    "lineNumber": 593,
+    "lineNumber": 594,
     "params": [
       {
         "name": "centerX",
@@ -5754,7 +6121,7 @@
     "return": null
   },
   {
-    "__docId__": 318,
+    "__docId__": 348,
     "kind": "method",
     "name": "drawTile",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5764,7 +6131,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawTile",
     "access": "public",
     "description": "Draw a tile",
-    "lineNumber": 610,
+    "lineNumber": 611,
     "params": [
       {
         "nullable": null,
@@ -5800,7 +6167,7 @@
     "return": null
   },
   {
-    "__docId__": 319,
+    "__docId__": 349,
     "kind": "method",
     "name": "drawMap",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5810,7 +6177,7 @@
     "longname": "src/Screen/Screen.js~Screen#drawMap",
     "access": "public",
     "description": "Draw a TileMap layer to the screen",
-    "lineNumber": 653,
+    "lineNumber": 654,
     "params": [
       {
         "nullable": null,
@@ -5896,7 +6263,159 @@
     "return": null
   },
   {
-    "__docId__": 320,
+    "__docId__": 350,
+    "kind": "method",
+    "name": "drawText",
+    "memberof": "src/Screen/Screen.js~Screen",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Screen/Screen.js~Screen#drawText",
+    "access": "public",
+    "description": "Draw a line of text to the screen.\nNewlines are not supported, this will draw just a single line",
+    "lineNumber": 688,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "text",
+        "description": "the text to draw"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "x",
+        "description": "the x position on the screen to draw to"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "y",
+        "description": "the y position on the screen to draw to"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "paletteId",
+        "description": "the palette if for the main color"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "outlinePaletteId",
+        "description": "the palette id for the outline color"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "font",
+        "description": "the index of the font to use"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 351,
+    "kind": "method",
+    "name": "drawChar",
+    "memberof": "src/Screen/Screen.js~Screen",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Screen/Screen.js~Screen#drawChar",
+    "access": "public",
+    "description": "Draw an individual character to the screen",
+    "lineNumber": 708,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "charCode",
+        "description": "the unicode point to draw"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "x",
+        "description": "the x position on the screen to draw to"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "y",
+        "description": "the y position on the screen to draw to"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "paletteId",
+        "description": "the palette id for the main color"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "outlinePaletteId",
+        "description": "the palette id for the outline color"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "font",
+        "description": "the index of the font to use"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 352,
     "kind": "method",
     "name": "drawScreen",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5906,12 +6425,12 @@
     "longname": "src/Screen/Screen.js~Screen#drawScreen",
     "access": "public",
     "description": "draw the data from {@link _screenData} to the canvas",
-    "lineNumber": 680,
+    "lineNumber": 728,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 321,
+    "__docId__": 353,
     "kind": "file",
     "name": "src/TileData/TileData.js",
     "content": "\n/**\n * Holds all of the tile data.\n */\nclass TileData {\n  constructor() {\n    this.tileSize = 16;\n    this.tilesets = [];\n    this.data = null;\n  }\n\n  /**\n   * Parse all of the tilesets and add them to the data array\n   */\n  init() {\n    let numberOfTiles = 0;\n    for ( let i = 0; i < this.tilesets.length; i += 1 ) {\n      const currentTileset = this.tilesets[i];\n      numberOfTiles += currentTileset.width * currentTileset.height;\n    }\n    this.data = new Uint8ClampedArray( numberOfTiles * this.tileSize * this.tileSize );\n\n    let startPosition = 0;\n    let firstGid = 1;\n    for ( let i = 0; i < this.tilesets.length; i += 1 ) {\n      const currentTileset = this.tilesets[i];\n      currentTileset.firstGid = firstGid;\n      const { data } = currentTileset;\n      if ( currentTileset.format === 'array' ) {\n        for ( let j = 0; j < data.length; j += 1 ) {\n          this.data[startPosition + j] = parseInt( data[j], 10 );\n        }\n      }\n      else if ( currentTileset.format === 'run' ) {\n        let runPosition = 0;\n        let dataPosition = 0;\n        while ( runPosition < data.length ) {\n          const runLength = data[runPosition];\n          const paletteId = parseInt( data[runPosition + 1], 10 );\n          for ( let j = 0; j < runLength; j += 1 ) {\n            this.data[startPosition + dataPosition] = paletteId;\n            dataPosition += 1;\n          }\n          runPosition += 2;\n        }\n      }\n      firstGid += currentTileset.width * currentTileset.height;\n      startPosition += currentTileset.width * currentTileset.height * this.tileSize * this.tileSize;\n    }\n  }\n\n  /**\n   * Add a tileset\n   * @param {Object} tileset - the tileset data\n   */\n  addTileset( tileset ) {\n    this.tilesets.push( tileset );\n  }\n\n  /**\n   * Get the GID for a tile\n   * @param {number} x - x position of the tile\n   * @param {number} y - y position of the tile\n   * @param {number} tileset - the index of the tileset\n   */\n  getGid( x, y, tileset = 0 ) {\n    if ( x < 0 || y < 0 ) {\n      return -1;\n    }\n    const currentTileset = this.tilesets[tileset];\n    const { width, height, firstGid } = currentTileset;\n    if ( x >= width || y >= height ) {\n      return -1;\n    }\n    return y * width + x + firstGid;\n  }\n}\n\nexport default TileData;\n",
@@ -5922,7 +6441,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 322,
+    "__docId__": 354,
     "kind": "class",
     "name": "TileData",
     "memberof": "src/TileData/TileData.js",
@@ -5937,7 +6456,7 @@
     "interface": false
   },
   {
-    "__docId__": 323,
+    "__docId__": 355,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5951,7 +6470,7 @@
     "undocument": true
   },
   {
-    "__docId__": 324,
+    "__docId__": 356,
     "kind": "member",
     "name": "tileSize",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5968,7 +6487,7 @@
     }
   },
   {
-    "__docId__": 325,
+    "__docId__": 357,
     "kind": "member",
     "name": "tilesets",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5985,7 +6504,7 @@
     }
   },
   {
-    "__docId__": 326,
+    "__docId__": 358,
     "kind": "member",
     "name": "data",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -6002,7 +6521,7 @@
     }
   },
   {
-    "__docId__": 327,
+    "__docId__": 359,
     "kind": "method",
     "name": "init",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -6017,7 +6536,7 @@
     "return": null
   },
   {
-    "__docId__": 329,
+    "__docId__": 361,
     "kind": "method",
     "name": "addTileset",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -6043,7 +6562,7 @@
     "return": null
   },
   {
-    "__docId__": 330,
+    "__docId__": 362,
     "kind": "method",
     "name": "getGid",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -6102,7 +6621,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\r\n  \"name\": \"minnow-engine\",\r\n  \"version\": \"0.0.3\",\r\n  \"description\": \"A game engine for low resolution games.\",\r\n  \"main\": \"src/index.js\",\r\n  \"scripts\": {\r\n    \"test\": \"jest\",\r\n    \"build\": \"webpack --config config/webpack.config.lib.js\",\r\n    \"build-min\": \"webpack --config config/webpack.config.lib.min.js\",\r\n    \"build-docs\": \"esdoc\",\r\n    \"demo-start\": \"webpack-dev-server --open --config demo/config/webpack.demo.dev.js\",\r\n    \"demo-build\": \"webpack --config demo/config/webpack.demo.prod.js\"\r\n  },\r\n  \"repository\": {\r\n    \"type\": \"git\",\r\n    \"url\": \"git+https://github.com/byersdz/minnow-engine.git\"\r\n  },\r\n  \"keywords\": [],\r\n  \"author\": \"David Byers\",\r\n  \"license\": \"MIT\",\r\n  \"bugs\": {\r\n    \"url\": \"https://github.com/byersdz/minnow-engine/issues\"\r\n  },\r\n  \"homepage\": \"https://github.com/byersdz/minnow-engine#readme\",\r\n  \"devDependencies\": {\r\n    \"css-loader\": \"^2.1.0\",\r\n    \"esdoc\": \"^1.1.0\",\r\n    \"esdoc-standard-plugin\": \"^1.0.0\",\r\n    \"eslint\": \"^5.14.0\",\r\n    \"eslint-config-airbnb-base\": \"^13.1.0\",\r\n    \"eslint-loader\": \"^2.1.2\",\r\n    \"eslint-plugin-import\": \"^2.16.0\",\r\n    \"jest\": \"^24.1.0\",\r\n    \"style-loader\": \"^0.23.1\",\r\n    \"webpack\": \"^4.29.3\",\r\n    \"webpack-cli\": \"^3.2.3\",\r\n    \"webpack-dev-server\": \"^3.1.14\",\r\n    \"webpack-merge\": \"^4.2.1\"\r\n  },\r\n  \"jest\": {\r\n    \"moduleNameMapper\": {\r\n      \"^SRC(.*)$\": \"<rootDir>/src$1\"\r\n    }\r\n  }\r\n}\r\n",
+    "content": "{\r\n  \"name\": \"minnow-engine\",\r\n  \"version\": \"0.1.0\",\r\n  \"description\": \"A game engine for low resolution games.\",\r\n  \"main\": \"src/index.js\",\r\n  \"scripts\": {\r\n    \"test\": \"jest\",\r\n    \"build\": \"webpack --config config/webpack.config.lib.js\",\r\n    \"build-min\": \"webpack --config config/webpack.config.lib.min.js\",\r\n    \"build-docs\": \"esdoc\",\r\n    \"demo-start\": \"webpack-dev-server --open --config demo/config/webpack.demo.dev.js\",\r\n    \"demo-build\": \"webpack --config demo/config/webpack.demo.prod.js\"\r\n  },\r\n  \"repository\": {\r\n    \"type\": \"git\",\r\n    \"url\": \"git+https://github.com/byersdz/minnow-engine.git\"\r\n  },\r\n  \"keywords\": [],\r\n  \"author\": \"David Byers\",\r\n  \"license\": \"MIT\",\r\n  \"bugs\": {\r\n    \"url\": \"https://github.com/byersdz/minnow-engine/issues\"\r\n  },\r\n  \"homepage\": \"https://github.com/byersdz/minnow-engine#readme\",\r\n  \"devDependencies\": {\r\n    \"css-loader\": \"^2.1.0\",\r\n    \"esdoc\": \"^1.1.0\",\r\n    \"esdoc-standard-plugin\": \"^1.0.0\",\r\n    \"eslint\": \"^5.14.0\",\r\n    \"eslint-config-airbnb-base\": \"^13.1.0\",\r\n    \"eslint-loader\": \"^2.1.2\",\r\n    \"eslint-plugin-import\": \"^2.16.0\",\r\n    \"jest\": \"^24.1.0\",\r\n    \"style-loader\": \"^0.23.1\",\r\n    \"webpack\": \"^4.29.3\",\r\n    \"webpack-cli\": \"^3.2.3\",\r\n    \"webpack-dev-server\": \"^3.1.14\",\r\n    \"webpack-merge\": \"^4.2.1\"\r\n  },\r\n  \"jest\": {\r\n    \"moduleNameMapper\": {\r\n      \"^SRC(.*)$\": \"<rootDir>/src$1\"\r\n    }\r\n  }\r\n}\r\n",
     "longname": "C:\\Users\\byers\\Development\\Projects\\minnow-engine\\package.json",
     "name": "package.json",
     "static": true,

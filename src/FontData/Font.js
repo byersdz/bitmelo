@@ -52,7 +52,6 @@ class Font {
     let codePoint = charCode;
     if ( charCode >= this.width * this.height ) {
       const key = charCode.toString();
-      console.log( key );
 
       if ( this.charData && this.charData[key] ) {
         if ( this.charData[key] !== undefined ) {

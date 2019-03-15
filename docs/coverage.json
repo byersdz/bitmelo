@@ -1,21 +1,47 @@
 {
-  "coverage": "17.88%",
-  "expectCount": 246,
-  "actualCount": 44,
+  "coverage": "18.72%",
+  "expectCount": 267,
+  "actualCount": 50,
   "files": {
     "src/Engine/Engine.js": {
-      "expectCount": 11,
+      "expectCount": 12,
       "actualCount": 2,
       "undocumentLines": [
-        6,
-        7,
-        8,
-        9,
         10,
         11,
         12,
         13,
-        14
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    },
+    "src/FontData/Font.js": {
+      "expectCount": 13,
+      "actualCount": 3,
+      "undocumentLines": [
+        7,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        18
+      ]
+    },
+    "src/FontData/FontData.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        8,
+        9,
+        12
       ]
     },
     "src/index.js": {
@@ -211,8 +237,8 @@
       ]
     },
     "src/Screen/Screen.js": {
-      "expectCount": 48,
-      "actualCount": 21,
+      "expectCount": 51,
+      "actualCount": 23,
       "undocumentLines": [
         2,
         3,
@@ -231,16 +257,17 @@
         23,
         24,
         25,
-        27,
-        29,
+        26,
+        28,
         30,
         31,
         32,
         33,
         34,
-        36,
-        97,
-        119
+        35,
+        37,
+        98,
+        120
       ]
     },
     "src/TileData/TileData.js": {

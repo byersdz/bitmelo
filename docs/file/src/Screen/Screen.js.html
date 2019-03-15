@@ -31,6 +31,8 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Keys">Keys</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#engine">Engine</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Engine/Engine.js~Engine.html">Engine</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#fontdata">FontData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/FontData/Font.js~Font.html">Font</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html">FontData</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#input">Input</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Input/Input.js~Input.html">Input</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GAME_ACTION_FOUR">GAME_ACTION_FOUR</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GAME_ACTION_ONE">GAME_ACTION_ONE</a></span></span></li>
@@ -194,6 +196,7 @@ class Screen {
     this.hideCursor = false;
     this.tileData = null;
     this.mapData = null;
+    this.fontData = null;
 
     this.onScaleChange = null;
 
@@ -840,6 +843,53 @@ class Screen {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
           this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+        }
+      }
+    }
+  }
+
+  /**
+   * Draw a line of text to the screen.
+   * Newlines are not supported, this will draw just a single line
+   * @param {string} text - the text to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette if for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
+  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    let currentX = x;
+    for ( let i = 0; i &lt; text.length; i += 1 ) {
+      const charCode = text.charCodeAt( i );
+      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );
+      currentX += currentFont.widthForChar( charCode );
+      currentX += currentFont.letterSpacing;
+    }
+  }
+
+  /**
+   * Draw an individual character to the screen
+   * @param {number} charCode - the unicode point to draw
+   * @param {number} x - the x position on the screen to draw to
+   * @param {number} y - the y position on the screen to draw to
+   * @param {number} paletteId - the palette id for the main color
+   * @param {number} outlinePaletteId - the palette id for the outline color
+   * @param {number} font - the index of the font to use
+   */
+  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    const currentFont = this.fontData.fonts[font];
+    const { tileSize, originX, originY } = currentFont;
+    const basePosition = currentFont.baseIndexForChar( charCode );
+    for ( let fontY = 0; fontY &lt; tileSize; fontY += 1 ) {
+      for ( let fontX = 0; fontX &lt; tileSize; fontX += 1 ) {
+        const id = currentFont.data[basePosition + fontY * tileSize + fontX];
+        if ( id === 1 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );
+        }
+        else if ( id === 2 ) {
+          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );
         }
       }
     }

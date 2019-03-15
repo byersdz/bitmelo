@@ -1,0 +1,222 @@
+{
+  "tileSize": 16,
+  "originX" : 2,
+  "originY": 4,
+  "standardWidth": 5,
+  "letterSpacing": 1,
+  "charData": {
+    "8364": {
+      "name": "euro",
+      "remap": 1,
+      "width": 6
+    },
+    "33": {
+      "name": "!",
+      "width": 3
+    },
+    "34": {
+      "name": "double quote",
+      "width": 4
+    },
+    "37": {
+      "name": "percent",
+      "width": 7
+    },
+    "38": {
+      "name": "and",
+      "width": 7
+    },
+    "39": {
+      "name": "single quote",
+      "width": 1
+    },
+    "40": {
+      "name": "(",
+      "width": 3
+    },
+    "41": {
+      "name": ")",
+      "width": 3
+    },
+    "44": {
+      "name": ",",
+      "width": 2
+    },
+    "46": {
+      "name": ".",
+      "width": 1
+    },
+    "47": {
+      "name": "f slash",
+      "width": 7
+    },
+    "49": {
+      "name": "1",
+      "width": 3
+    },
+    "58": {
+      "name": ":",
+      "width": 1
+    },
+    "59": {
+      "name": ";",
+      "width": 2
+    },
+    "60": {
+      "name": "<",
+      "width": 4
+    },
+    "62": {
+      "name": ">",
+      "width": 4
+    },
+    "64": {
+      "name": "@",
+      "width": 7
+    },
+    "91": {
+      "name": "[",
+      "width": 3
+    },
+    "92": {
+      "name": "backslash",
+      "width": 7
+    },
+    "93": {
+      "name": "]",
+      "width": 3
+    },
+    "96": {
+      "name": "grave",
+      "width": 2
+    },
+    "105": {
+      "name": "i",
+      "width": 1
+    },
+    "107": {
+      "name": "k",
+      "width": 4
+    },
+    "108": {
+      "name": "l",
+      "width": 1
+    },
+    "123": {
+      "name": "{",
+      "width": 3
+    },
+    "124": {
+      "name": "|",
+      "width": 1
+    },
+    "125": {
+      "name": "}",
+      "width": 3
+    },
+    "161": {
+      "name": "upside down !",
+      "width": 3
+    },
+    "164": {
+      "name": "currency",
+      "width": 6
+    },
+    "165": {
+      "name": "yen",
+      "width": 7
+    },
+    "166": {
+      "name": "broken bar",
+      "width": 1
+    },
+    "167": {
+      "name": "section",
+      "width": 6
+    },
+    "169": {
+      "name": "copyright",
+      "width": 7
+    },
+    "170": {
+      "name": "f ordinal",
+      "width": 4
+    },
+    "171": {
+      "name": "<<",
+      "width": 6
+    },
+    "172": {
+      "name": "not",
+      "width": 6
+    },
+    "174": {
+      "name": "(r)",
+      "width": 8
+    },
+    "176": {
+      "name": "degree",
+      "width": 4
+    },
+    "178": {
+      "name": "^2",
+      "width": 3
+    },
+    "179": {
+      "name": "^3",
+      "width": 3
+    },
+    "180": {
+      "name": "acute",
+      "width": 2
+    },
+    "182": {
+      "name": "pilcrow",
+      "width": 3
+    },
+    "183": {
+      "name": "middle dot",
+      "width": 1
+    },
+    "185": {
+      "name": "^1",
+      "width": 4
+    },
+    "186": {
+      "name": "m ordinal",
+      "width": 4
+    },
+    "187": {
+      "name": ">>",
+      "width": 6
+    },
+    "188": {
+      "name": "1/4",
+      "width": 7
+    },
+    "189": {
+      "name": "1/2",
+      "width": 7
+    },
+    "190": {
+      "name": "3/4",
+      "width": 7
+    },
+    "236": {
+      "name": "i",
+      "width": 3
+    },
+    "237": {
+      "name": "i",
+      "width": 3
+    },
+    "238": {
+      "name": "i",
+      "width": 3
+    },
+    "239": {
+      "name": "i",
+      "width": 3
+    }
+  }
+}
