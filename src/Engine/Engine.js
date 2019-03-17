@@ -3,6 +3,7 @@ import Input from '../Input/Input';
 import TileData from '../TileData/TileData';
 import MapData from '../MapData/MapData';
 import FontData from '../FontData/FontData';
+import Audio from '../Audio/Audio';
 
 import standardFont from '../FontData/standard.font.json';
 import smallFont from '../FontData/small.font.json';
@@ -12,6 +13,8 @@ class Engine {
     this.containerId = 'minnow-container';
     this.onInit = null;
     this.onDrawStartScreen = null;
+    this.onUpdateStartTransition = null;
+    this.startTransitionFrames = 60;
     this.onUpdate = null;
     this.clickToBegin = true;
     this.screen = new Screen();
@@ -19,6 +22,7 @@ class Engine {
     this.tileData = new TileData();
     this.mapData = new MapData();
     this.fontData = new FontData();
+    this.audio = new Audio();
 
     this.fontData.addFont( standardFont );
     this.fontData.addFont( smallFont );
@@ -55,7 +59,7 @@ class Engine {
         this.onDrawStartScreen();
       }
       else {
-        this.screen.clear( 5 );
+        this.screen.clear( 1 );
         this.screen.drawText( 'Click to begin...', 10, 10, 2, 1, 0 );
       }
       const screenHidesCursor = this.screen.hideCursor;
@@ -67,12 +71,15 @@ class Engine {
           this._hasBegun = true;
           this.screen.hideCursor = screenHidesCursor;
           this.screen._setCanvasStyle();
+          this.audio.init();
+          this.input.clearInput();
           requestAnimationFrame( this._update );
         }
       } );
     }
     else {
       this._hasBegun = true;
+      this.audio.init();
       requestAnimationFrame( this._update );
     }
   }
@@ -83,7 +90,17 @@ class Engine {
   _update() {
     this.input.pollInput();
 
-    if ( this.onUpdate ) {
+    if ( this.startTransitionFrames > 0 ) {
+      this.startTransitionFrames -= 1;
+      if ( this.onUpdateStartTransition ) {
+        this.clearInput();
+        this.onUpdateStartTransition();
+      }
+      else {
+        this.screen.clear( 1 );
+      }
+    }
+    else if ( this.onUpdate ) {
       this.onUpdate();
     }
 

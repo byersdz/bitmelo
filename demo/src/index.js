@@ -40,6 +40,10 @@ engine.onUpdate = () => {
     position.y -= 1;
   }
 
+  if ( engine.input.mouse.left.down ) {
+    engine.audio.playSound();
+  }
+
   if ( count >= 100 ) {
     increment = -1;
   }

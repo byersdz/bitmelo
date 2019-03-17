@@ -170,6 +170,17 @@ class Input {
   }
 
   /**
+   * clear out all of the input
+   */
+  clearInput() {
+    for ( let i = 0; i < 256; i += 1 ) {
+      this._keysRaw[i] = 0;
+      this._lastKeys[i] = 0;
+      this._currentKeys[i] = 0;
+    }
+  }
+
+  /**
    * Update the input, should be done first thing in the game loop.
    */
   pollInput() {
