@@ -77,19 +77,22 @@ class Audio {
 
     const ticDuration = fullDuration / TICS_PER_SOUND;
 
-    osc.frequency.value = 500;
+    osc.frequency.value = 440;
 
     const gainNode = this.context.createGain();
 
-    const masterVolume = Audio.valueForVolume( volume );
+    const masterVolume = volume / 15;
     const initialVolume = sound.volumeTics[0] * masterVolume;
     gainNode.gain.setValueAtTime( Audio.valueForVolume( initialVolume ), this.context.currentTime );
+
+    osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
 
     for ( let tic = 1; tic < duration; tic += 1 ) {
       const time = this.context.currentTime + tic * ticDuration;
       const ticIndex = Audio.indexAtTic( tic, sound.loopStart, sound.loopEnd );
       const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * masterVolume );
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
+      osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
     }
 
     osc.connect( gainNode ).connect( this.context.destination );

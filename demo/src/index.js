@@ -58,9 +58,44 @@ engine.onInit = () => {
       15,
       15,
     ],
+    pitchTics: [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+      0,
+      -1,
+      -2,
+      -3,
+      -4,
+      -5,
+    ],
     wave: 3,
-    loopStart: 0,
+    loopStart: 16,
     loopEnd: 31,
+    pitchScale: 100,
   };
   engine.audio.addSound( testSound );
 
@@ -82,7 +117,7 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound( 0, 0, 100, 15, 0 );
+    engine.audio.playSound( 0, 0, 100, 9, -3 );
     // audioCount += 1;
   }
 

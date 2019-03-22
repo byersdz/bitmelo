@@ -7,6 +7,7 @@ class Sound {
     this.loopStart = -1;
     this.loopEnd = -1;
     this.wave = 0;
+    this.pitchScale = 10;
 
     if ( data ) {
       const {
@@ -16,6 +17,7 @@ class Sound {
         loopStart,
         loopEnd,
         wave,
+        pitchScale,
       } = data;
 
       if ( volumeTics && Array.isArray( volumeTics ) ) {
@@ -39,6 +41,7 @@ class Sound {
       this.wave = wave;
       this.loopStart = loopStart;
       this.loopEnd = loopEnd;
+      this.pitchScale = pitchScale;
     }
   }
 }
