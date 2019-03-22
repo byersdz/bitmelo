@@ -13,8 +13,7 @@ const position = {
 
 const engine = new Engine();
 
-let count = 10;
-let increment = 1;
+// let audioCount = 0;
 
 engine.onInit = () => {
   engine.screen.hideCursor = true;
@@ -23,7 +22,49 @@ engine.onInit = () => {
   engine.tileData.addTileset( tileset );
   engine.tileData.addTileset( tileset2 );
   engine.mapData.addTileMap( tileMap );
-  console.log( engine.fontData );
+
+  const testSound = {
+    volumeTics: [
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+    ],
+    wave: 3,
+    loopStart: 0,
+    loopEnd: 31,
+  };
+  engine.audio.addSound( testSound );
+
+  console.log( engine.audio.sounds );
 };
 
 engine.onUpdate = () => {
@@ -41,17 +82,9 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound();
+    engine.audio.playSound( 0, 0, 100, 15, 0 );
+    // audioCount += 1;
   }
-
-  if ( count >= 100 ) {
-    increment = -1;
-  }
-  else if ( count <= 1 ) {
-    increment = 1;
-  }
-
-  count += increment;
 
   engine.screen.clear( 5 );
   engine.screen.drawLine( position.x, position.y, 100, 100, 4 );
