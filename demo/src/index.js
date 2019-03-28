@@ -3,7 +3,6 @@ import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
 import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
-
 import './style.css';
 
 const position = {
@@ -92,7 +91,7 @@ engine.onInit = () => {
       -4,
       -5,
     ],
-    wave: 3,
+    wave: 0,
     loopStart: 16,
     loopEnd: 31,
     pitchScale: 100,
