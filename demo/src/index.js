@@ -1,5 +1,6 @@
 import { Engine } from '../../src/index';
 import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
+import Notes from '../../src/Audio/Notes';
 import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
@@ -12,7 +13,7 @@ const position = {
 
 const engine = new Engine();
 
-// let audioCount = 0;
+let audioCount = 0;
 
 engine.onInit = () => {
   engine.screen.hideCursor = true;
@@ -24,27 +25,27 @@ engine.onInit = () => {
 
   const testSound = {
     volumeTics: [
-      4,
-      4,
-      5,
-      5,
-      5,
-      5,
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
       15,
       15,
       15,
@@ -66,34 +67,34 @@ engine.onInit = () => {
       0,
       0,
       0,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      9,
-      8,
-      7,
-      6,
-      5,
-      4,
-      3,
-      2,
-      1,
       0,
-      -1,
-      -2,
-      -3,
-      -4,
-      -5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
     ],
-    wave: 0,
-    loopStart: 16,
-    loopEnd: 31,
+    wave: 2,
+    loopStart: -1,
+    loopEnd: -1,
     pitchScale: 100,
   };
   engine.audio.addSound( testSound );
@@ -116,8 +117,10 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound( 0, 0, 100, 9, -3 );
-    // audioCount += 1;
+    console.log( Notes.A5 );
+    console.log( audioCount );
+    engine.audio.playSound( 0, audioCount, 32, 9, 0 );
+    audioCount += 1;
   }
 
   engine.screen.clear( 5 );

@@ -1,4 +1,5 @@
 import Sound from './Sound';
+import Frequencies from './Frequencies';
 
 const TICS_PER_SOUND = 32;
 
@@ -77,7 +78,14 @@ class Audio {
 
     const ticDuration = fullDuration / TICS_PER_SOUND;
 
-    osc.frequency.value = 440;
+    let trimmedNote = note;
+    if ( trimmedNote < 0 ) {
+      trimmedNote = 0;
+    }
+    else if ( trimmedNote >= Frequencies.length ) {
+      trimmedNote = Frequencies.length - 1;
+    }
+    osc.frequency.value = Frequencies[trimmedNote];
 
     const gainNode = this.context.createGain();
 
