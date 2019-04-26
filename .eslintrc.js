@@ -17,7 +17,13 @@ module.exports = {
     "max-len": ["error", { "code": 120, "ignoreComments": true, "ignoreTrailingComments": true }],
     "operator-assignment": "off",
     "no-lonely-if": "off",
-    "no-console": 'off'
+    "no-console": 'off',
+    "prefer-destructuring": ["error", {
+      "array": false,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }]
   },
   "globals": {
     "minnow": "readonly"

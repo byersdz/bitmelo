@@ -19,7 +19,7 @@ class Audio {
     return this.sounds.length - 1;
   }
 
-  playSound( soundIndex, note, duration = 32, volume = 15, speed = 0 ) {
+  playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {
     if ( soundIndex >= this.sounds.length || soundIndex < 0 ) {
       console.error( 'Invalid sound index' );
       return;
@@ -89,23 +89,43 @@ class Audio {
 
     const gainNode = this.context.createGain();
 
-    const masterVolume = volume / 15;
-    const initialVolume = sound.volumeTics[0] * masterVolume;
+    const initialVolume = sound.volumeTics[0] * volume;
     gainNode.gain.setValueAtTime( Audio.valueForVolume( initialVolume ), this.context.currentTime );
 
     osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
 
     for ( let tic = 1; tic < duration; tic += 1 ) {
       const time = this.context.currentTime + tic * ticDuration;
-      const ticIndex = Audio.indexAtTic( tic, sound.loopStart, sound.loopEnd );
-      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * masterVolume );
+      const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * volume );
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
       osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
+      const currentNote = trimmedNote + sound.arpTics[ticIndex];
+      let currentFrequency = 0;
+      if ( currentNote < 0 ) {
+        currentFrequency = Frequencies[0];
+      }
+      else if ( currentNote >= Frequencies.length ) {
+        currentFrequency = Frequencies[Frequencies.length - 1];
+      }
+      else {
+        currentFrequency = Frequencies[currentNote];
+      }
+      osc.frequency.setValueAtTime( currentFrequency, time );
     }
+    const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );
 
+    if ( sound.releaseMode === Sound.RELEASE_EXPO ) {
+      gainNode.gain.exponentialRampToValueAtTime( 0, stopTime );
+    }
+    else {
+      // default to linear
+      gainNode.gain.linearRampToValueAtTime( 0, stopTime );
+    }
     osc.connect( gainNode ).connect( this.context.destination );
     osc.start();
-    osc.stop( this.context.currentTime + duration * ticDuration );
+
+    osc.stop( stopTime );
   }
 
   static valueForVolume( volume ) {
@@ -113,8 +133,8 @@ class Audio {
     return normalizedValue ** 2.5;
   }
 
-  static indexAtTic( tic, loopStart, loopEnd ) {
-    if ( loopStart < 0 || loopEnd < loopStart ) {
+  static indexAtTic( tic, useLoop, loopStart, loopEnd ) {
+    if ( !useLoop || loopStart < 0 || loopEnd < loopStart ) {
       // no looping
       if ( tic < 0 ) {
         return 0;

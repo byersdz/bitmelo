@@ -5,6 +5,7 @@ import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
 import tileMap from '../data/test.map.json';
 import './style.css';
+import Sound from '../../src/Audio/Sound';
 
 const position = {
   x: 0,
@@ -92,14 +93,49 @@ engine.onInit = () => {
       0,
       0,
     ],
-    wave: 2,
+    arpTics: [
+      0,
+      0,
+      0,
+      0,
+      0,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      0,
+      0,
+      0,
+      -3,
+      -3,
+      -3,
+      -3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+    wave: 3,
+    useLoop: false,
     loopStart: -1,
     loopEnd: -1,
     pitchScale: 100,
+    releaseLength: 1,
+    releaseMode: Sound.RELEASE_EXPO,
   };
   engine.audio.addSound( testSound );
-
-  console.log( engine.audio.sounds );
 };
 
 engine.onUpdate = () => {
@@ -119,7 +155,7 @@ engine.onUpdate = () => {
   if ( engine.input.mouse.left.down ) {
     console.log( Notes.A5 );
     console.log( audioCount );
-    engine.audio.playSound( 0, audioCount, 32, 9, 0 );
+    engine.audio.playSound( 0, Notes.C4, 32, 1, -2 );
     audioCount += 1;
   }
 
