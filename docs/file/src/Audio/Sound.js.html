@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">FontData | minnow-engine</title>
+  <title data-ice="title">src/Audio/Sound.js | minnow-engine</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -173,312 +173,69 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import FontData from &apos;<span><a href="file/src/FontData/FontData.js.html#lineNumber7">minnow-engine/src/FontData/FontData.js</a></span>&apos;</code></pre></div>
-  <span data-ice="access">public</span>
-  <span data-ice="kind">class</span>
-  
-  
-  
-  <span data-ice="source">| <span><a href="file/src/FontData/FontData.js.html#lineNumber7">source</a></span></span>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">src/Audio/Sound.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">
 
-<div class="self-detail detail">
-  <h1 data-ice="name">FontData</h1>
+class Sound {
+  constructor( data ) {
+    this.volumeTics = new Int8Array( 32 );
+    this.pitchTics = new Int8Array( 32 );
+    this.arpTics = new Int8Array( 32 );
+    this.useLoop = false;
+    this.loopStart = -1;
+    this.loopEnd = -1;
+    this.wave = 0;
+    this.pitchScale = 10;
+    this.releaseLength = 1;
+    this.releaseMode = Sound.RELEASE_LINEAR;
 
-  
+    if ( data ) {
+      const {
+        volumeTics,
+        pitchTics,
+        arpTics,
+        useLoop,
+        loopStart,
+        loopEnd,
+        wave,
+        pitchScale,
+        releaseLength,
+      } = data;
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
+      if ( volumeTics &amp;&amp; Array.isArray( volumeTics ) ) {
+        for ( let i = 0; i &lt; volumeTics.length; i += 1 ) {
+          this.volumeTics[i] = volumeTics[i];
+        }
+      }
 
-  
-  
-  <div class="description" data-ice="description"><p>Holds all of the font data</p>
-</div>
-  
+      if ( pitchTics &amp;&amp; Array.isArray( pitchTics ) ) {
+        for ( let i = 0; i &lt; pitchTics.length; i += 1 ) {
+          this.pitchTics[i] = pitchTics[i];
+        }
+      }
 
-  
+      if ( arpTics &amp;&amp; Array.isArray( arpTics ) ) {
+        for ( let i = 0; i &lt; arpTics.length; i += 1 ) {
+          this.arpTics[i] = arpTics[i];
+        }
+      }
 
-  
+      this.wave = wave;
+      this.useLoop = useLoop;
+      this.loopStart = loopStart;
+      this.loopEnd = loopEnd;
+      this.pitchScale = pitchScale;
+      this.releaseLength = releaseLength;
+    }
+  }
+}
 
-  
+Sound.RELEASE_LINEAR = &apos;linear&apos;;
+Sound.RELEASE_EXPO = &apos;expo&apos;;
 
-  
-</div>
+export default Sound;
+</code></pre>
 
-
-
-<div data-ice="constructorSummary"><h2>Constructor Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Constructor</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">()</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-<div data-ice="memberSummary"><h2>Member Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Members</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-member-fonts">fonts</a></span></span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-<div data-ice="methodSummary"><h2>Method Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Methods</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-method-addFont">addFont</a></span></span><span class="code" data-ice="signature">(fontData: <span>*</span>)</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-
-
-
-
-
-<div data-ice="constructorDetails"><h2 data-ice="title">Public Constructors</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-constructor-constructor">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">()</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber8">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
-<div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-fonts">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">fonts</span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber9">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
-<div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-addFont">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">addFont</span><span class="code" data-ice="signature">(fontData: <span>*</span>)</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber12">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties"><div data-ice="properties">
-  <h4 data-ice="title">Params:</h4>
-  <table class="params">
-    <thead>
-    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-    
-    <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">fontData</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
-    </tr>
-</tbody>
-  </table>
-</div>
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
 </div>
 
 <footer class="footer">

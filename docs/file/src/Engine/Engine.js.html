@@ -30,6 +30,9 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Keys">Keys</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#audio">Audio</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Audio/Audio.js~Audio.html">Audio</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Audio/Sound.js~Sound.html">Sound</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Notes">Notes</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#engine">Engine</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Engine/Engine.js~Engine.html">Engine</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#fontdata">FontData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/FontData/Font.js~Font.html">Font</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html">FontData</a></span></span></li>
@@ -176,6 +179,7 @@ import Input from &apos;../Input/Input&apos;;
 import TileData from &apos;../TileData/TileData&apos;;
 import MapData from &apos;../MapData/MapData&apos;;
 import FontData from &apos;../FontData/FontData&apos;;
+import Audio from &apos;../Audio/Audio&apos;;
 
 import standardFont from &apos;../FontData/standard.font.json&apos;;
 import smallFont from &apos;../FontData/small.font.json&apos;;
@@ -184,16 +188,22 @@ class Engine {
   constructor() {
     this.containerId = &apos;minnow-container&apos;;
     this.onInit = null;
+    this.onDrawStartScreen = null;
+    this.onUpdateStartTransition = null;
+    this.startTransitionFrames = 60;
     this.onUpdate = null;
+    this.clickToBegin = true;
     this.screen = new Screen();
     this.input = new Input();
     this.tileData = new TileData();
     this.mapData = new MapData();
     this.fontData = new FontData();
+    this.audio = new Audio();
 
     this.fontData.addFont( standardFont );
     this.fontData.addFont( smallFont );
 
+    this._hasBegun = false;
     this._update = this._update.bind( this );
   }
 
@@ -220,7 +230,34 @@ class Engine {
     this.screen.mapData = this.mapData;
     this.screen.fontData = this.fontData;
 
-    requestAnimationFrame( this._update );
+    if ( this.clickToBegin ) {
+      if ( this.onDrawStartScreen ) {
+        this.onDrawStartScreen();
+      }
+      else {
+        this.screen.clear( 1 );
+        this.screen.drawText( &apos;Click to begin...&apos;, 10, 10, 2, 1, 0 );
+      }
+      const screenHidesCursor = this.screen.hideCursor;
+      this.screen.hideCursor = false;
+      this.screen._setCanvasStyle();
+      this.screen.drawScreen();
+      this.screen.canvas.addEventListener( &apos;click&apos;, () =&gt; {
+        if ( !this._hasBegun ) {
+          this._hasBegun = true;
+          this.screen.hideCursor = screenHidesCursor;
+          this.screen._setCanvasStyle();
+          this.audio.init();
+          this.input.clearInput();
+          requestAnimationFrame( this._update );
+        }
+      } );
+    }
+    else {
+      this._hasBegun = true;
+      this.audio.init();
+      requestAnimationFrame( this._update );
+    }
   }
 
   /**
@@ -229,7 +266,17 @@ class Engine {
   _update() {
     this.input.pollInput();
 
-    if ( this.onUpdate ) {
+    if ( this.startTransitionFrames &gt; 0 ) {
+      this.startTransitionFrames -= 1;
+      if ( this.onUpdateStartTransition ) {
+        this.clearInput();
+        this.onUpdateStartTransition();
+      }
+      else {
+        this.screen.clear( 1 );
+      }
+    }
+    else if ( this.onUpdate ) {
       this.onUpdate();
     }
 

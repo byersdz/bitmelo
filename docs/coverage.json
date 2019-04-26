@@ -1,13 +1,53 @@
 {
-  "coverage": "18.72%",
-  "expectCount": 267,
-  "actualCount": 50,
+  "coverage": "17.17%",
+  "expectCount": 297,
+  "actualCount": 51,
   "files": {
-    "src/Engine/Engine.js": {
+    "src/Audio/Audio.js": {
+      "expectCount": 10,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        7,
+        8,
+        9,
+        12,
+        17,
+        22,
+        131,
+        136
+      ]
+    },
+    "src/Audio/Notes.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        2
+      ]
+    },
+    "src/Audio/Sound.js": {
       "expectCount": 12,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    "src/Engine/Engine.js": {
+      "expectCount": 18,
       "actualCount": 2,
       "undocumentLines": [
-        10,
         11,
         12,
         13,
@@ -16,7 +56,14 @@
         16,
         17,
         18,
-        19
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        30
       ]
     },
     "src/FontData/Font.js": {
@@ -52,8 +99,8 @@
       ]
     },
     "src/Input/Input.js": {
-      "expectCount": 54,
-      "actualCount": 9,
+      "expectCount": 55,
+      "actualCount": 10,
       "undocumentLines": [
         3,
         4,
@@ -97,9 +144,9 @@
         144,
         157,
         168,
-        262,
-        286,
-        292
+        273,
+        297,
+        303
       ]
     },
     "src/Input/Keys.js": {
