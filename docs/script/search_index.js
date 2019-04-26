@@ -18,6 +18,12 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "minnow-engine/src/audio/audio.js~audio",
+    "class/src/Audio/Audio.js~Audio.html",
+    "<span>Audio</span> <span class=\"search-result-import-path\">minnow-engine/src/Audio/Audio.js</span>",
+    "class"
+  ],
+  [
     "minnow-engine/src/input/keys.js~backspace",
     "variable/index.html#static-variable-BACKSPACE",
     "<span>BACKSPACE</span> <span class=\"search-result-import-path\">minnow-engine/src/Input/Keys.js</span>",
@@ -582,6 +588,12 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "minnow-engine/src/audio/notes.js~notes",
+    "variable/index.html#static-variable-Notes",
+    "<span>Notes</span> <span class=\"search-result-import-path\">minnow-engine/src/Audio/Notes.js</span>",
+    "variable"
+  ],
+  [
     "minnow-engine/src/input/keys.js~one",
     "variable/index.html#static-variable-ONE",
     "<span>ONE</span> <span class=\"search-result-import-path\">minnow-engine/src/Input/Keys.js</span>",
@@ -729,6 +741,12 @@ window.esdocSearchIndex = [
     "minnow-engine/src/screen/screen.js~screen",
     "class/src/Screen/Screen.js~Screen.html",
     "<span>Screen</span> <span class=\"search-result-import-path\">minnow-engine/src/Screen/Screen.js</span>",
+    "class"
+  ],
+  [
+    "minnow-engine/src/audio/sound.js~sound",
+    "class/src/Audio/Sound.js~Sound.html",
+    "<span>Sound</span> <span class=\"search-result-import-path\">minnow-engine/src/Audio/Sound.js</span>",
     "class"
   ],
   [
@@ -1104,10 +1122,154 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/audio/audio.js",
+    "file/src/Audio/Audio.js.html",
+    "src/Audio/Audio.js",
+    "file"
+  ],
+  [
+    "src/audio/audio.js~audio#addsound",
+    "class/src/Audio/Audio.js~Audio.html#instance-method-addSound",
+    "src/Audio/Audio.js~Audio#addSound",
+    "method"
+  ],
+  [
+    "src/audio/audio.js~audio#constructor",
+    "class/src/Audio/Audio.js~Audio.html#instance-constructor-constructor",
+    "src/Audio/Audio.js~Audio#constructor",
+    "method"
+  ],
+  [
+    "src/audio/audio.js~audio#context",
+    "class/src/Audio/Audio.js~Audio.html#instance-member-context",
+    "src/Audio/Audio.js~Audio#context",
+    "member"
+  ],
+  [
+    "src/audio/audio.js~audio#init",
+    "class/src/Audio/Audio.js~Audio.html#instance-method-init",
+    "src/Audio/Audio.js~Audio#init",
+    "method"
+  ],
+  [
+    "src/audio/audio.js~audio#playsound",
+    "class/src/Audio/Audio.js~Audio.html#instance-method-playSound",
+    "src/Audio/Audio.js~Audio#playSound",
+    "method"
+  ],
+  [
+    "src/audio/audio.js~audio#sounds",
+    "class/src/Audio/Audio.js~Audio.html#instance-member-sounds",
+    "src/Audio/Audio.js~Audio#sounds",
+    "member"
+  ],
+  [
+    "src/audio/audio.js~audio.indexattic",
+    "class/src/Audio/Audio.js~Audio.html#static-method-indexAtTic",
+    "src/Audio/Audio.js~Audio.indexAtTic",
+    "method"
+  ],
+  [
+    "src/audio/audio.js~audio.valueforvolume",
+    "class/src/Audio/Audio.js~Audio.html#static-method-valueForVolume",
+    "src/Audio/Audio.js~Audio.valueForVolume",
+    "method"
+  ],
+  [
+    "src/audio/frequencies.js",
+    "file/src/Audio/Frequencies.js.html",
+    "src/Audio/Frequencies.js",
+    "file"
+  ],
+  [
+    "src/audio/notes.js",
+    "file/src/Audio/Notes.js.html",
+    "src/Audio/Notes.js",
+    "file"
+  ],
+  [
+    "src/audio/sound.js",
+    "file/src/Audio/Sound.js.html",
+    "src/Audio/Sound.js",
+    "file"
+  ],
+  [
+    "src/audio/sound.js~sound#arptics",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-arpTics",
+    "src/Audio/Sound.js~Sound#arpTics",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#constructor",
+    "class/src/Audio/Sound.js~Sound.html#instance-constructor-constructor",
+    "src/Audio/Sound.js~Sound#constructor",
+    "method"
+  ],
+  [
+    "src/audio/sound.js~sound#loopend",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-loopEnd",
+    "src/Audio/Sound.js~Sound#loopEnd",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#loopstart",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-loopStart",
+    "src/Audio/Sound.js~Sound#loopStart",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#pitchscale",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-pitchScale",
+    "src/Audio/Sound.js~Sound#pitchScale",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#pitchtics",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-pitchTics",
+    "src/Audio/Sound.js~Sound#pitchTics",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#releaselength",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-releaseLength",
+    "src/Audio/Sound.js~Sound#releaseLength",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#releasemode",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-releaseMode",
+    "src/Audio/Sound.js~Sound#releaseMode",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#useloop",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-useLoop",
+    "src/Audio/Sound.js~Sound#useLoop",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#volumetics",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-volumeTics",
+    "src/Audio/Sound.js~Sound#volumeTics",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#wave",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-wave",
+    "src/Audio/Sound.js~Sound#wave",
+    "member"
+  ],
+  [
     "src/engine/engine.js",
     "file/src/Engine/Engine.js.html",
     "src/Engine/Engine.js",
     "file"
+  ],
+  [
+    "src/engine/engine.js~engine#_hasbegun",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-_hasBegun",
+    "src/Engine/Engine.js~Engine#_hasBegun",
+    "member"
   ],
   [
     "src/engine/engine.js~engine#_update",
@@ -1116,10 +1278,22 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/engine/engine.js~engine#audio",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-audio",
+    "src/Engine/Engine.js~Engine#audio",
+    "member"
+  ],
+  [
     "src/engine/engine.js~engine#begin",
     "class/src/Engine/Engine.js~Engine.html#instance-method-begin",
     "src/Engine/Engine.js~Engine#begin",
     "method"
+  ],
+  [
+    "src/engine/engine.js~engine#clicktobegin",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-clickToBegin",
+    "src/Engine/Engine.js~Engine#clickToBegin",
+    "member"
   ],
   [
     "src/engine/engine.js~engine#constructor",
@@ -1152,6 +1326,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/engine/engine.js~engine#ondrawstartscreen",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-onDrawStartScreen",
+    "src/Engine/Engine.js~Engine#onDrawStartScreen",
+    "member"
+  ],
+  [
     "src/engine/engine.js~engine#oninit",
     "class/src/Engine/Engine.js~Engine.html#instance-member-onInit",
     "src/Engine/Engine.js~Engine#onInit",
@@ -1164,9 +1344,21 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/engine/engine.js~engine#onupdatestarttransition",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-onUpdateStartTransition",
+    "src/Engine/Engine.js~Engine#onUpdateStartTransition",
+    "member"
+  ],
+  [
     "src/engine/engine.js~engine#screen",
     "class/src/Engine/Engine.js~Engine.html#instance-member-screen",
     "src/Engine/Engine.js~Engine#screen",
+    "member"
+  ],
+  [
+    "src/engine/engine.js~engine#starttransitionframes",
+    "class/src/Engine/Engine.js~Engine.html#instance-member-startTransitionFrames",
+    "src/Engine/Engine.js~Engine#startTransitionFrames",
     "member"
   ],
   [
@@ -1426,6 +1618,12 @@ window.esdocSearchIndex = [
     "class/src/Input/Input.js~Input.html#instance-member-canvasScale",
     "src/Input/Input.js~Input#canvasScale",
     "member"
+  ],
+  [
+    "src/input/input.js~input#clearinput",
+    "class/src/Input/Input.js~Input.html#instance-method-clearInput",
+    "src/Input/Input.js~Input#clearInput",
+    "method"
   ],
   [
     "src/input/input.js~input#constructor",

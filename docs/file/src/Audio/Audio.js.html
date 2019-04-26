@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">FontData | minnow-engine</title>
+  <title data-ice="title">src/Audio/Audio.js | minnow-engine</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -173,312 +173,171 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import FontData from &apos;<span><a href="file/src/FontData/FontData.js.html#lineNumber7">minnow-engine/src/FontData/FontData.js</a></span>&apos;</code></pre></div>
-  <span data-ice="access">public</span>
-  <span data-ice="kind">class</span>
-  
-  
-  
-  <span data-ice="source">| <span><a href="file/src/FontData/FontData.js.html#lineNumber7">source</a></span></span>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">src/Audio/Audio.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Sound from &apos;./Sound&apos;;
+import Frequencies from &apos;./Frequencies&apos;;
 
-<div class="self-detail detail">
-  <h1 data-ice="name">FontData</h1>
+const TICS_PER_SOUND = 32;
 
-  
+class Audio {
+  constructor() {
+    this.context = null;
+    this.sounds = [];
+  }
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  init() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    this.context = new AudioContext();
+  }
 
-  
-  
-  <div class="description" data-ice="description"><p>Holds all of the font data</p>
-</div>
-  
+  addSound( soundData ) {
+    this.sounds.push( new Sound( soundData ) );
+    return this.sounds.length - 1;
+  }
 
-  
+  playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {
+    if ( soundIndex &gt;= this.sounds.length || soundIndex &lt; 0 ) {
+      console.error( &apos;Invalid sound index&apos; );
+      return;
+    }
 
-  
+    const sound = this.sounds[soundIndex];
 
-  
+    const osc = this.context.createOscillator();
 
-  
-</div>
+    switch ( sound.wave ) {
+      case 0:
+        osc.type = &apos;sine&apos;;
+        break;
+      case 1:
+        osc.type = &apos;triangle&apos;;
+        break;
+      case 2:
+        osc.type = &apos;square&apos;;
+        break;
+      case 3:
+        osc.type = &apos;sawtooth&apos;;
+        break;
+      default:
+        osc.type = &apos;sine&apos;;
+        break;
+    }
 
+    let fullDuration = 1;
 
+    switch ( speed ) {
+      case -1:
+        fullDuration = 1.5;
+        break;
+      case -2:
+        fullDuration = 2;
+        break;
+      case -3:
+        fullDuration = 2.5;
+        break;
+      case -4:
+        fullDuration = 3;
+        break;
+      case 1:
+        fullDuration = 0.75;
+        break;
+      case 2:
+        fullDuration = 0.5;
+        break;
+      case 3:
+        fullDuration = 0.25;
+        break;
+      default:
+        fullDuration = 1;
+        break;
+    }
 
-<div data-ice="constructorSummary"><h2>Constructor Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Constructor</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">()</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-<div data-ice="memberSummary"><h2>Member Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Members</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-member-fonts">fonts</a></span></span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-<div data-ice="methodSummary"><h2>Method Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Methods</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/FontData/FontData.js~FontData.html#instance-method-addFont">addFont</a></span></span><span class="code" data-ice="signature">(fontData: <span>*</span>)</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
+    const ticDuration = fullDuration / TICS_PER_SOUND;
 
+    let trimmedNote = note;
+    if ( trimmedNote &lt; 0 ) {
+      trimmedNote = 0;
+    }
+    else if ( trimmedNote &gt;= Frequencies.length ) {
+      trimmedNote = Frequencies.length - 1;
+    }
+    osc.frequency.value = Frequencies[trimmedNote];
 
+    const gainNode = this.context.createGain();
 
+    const initialVolume = sound.volumeTics[0] * volume;
+    gainNode.gain.setValueAtTime( Audio.valueForVolume( initialVolume ), this.context.currentTime );
 
+    osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
 
-<div data-ice="constructorDetails"><h2 data-ice="title">Public Constructors</h2>
+    for ( let tic = 1; tic &lt; duration; tic += 1 ) {
+      const time = this.context.currentTime + tic * ticDuration;
+      const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * volume );
+      gainNode.gain.linearRampToValueAtTime( currentVolume, time );
+      osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
+      const currentNote = trimmedNote + sound.arpTics[ticIndex];
+      let currentFrequency = 0;
+      if ( currentNote &lt; 0 ) {
+        currentFrequency = Frequencies[0];
+      }
+      else if ( currentNote &gt;= Frequencies.length ) {
+        currentFrequency = Frequencies[Frequencies.length - 1];
+      }
+      else {
+        currentFrequency = Frequencies[currentNote];
+      }
+      osc.frequency.setValueAtTime( currentFrequency, time );
+    }
+    const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );
 
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-constructor-constructor">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">()</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber8">source</a></span></span>
-    </span>
-  </h3>
+    if ( sound.releaseMode === Sound.RELEASE_EXPO ) {
+      gainNode.gain.exponentialRampToValueAtTime( 0, stopTime );
+    }
+    else {
+      // default to linear
+      gainNode.gain.linearRampToValueAtTime( 0, stopTime );
+    }
+    osc.connect( gainNode ).connect( this.context.destination );
+    osc.start();
 
-  
-  
-  
-  
+    osc.stop( stopTime );
+  }
 
-  
+  static valueForVolume( volume ) {
+    const normalizedValue = volume / 15;
+    return normalizedValue ** 2.5;
+  }
 
-  <div data-ice="properties">
-</div>
+  static indexAtTic( tic, useLoop, loopStart, loopEnd ) {
+    if ( !useLoop || loopStart &lt; 0 || loopEnd &lt; loopStart ) {
+      // no looping
+      if ( tic &lt; 0 ) {
+        return 0;
+      }
 
-  
+      if ( tic &gt;= TICS_PER_SOUND ) {
+        return TICS_PER_SOUND - 1;
+      }
 
-  
+      return tic;
+    }
 
-  
+    if ( tic &lt;= loopEnd ) {
+      // not looping yet
+      return tic;
+    }
 
-  
+    const loopLength = loopEnd - loopStart + 1;
+    const loopAdd = ( tic - loopStart ) % loopLength;
 
-  
+    return loopStart + loopAdd;
+  }
+}
 
-  
+export default Audio;
+</code></pre>
 
-  
-
-  
-  
-</div>
-</div>
-<div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-fonts">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">fonts</span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber9">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
-<div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-addFont">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">addFont</span><span class="code" data-ice="signature">(fontData: <span>*</span>)</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/FontData/FontData.js.html#lineNumber12">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties"><div data-ice="properties">
-  <h4 data-ice="title">Params:</h4>
-  <table class="params">
-    <thead>
-    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-    
-    <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">fontData</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
-    </tr>
-</tbody>
-  </table>
-</div>
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
 </div>
 
 <footer class="footer">
