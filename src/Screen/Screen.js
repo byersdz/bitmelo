@@ -9,7 +9,7 @@ export const SCALE_FIT_WINDOW = 2;
  */
 class Screen {
   constructor() {
-    this.conainerId = 'minnow-container';
+    this.conainerId = 'bitmelo-container';
     this.container = null;
     this.width = 320;
     this.height = 180;

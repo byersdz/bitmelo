@@ -14,8 +14,6 @@ const position = {
 
 const engine = new Engine();
 
-let audioCount = 0;
-
 engine.onInit = () => {
   engine.screen.hideCursor = true;
   engine.screen.scale = 4;
@@ -128,12 +126,12 @@ engine.onInit = () => {
       0,
     ],
     wave: 3,
-    useLoop: false,
-    loopStart: -1,
-    loopEnd: -1,
+    useLoop: true,
+    loopStart: 0,
+    loopEnd: 31,
     pitchScale: 100,
-    releaseLength: 1,
-    releaseMode: Sound.RELEASE_EXPO,
+    releaseLength: 10,
+    releaseMode: Sound.RELEASE_LINEAR,
   };
   engine.audio.addSound( testSound );
 };
@@ -153,10 +151,10 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    console.log( Notes.A5 );
-    console.log( audioCount );
-    engine.audio.playSound( 0, Notes.C4, 32, 1, -2 );
-    audioCount += 1;
+    engine.audio.playSound( 0, Notes.C4, -1, 1, 0 );
+  }
+  else if ( engine.input.mouse.left.up ) {
+    engine.audio.stopInfiniteSound( 0 );
   }
 
   engine.screen.clear( 5 );

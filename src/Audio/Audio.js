@@ -1,18 +1,45 @@
 import Sound from './Sound';
 import Frequencies from './Frequencies';
 
-const TICS_PER_SOUND = 32;
-
 class Audio {
   constructor() {
     this.context = null;
     this.sounds = [];
+    this.lookAheadTime = 0.05; // in seconds
   }
 
   init() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.context = new AudioContext();
   }
+
+
+  update() {
+    let sound = null;
+    for ( let i = 0; i < this.sounds.length; i += 1 ) {
+      sound = this.sounds[i];
+      if ( sound.isPlayingInfiniteSound ) {
+        const lastScheduledTime = this.context.currentTime - sound.infiniteStartTime + this.lookAheadTime;
+        const totalNumberOfTics = Math.floor( lastScheduledTime / sound.infiniteTicDuration );
+        if ( totalNumberOfTics > sound.infiniteTicsPlayed ) {
+          for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {
+            const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;
+            const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
+            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * sound.infiniteVolume );
+
+            sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );
+            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
+            const currentNote = sound.infiniteNote + sound.arpTics[ticIndex];
+            const currentFrequency = Audio.frequencyForNote( currentNote );
+            sound.infiniteOsc.frequency.setValueAtTime( currentFrequency, time );
+
+            sound.infiniteTicsPlayed = tic;
+          }
+        }
+      }
+    }
+  }
+
 
   addSound( soundData ) {
     this.sounds.push( new Sound( soundData ) );
@@ -25,67 +52,20 @@ class Audio {
       return;
     }
 
+    if ( duration < 0 ) {
+      this.playInfiniteSound( soundIndex, note, volume, speed );
+      return;
+    }
+
     const sound = this.sounds[soundIndex];
 
     const osc = this.context.createOscillator();
+    osc.type = Audio.oscTypeForWaveValue( sound.wave );
 
-    switch ( sound.wave ) {
-      case 0:
-        osc.type = 'sine';
-        break;
-      case 1:
-        osc.type = 'triangle';
-        break;
-      case 2:
-        osc.type = 'square';
-        break;
-      case 3:
-        osc.type = 'sawtooth';
-        break;
-      default:
-        osc.type = 'sine';
-        break;
-    }
+    const ticDuration = Audio.ticDurationForSpeedValue( speed );
+    console.log( ticDuration );
 
-    let fullDuration = 1;
-
-    switch ( speed ) {
-      case -1:
-        fullDuration = 1.5;
-        break;
-      case -2:
-        fullDuration = 2;
-        break;
-      case -3:
-        fullDuration = 2.5;
-        break;
-      case -4:
-        fullDuration = 3;
-        break;
-      case 1:
-        fullDuration = 0.75;
-        break;
-      case 2:
-        fullDuration = 0.5;
-        break;
-      case 3:
-        fullDuration = 0.25;
-        break;
-      default:
-        fullDuration = 1;
-        break;
-    }
-
-    const ticDuration = fullDuration / TICS_PER_SOUND;
-
-    let trimmedNote = note;
-    if ( trimmedNote < 0 ) {
-      trimmedNote = 0;
-    }
-    else if ( trimmedNote >= Frequencies.length ) {
-      trimmedNote = Frequencies.length - 1;
-    }
-    osc.frequency.value = Frequencies[trimmedNote];
+    osc.frequency.value = Audio.frequencyForNote( note );
 
     const gainNode = this.context.createGain();
 
@@ -100,17 +80,8 @@ class Audio {
       const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * volume );
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
       osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
-      const currentNote = trimmedNote + sound.arpTics[ticIndex];
-      let currentFrequency = 0;
-      if ( currentNote < 0 ) {
-        currentFrequency = Frequencies[0];
-      }
-      else if ( currentNote >= Frequencies.length ) {
-        currentFrequency = Frequencies[Frequencies.length - 1];
-      }
-      else {
-        currentFrequency = Frequencies[currentNote];
-      }
+      const currentNote = note + sound.arpTics[ticIndex];
+      const currentFrequency = Audio.frequencyForNote( currentNote );
       osc.frequency.setValueAtTime( currentFrequency, time );
     }
     const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );
@@ -128,6 +99,98 @@ class Audio {
     osc.stop( stopTime );
   }
 
+  stopInfiniteSound( soundIndex ) {
+    const sound = this.sounds[soundIndex];
+    if ( sound.isPlayingInfiniteSound ) {
+      const stopTime = this.context.currentTime + ( sound.releaseLength * sound.infiniteTicDuration );
+      if ( sound.releaseMode === Sound.RELEASE_EXPO ) {
+        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0, stopTime );
+      }
+      else {
+        // default to linear
+        sound.infiniteGain.gain.linearRampToValueAtTime( 0, stopTime );
+      }
+      sound.infiniteTicsPlayed = 0;
+      sound.infiniteOsc.stop( stopTime );
+      sound.isPlayingInfiniteSound = false;
+    }
+  }
+
+  playInfiniteSound( soundIndex, note, volume, speed ) {
+    const sound = this.sounds[soundIndex];
+    if ( sound.isPlayingInfiniteSound ) {
+      this.stopSound( soundIndex );
+    }
+
+    sound.isPlayingInfiniteSound = true;
+    sound.infiniteStartTime = this.context.currentTime;
+    sound.infiniteOsc = this.context.createOscillator();
+    sound.infiniteTicDuration = Audio.ticDurationForSpeedValue( speed );
+    sound.infiniteGain = this.context.createGain();
+    sound.infiniteVolume = volume;
+    sound.infiniteNote = note;
+
+    sound.infiniteOsc.frequency.value = Audio.frequencyForNote( note );
+    sound.infiniteOsc.type = Audio.oscTypeForWaveValue( sound.wave );
+
+    const initialVolume = sound.volumeTics[0] * volume;
+    sound.infiniteGain.gain.value = initialVolume;
+
+    sound.infiniteOsc.connect( sound.infiniteGain ).connect( this.context.destination );
+    sound.infiniteOsc.start();
+  }
+
+  static frequencyForNote( note ) {
+    let trimmedNote = note;
+    if ( trimmedNote < 0 ) {
+      trimmedNote = 0;
+    }
+    else if ( trimmedNote >= Frequencies.length ) {
+      trimmedNote = Frequencies.length - 1;
+    }
+    return Frequencies[trimmedNote];
+  }
+
+  static ticDurationForSpeedValue( speed ) {
+    return Audio.fullDurationForSpeedValue( speed ) / Audio.TICS_PER_SOUND;
+  }
+
+  static fullDurationForSpeedValue( speed ) {
+    switch ( speed ) {
+      case -1:
+        return 1.5;
+      case -2:
+        return 2;
+      case -3:
+        return 2.5;
+      case -4:
+        return 3;
+      case 1:
+        return 0.75;
+      case 2:
+        return 0.5;
+      case 3:
+        return 0.25;
+      default:
+        return 1;
+    }
+  }
+
+  static oscTypeForWaveValue( waveValue ) {
+    switch ( waveValue ) {
+      case 0:
+        return 'sine';
+      case 1:
+        return 'triangle';
+      case 2:
+        return 'square';
+      case 3:
+        return 'sawtooth';
+      default:
+        return 'sine';
+    }
+  }
+
   static valueForVolume( volume ) {
     const normalizedValue = volume / 15;
     return normalizedValue ** 2.5;
@@ -140,8 +203,8 @@ class Audio {
         return 0;
       }
 
-      if ( tic >= TICS_PER_SOUND ) {
-        return TICS_PER_SOUND - 1;
+      if ( tic >= Audio.TICS_PER_SOUND ) {
+        return Audio.TICS_PER_SOUND - 1;
       }
 
       return tic;
@@ -158,5 +221,7 @@ class Audio {
     return loopStart + loopAdd;
   }
 }
+
+Audio.TICS_PER_SOUND = 32;
 
 export default Audio;

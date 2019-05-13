@@ -13,6 +13,15 @@ class Sound {
     this.releaseLength = 1;
     this.releaseMode = Sound.RELEASE_LINEAR;
 
+    this.isPlayingInfiniteSound = false;
+    this.infiniteStartTime = 0;
+    this.infiniteOsc = null;
+    this.infiniteGain = null;
+    this.infiniteTicDuration = 0;
+    this.infiniteTicsPlayed = 0;
+    this.infiniteVolume = 0;
+    this.infiniteNote = 0;
+
     if ( data ) {
       const {
         volumeTics,

@@ -79,7 +79,7 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# minnow specific
+# bitmelo specific
 demo/
 docs/
 config/

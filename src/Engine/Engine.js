@@ -10,7 +10,7 @@ import smallFont from '../FontData/small.font.json';
 
 class Engine {
   constructor() {
-    this.containerId = 'minnow-container';
+    this.containerId = 'bitmelo-container';
     this.onInit = null;
     this.onDrawStartScreen = null;
     this.onUpdateStartTransition = null;
@@ -39,6 +39,7 @@ class Engine {
       this.onInit();
     }
 
+    this.screen.conainerId = this.containerId;
     this.screen.init();
     this.screen.onScaleChange = ( scale ) => {
       this.input.canvasScale = scale;
@@ -102,6 +103,7 @@ class Engine {
     }
     else if ( this.onUpdate ) {
       this.onUpdate();
+      this.audio.update();
     }
 
     this.screen.drawScreen();
