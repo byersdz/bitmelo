@@ -115,6 +115,12 @@ class Audio {
     }
   }
 
+  stopAllInfiniteSounds() {
+    for ( let i = 0; i < this.sounds.length; i += 1 ) {
+      this.stopInfiniteSound( i );
+    }
+  }
+
   playInfiniteSound( soundIndex, note, volume, speed ) {
     const sound = this.sounds[soundIndex];
     if ( sound.isPlayingInfiniteSound ) {

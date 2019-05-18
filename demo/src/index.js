@@ -151,10 +151,10 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound( 0, Notes.C4, 32, 1, 0 );
+    engine.audio.playSound( 0, Notes.C4, -1, 1, 0 );
   }
   else if ( engine.input.mouse.left.up ) {
-    engine.audio.stopInfiniteSound( 0 );
+    engine.audio.stopAllInfiniteSounds();
   }
 
   engine.screen.clear( 5 );
