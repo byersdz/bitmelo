@@ -125,7 +125,7 @@ engine.onInit = () => {
       0,
       0,
     ],
-    wave: 3,
+    wave: 0,
     useLoop: true,
     loopStart: 0,
     loopEnd: 31,
@@ -151,7 +151,7 @@ engine.onUpdate = () => {
   }
 
   if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound( 0, Notes.C4, -1, 1, 0 );
+    engine.audio.playSound( 0, Notes.C4, 32, 1, 0 );
   }
   else if ( engine.input.mouse.left.up ) {
     engine.audio.stopInfiniteSound( 0 );

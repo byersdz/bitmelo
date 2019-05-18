@@ -25,7 +25,7 @@ class Audio {
           for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {
             const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;
             const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
-            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * sound.infiniteVolume );
+            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * sound.infiniteVolume;
 
             sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );
             sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
@@ -63,21 +63,20 @@ class Audio {
     osc.type = Audio.oscTypeForWaveValue( sound.wave );
 
     const ticDuration = Audio.ticDurationForSpeedValue( speed );
-    console.log( ticDuration );
 
     osc.frequency.value = Audio.frequencyForNote( note );
 
     const gainNode = this.context.createGain();
 
-    const initialVolume = sound.volumeTics[0] * volume;
-    gainNode.gain.setValueAtTime( Audio.valueForVolume( initialVolume ), this.context.currentTime );
+    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;
+    gainNode.gain.setValueAtTime( initialVolume, this.context.currentTime );
 
     osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
 
     for ( let tic = 1; tic < duration; tic += 1 ) {
       const time = this.context.currentTime + tic * ticDuration;
       const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
-      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * volume );
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * volume;
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
       osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
       const currentNote = note + sound.arpTics[ticIndex];
@@ -133,8 +132,8 @@ class Audio {
     sound.infiniteOsc.frequency.value = Audio.frequencyForNote( note );
     sound.infiniteOsc.type = Audio.oscTypeForWaveValue( sound.wave );
 
-    const initialVolume = sound.volumeTics[0] * volume;
-    sound.infiniteGain.gain.value = initialVolume;
+    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;
+    sound.infiniteGain.gain.setValueAtTime( initialVolume, this.context.currentTime );
 
     sound.infiniteOsc.connect( sound.infiniteGain ).connect( this.context.destination );
     sound.infiniteOsc.start();
