@@ -1,4 +1,6 @@
 
+import standardPalette from './standardPalette';
+
 export const SCALE_CONSTANT = 1;
 export const SCALE_FIT_WINDOW = 2;
 
@@ -82,6 +84,7 @@ class Screen {
 
     if ( !this._palette ) {
       // set the default palette
+      /*
       this._palette = [
         [0x00, 0x00, 0x00],
         [0x00, 0x00, 0x00],
@@ -90,6 +93,8 @@ class Screen {
         [0x00, 0xff, 0x00],
         [0x00, 0x00, 0xff],
       ];
+      */
+      this._palette = standardPalette;
     }
 
     this._buildPalette();
@@ -185,21 +190,47 @@ class Screen {
     if ( this._isLittleEndian ) {
       for ( let i = 0; i < this._palette.length; i += 1 ) {
         currentColor = this._palette[i];
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        if ( typeof currentColor === 'string' ) {
+          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );
+          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );
+          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );
+        }
+        else {
+          r = currentColor[0];
+          g = currentColor[1];
+          b = currentColor[2];
+        }
         this._generatedPalette[i] = (
           ( 255 << 24 ) // a
-          | ( currentColor[2] << 16 ) // b
-          | ( currentColor[1] << 8 ) // g
-          | currentColor[0] // r
+          | ( b << 16 ) // b
+          | ( g << 8 ) // g
+          | r // r
         );
       }
     }
     else {
       for ( let i = 0; i < this._palette.length; i += 1 ) {
         currentColor = this._palette[i];
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        if ( typeof currentColor === 'string' ) {
+          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );
+          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );
+          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );
+        }
+        else {
+          r = currentColor[0];
+          g = currentColor[1];
+          b = currentColor[2];
+        }
         this._generatedPalette[i] = (
-          ( currentColor[0] << 24 ) // r
-          | ( currentColor[1] << 16 ) // g
-          | ( currentColor[2] << 8 ) // b
+          ( r << 24 ) // r
+          | ( g << 16 ) // g
+          | ( b << 8 ) // b
           | 255 // a
         );
       }

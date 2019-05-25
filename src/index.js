@@ -19,5 +19,6 @@ export { default as TileMap } from './MapData/TileMap';
 export { default as Engine } from './Engine/Engine';
 
 export { default as Screen } from './Screen/Screen';
+export { default as standardPalette } from './Screen/standardPalette';
 
 export { default as TileData } from './TileData/TileData';
