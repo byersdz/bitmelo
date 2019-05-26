@@ -1,6 +1,6 @@
 {
   "name": "bitmelo",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "A game engine for low resolution games.",
   "main": "src/index.js",
   "scripts": {
