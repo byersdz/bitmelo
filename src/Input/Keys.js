@@ -1,205 +1,209 @@
 
-export const BACKSPACE = 8;
-export const TAB = 9;
-export const ENTER = 13;
-export const SHIFT = 16;
-export const CTRL = 17;
-export const ALT = 18;
-export const PAUSE_BREAK = 19;
-export const CAPSLOCK = 20;
-export const ESCAPE = 27;
-export const SPACE = 32;
-export const PAGE_UP = 33;
-export const PAGE_DOWN = 34;
-export const END = 35;
-export const HOME = 36;
-export const LEFT_ARROW = 37;
-export const UP_ARROW = 38;
-export const RIGHT_ARROW = 39;
-export const DOWN_ARROW = 40;
-export const INSERT = 45;
-export const DELETE = 46;
-export const ZERO = 48;
-export const ONE = 49;
-export const TWO = 50;
-export const THREE = 51;
-export const FOUR = 52;
-export const FIVE = 53;
-export const SIX = 54;
-export const SEVEN = 55;
-export const EIGHT = 56;
-export const NINE = 57;
-export const A_KEY = 65;
-export const B_KEY = 66;
-export const C_KEY = 67;
-export const D_KEY = 68;
-export const E_KEY = 69;
-export const F_KEY = 70;
-export const G_KEY = 71;
-export const H_KEY = 72;
-export const I_KEY = 73;
-export const J_KEY = 74;
-export const K_KEY = 75;
-export const L_KEY = 76;
-export const M_KEY = 77;
-export const N_KEY = 78;
-export const O_KEY = 79;
-export const P_KEY = 80;
-export const Q_KEY = 81;
-export const R_KEY = 82;
-export const S_KEY = 83;
-export const T_KEY = 84;
-export const U_KEY = 85;
-export const V_KEY = 86;
-export const W_KEY = 87;
-export const X_KEY = 88;
-export const Y_KEY = 89;
-export const Z_KEY = 90;
-export const LEFT_WINDOW = 91;
-export const RIGHT_WINDOW = 92;
-export const SELECT = 93;
-export const NUM_ZERO = 96;
-export const NUM_ONE = 97;
-export const NUM_TWO = 98;
-export const NUM_THREE = 99;
-export const NUM_FOUR = 100;
-export const NUM_FIVE = 101;
-export const NUM_SIX = 102;
-export const NUM_SEVEN = 103;
-export const NUM_EIGHT = 104;
-export const NUM_NINE = 105;
-export const MULTIPLY = 106;
-export const ADD = 107;
-export const SUBTRACT = 109;
-export const DECIMAL_POINT = 110;
-export const DIVIDE = 111;
-export const F1 = 112;
-export const F2 = 113;
-export const F3 = 114;
-export const F4 = 115;
-export const F5 = 116;
-export const F6 = 117;
-export const F7 = 118;
-export const F8 = 119;
-export const F9 = 120;
-export const F10 = 121;
-export const F11 = 122;
-export const F12 = 123;
-export const NUM_LOCK = 144;
-export const SCROLL_LOCK = 145;
-export const SEMI_COLON = 186;
-export const EQUAL_SIGN = 187;
-export const COMMA = 188;
-export const DASH = 189;
-export const PERIOD = 190;
-export const FORWARD_SLASH = 191;
-export const GRAVE_ACCENT = 192;
-export const OPEN_BRACKET = 219;
-export const BACK_SLASH = 220;
-export const CLOSE_BRACKET = 221;
-export const SINGLE_QUOTE = 222;
+const Keys = {};
 
-export const codesToKeyCodes = {
-  Backspace: BACKSPACE,
-  Tab: TAB,
-  Enter: ENTER,
-  ShiftLeft: SHIFT,
-  ShiftRight: SHIFT,
-  ControlLeft: CTRL,
-  ControlRight: CTRL,
-  AltLeft: ALT,
-  AltRight: ALT,
-  CapsLock: CAPSLOCK,
-  Escape: ESCAPE,
-  Space: SPACE,
-  PageUp: PAGE_UP,
-  PageDown: PAGE_DOWN,
-  End: END,
-  Home: HOME,
-  ArrowLeft: LEFT_ARROW,
-  ArrowUp: UP_ARROW,
-  ArrowRight: RIGHT_ARROW,
-  ArrowDown: DOWN_ARROW,
-  Insert: INSERT,
-  Delete: DELETE,
-  Digit0: ZERO,
-  Digit1: ONE,
-  Digit2: TWO,
-  Digit3: THREE,
-  Digit4: FOUR,
-  Digit5: FIVE,
-  Digit6: SIX,
-  Digit7: SEVEN,
-  Digit8: EIGHT,
-  Digit9: NINE,
-  KeyA: A_KEY,
-  KeyB: B_KEY,
-  KeyC: C_KEY,
-  KeyD: D_KEY,
-  KeyE: E_KEY,
-  KeyF: F_KEY,
-  KeyG: G_KEY,
-  KeyH: H_KEY,
-  KeyI: I_KEY,
-  KeyJ: J_KEY,
-  KeyK: K_KEY,
-  KeyL: L_KEY,
-  KeyM: M_KEY,
-  KeyN: N_KEY,
-  KeyO: O_KEY,
-  KeyP: P_KEY,
-  KeyQ: Q_KEY,
-  KeyR: R_KEY,
-  KeyS: S_KEY,
-  KeyT: T_KEY,
-  KeyU: U_KEY,
-  KeyV: V_KEY,
-  KeyW: W_KEY,
-  KeyX: X_KEY,
-  KeyY: Y_KEY,
-  KeyZ: Z_KEY,
-  Select: SELECT,
-  Numpad0: NUM_ZERO,
-  Numpad1: NUM_ONE,
-  Numpad2: NUM_TWO,
-  Numpad3: NUM_THREE,
-  Numpad4: NUM_FOUR,
-  Numpad5: NUM_FIVE,
-  Numpad6: NUM_SIX,
-  Numpad7: NUM_SEVEN,
-  Numpad8: NUM_EIGHT,
-  Numpad9: NUM_NINE,
-  NumpadMultiply: MULTIPLY,
-  NumpadAdd: ADD,
-  NumpadSubtract: SUBTRACT,
-  NumpadDecimal: DECIMAL_POINT,
-  NumpadDivide: DIVIDE,
-  F1,
-  F2,
-  F3,
-  F4,
-  F5,
-  F6,
-  F7,
-  F8,
-  F9,
-  F10,
-  F11,
-  F12,
-  NumLock: NUM_LOCK,
-  ScrollLock: SCROLL_LOCK,
-  Semicolon: SEMI_COLON,
-  Equal: EQUAL_SIGN,
-  NumpadEqual: EQUAL_SIGN,
-  Comma: COMMA,
-  NumpadComma: COMMA,
-  Period: PERIOD,
-  Slash: FORWARD_SLASH,
-  Backquote: GRAVE_ACCENT,
-  BracketLeft: OPEN_BRACKET,
-  Backslash: BACK_SLASH,
-  BracketRight: CLOSE_BRACKET,
-  Quote: SINGLE_QUOTE,
-  Minus: DASH,
-  NumpadEnter: ENTER,
+Keys.BACKSPACE = 8;
+Keys.TAB = 9;
+Keys.ENTER = 13;
+Keys.SHIFT = 16;
+Keys.CTRL = 17;
+Keys.ALT = 18;
+Keys.PAUSE_BREAK = 19;
+Keys.CAPSLOCK = 20;
+Keys.ESCAPE = 27;
+Keys.SPACE = 32;
+Keys.PAGE_UP = 33;
+Keys.PAGE_DOWN = 34;
+Keys.END = 35;
+Keys.HOME = 36;
+Keys.LEFT_ARROW = 37;
+Keys.UP_ARROW = 38;
+Keys.RIGHT_ARROW = 39;
+Keys.DOWN_ARROW = 40;
+Keys.INSERT = 45;
+Keys.DELETE = 46;
+Keys.ZERO = 48;
+Keys.ONE = 49;
+Keys.TWO = 50;
+Keys.THREE = 51;
+Keys.FOUR = 52;
+Keys.FIVE = 53;
+Keys.SIX = 54;
+Keys.SEVEN = 55;
+Keys.EIGHT = 56;
+Keys.NINE = 57;
+Keys.A_KEY = 65;
+Keys.B_KEY = 66;
+Keys.C_KEY = 67;
+Keys.D_KEY = 68;
+Keys.E_KEY = 69;
+Keys.F_KEY = 70;
+Keys.G_KEY = 71;
+Keys.H_KEY = 72;
+Keys.I_KEY = 73;
+Keys.J_KEY = 74;
+Keys.K_KEY = 75;
+Keys.L_KEY = 76;
+Keys.M_KEY = 77;
+Keys.N_KEY = 78;
+Keys.O_KEY = 79;
+Keys.P_KEY = 80;
+Keys.Q_KEY = 81;
+Keys.R_KEY = 82;
+Keys.S_KEY = 83;
+Keys.T_KEY = 84;
+Keys.U_KEY = 85;
+Keys.V_KEY = 86;
+Keys.W_KEY = 87;
+Keys.X_KEY = 88;
+Keys.Y_KEY = 89;
+Keys.Z_KEY = 90;
+Keys.LEFT_WINDOW = 91;
+Keys.RIGHT_WINDOW = 92;
+Keys.SELECT = 93;
+Keys.NUM_ZERO = 96;
+Keys.NUM_ONE = 97;
+Keys.NUM_TWO = 98;
+Keys.NUM_THREE = 99;
+Keys.NUM_FOUR = 100;
+Keys.NUM_FIVE = 101;
+Keys.NUM_SIX = 102;
+Keys.NUM_SEVEN = 103;
+Keys.NUM_EIGHT = 104;
+Keys.NUM_NINE = 105;
+Keys.MULTIPLY = 106;
+Keys.ADD = 107;
+Keys.SUBTRACT = 109;
+Keys.DECIMAL_POINT = 110;
+Keys.DIVIDE = 111;
+Keys.F1 = 112;
+Keys.F2 = 113;
+Keys.F3 = 114;
+Keys.F4 = 115;
+Keys.F5 = 116;
+Keys.F6 = 117;
+Keys.F7 = 118;
+Keys.F8 = 119;
+Keys.F9 = 120;
+Keys.F10 = 121;
+Keys.F11 = 122;
+Keys.F12 = 123;
+Keys.NUM_LOCK = 144;
+Keys.SCROLL_LOCK = 145;
+Keys.SEMI_COLON = 186;
+Keys.EQUAL_SIGN = 187;
+Keys.COMMA = 188;
+Keys.DASH = 189;
+Keys.PERIOD = 190;
+Keys.FORWARD_SLASH = 191;
+Keys.GRAVE_ACCENT = 192;
+Keys.OPEN_BRACKET = 219;
+Keys.BACK_SLASH = 220;
+Keys.CLOSE_BRACKET = 221;
+Keys.SINGLE_QUOTE = 222;
+
+Keys.codesToKeyCodes = {
+  Backspace: Keys.BACKSPACE,
+  Tab: Keys.TAB,
+  Enter: Keys.ENTER,
+  ShiftLeft: Keys.SHIFT,
+  ShiftRight: Keys.SHIFT,
+  ControlLeft: Keys.CTRL,
+  ControlRight: Keys.CTRL,
+  AltLeft: Keys.ALT,
+  AltRight: Keys.ALT,
+  CapsLock: Keys.CAPSLOCK,
+  Escape: Keys.ESCAPE,
+  Space: Keys.SPACE,
+  PageUp: Keys.PAGE_UP,
+  PageDown: Keys.PAGE_DOWN,
+  End: Keys.END,
+  Home: Keys.HOME,
+  ArrowLeft: Keys.LEFT_ARROW,
+  ArrowUp: Keys.UP_ARROW,
+  ArrowRight: Keys.RIGHT_ARROW,
+  ArrowDown: Keys.DOWN_ARROW,
+  Insert: Keys.INSERT,
+  Delete: Keys.DELETE,
+  Digit0: Keys.ZERO,
+  Digit1: Keys.ONE,
+  Digit2: Keys.TWO,
+  Digit3: Keys.THREE,
+  Digit4: Keys.FOUR,
+  Digit5: Keys.FIVE,
+  Digit6: Keys.SIX,
+  Digit7: Keys.SEVEN,
+  Digit8: Keys.EIGHT,
+  Digit9: Keys.NINE,
+  KeyA: Keys.A_KEY,
+  KeyB: Keys.B_KEY,
+  KeyC: Keys.C_KEY,
+  KeyD: Keys.D_KEY,
+  KeyE: Keys.E_KEY,
+  KeyF: Keys.F_KEY,
+  KeyG: Keys.G_KEY,
+  KeyH: Keys.H_KEY,
+  KeyI: Keys.I_KEY,
+  KeyJ: Keys.J_KEY,
+  KeyK: Keys.K_KEY,
+  KeyL: Keys.L_KEY,
+  KeyM: Keys.M_KEY,
+  KeyN: Keys.N_KEY,
+  KeyO: Keys.O_KEY,
+  KeyP: Keys.P_KEY,
+  KeyQ: Keys.Q_KEY,
+  KeyR: Keys.R_KEY,
+  KeyS: Keys.S_KEY,
+  KeyT: Keys.T_KEY,
+  KeyU: Keys.U_KEY,
+  KeyV: Keys.V_KEY,
+  KeyW: Keys.W_KEY,
+  KeyX: Keys.X_KEY,
+  KeyY: Keys.Y_KEY,
+  KeyZ: Keys.Z_KEY,
+  Select: Keys.SELECT,
+  Numpad0: Keys.NUM_ZERO,
+  Numpad1: Keys.NUM_ONE,
+  Numpad2: Keys.NUM_TWO,
+  Numpad3: Keys.NUM_THREE,
+  Numpad4: Keys.NUM_FOUR,
+  Numpad5: Keys.NUM_FIVE,
+  Numpad6: Keys.NUM_SIX,
+  Numpad7: Keys.NUM_SEVEN,
+  Numpad8: Keys.NUM_EIGHT,
+  Numpad9: Keys.NUM_NINE,
+  NumpadMultiply: Keys.MULTIPLY,
+  NumpadAdd: Keys.ADD,
+  NumpadSubtract: Keys.SUBTRACT,
+  NumpadDecimal: Keys.DECIMAL_POINT,
+  NumpadDivide: Keys.DIVIDE,
+  F1: Keys.F1,
+  F2: Keys.F2,
+  F3: Keys.F3,
+  F4: Keys.F4,
+  F5: Keys.F5,
+  F6: Keys.F6,
+  F7: Keys.F7,
+  F8: Keys.F8,
+  F9: Keys.F9,
+  F10: Keys.F10,
+  F11: Keys.F11,
+  F12: Keys.F12,
+  NumLock: Keys.NUM_LOCK,
+  ScrollLock: Keys.SCROLL_LOCK,
+  Semicolon: Keys.SEMI_COLON,
+  Equal: Keys.EQUAL_SIGN,
+  NumpadEqual: Keys.EQUAL_SIGN,
+  Comma: Keys.COMMA,
+  NumpadComma: Keys.COMMA,
+  Period: Keys.PERIOD,
+  Slash: Keys.FORWARD_SLASH,
+  Backquote: Keys.GRAVE_ACCENT,
+  BracketLeft: Keys.OPEN_BRACKET,
+  Backslash: Keys.BACK_SLASH,
+  BracketRight: Keys.CLOSE_BRACKET,
+  Quote: Keys.SINGLE_QUOTE,
+  Minus: Keys.DASH,
+  NumpadEnter: Keys.ENTER,
 };
+
+export default Keys;

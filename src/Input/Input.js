@@ -1,23 +1,4 @@
-import * as Keys from './Keys';
-
-export const GAME_LEFT = 0;
-export const GAME_RIGHT = 1;
-export const GAME_UP = 2;
-export const GAME_DOWN = 3;
-export const GAME_ACTION_ONE = 4;
-export const GAME_ACTION_TWO = 5;
-export const GAME_ACTION_THREE = 6;
-export const GAME_ACTION_FOUR = 7;
-export const GAME_PAUSE = 8;
-export const GAME_LEFT_TRIGGER = 9;
-export const GAME_RIGHT_TRIGGER = 10;
-
-export const MENU_LEFT = 11;
-export const MENU_RIGHT = 12;
-export const MENU_UP = 13;
-export const MENU_DOWN = 14;
-export const MENU_CONFIRM = 15;
-export const MENU_BACK = 16;
+import Keys from './Keys';
 
 /**
  * Handle game input
@@ -55,27 +36,27 @@ class Input {
     this._buttonsToKeys = new Uint8ClampedArray( 32 );
 
     // default button mappings
-    this._buttonsToKeys[GAME_LEFT] = Keys.LEFT_ARROW;
-    this._buttonsToKeys[GAME_RIGHT] = Keys.RIGHT_ARROW;
-    this._buttonsToKeys[GAME_UP] = Keys.UP_ARROW;
-    this._buttonsToKeys[GAME_DOWN] = Keys.DOWN_ARROW;
+    this._buttonsToKeys[Input.GAME_LEFT] = Keys.LEFT_ARROW;
+    this._buttonsToKeys[Input.GAME_RIGHT] = Keys.RIGHT_ARROW;
+    this._buttonsToKeys[Input.GAME_UP] = Keys.UP_ARROW;
+    this._buttonsToKeys[Input.GAME_DOWN] = Keys.DOWN_ARROW;
 
-    this._buttonsToKeys[GAME_ACTION_ONE] = Keys.Z_KEY;
-    this._buttonsToKeys[GAME_ACTION_TWO] = Keys.X_KEY;
-    this._buttonsToKeys[GAME_ACTION_THREE] = Keys.A_KEY;
-    this._buttonsToKeys[GAME_ACTION_FOUR] = Keys.S_KEY;
-    this._buttonsToKeys[GAME_LEFT_TRIGGER] = Keys.Q_KEY;
-    this._buttonsToKeys[GAME_RIGHT_TRIGGER] = Keys.W_KEY;
+    this._buttonsToKeys[Input.GAME_ACTION_ONE] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.GAME_ACTION_TWO] = Keys.X_KEY;
+    this._buttonsToKeys[Input.GAME_ACTION_THREE] = Keys.A_KEY;
+    this._buttonsToKeys[Input.GAME_ACTION_FOUR] = Keys.S_KEY;
+    this._buttonsToKeys[Input.GAME_LEFT_TRIGGER] = Keys.Q_KEY;
+    this._buttonsToKeys[Input.GAME_RIGHT_TRIGGER] = Keys.W_KEY;
 
-    this._buttonsToKeys[GAME_PAUSE] = Keys.P_KEY;
+    this._buttonsToKeys[Input.GAME_PAUSE] = Keys.P_KEY;
 
-    this._buttonsToKeys[MENU_LEFT] = Keys.LEFT_ARROW;
-    this._buttonsToKeys[MENU_RIGHT] = Keys.RIGHT_ARROW;
-    this._buttonsToKeys[MENU_UP] = Keys.UP_ARROW;
-    this._buttonsToKeys[MENU_DOWN] = Keys.DOWN_ARROW;
+    this._buttonsToKeys[Input.MENU_LEFT] = Keys.LEFT_ARROW;
+    this._buttonsToKeys[Input.MENU_RIGHT] = Keys.RIGHT_ARROW;
+    this._buttonsToKeys[Input.MENU_UP] = Keys.UP_ARROW;
+    this._buttonsToKeys[Input.MENU_DOWN] = Keys.DOWN_ARROW;
 
-    this._buttonsToKeys[MENU_CONFIRM] = Keys.X_KEY;
-    this._buttonsToKeys[MENU_BACK] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;
+    this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;
 
     this._currentButtons = new Uint8ClampedArray( 32 );
     this._lastButtons = new Uint8ClampedArray( 32 );
@@ -271,27 +252,27 @@ class Input {
   }
 
   _updateButtons() {
-    this._updateButton( 'left', GAME_LEFT );
-    this._updateButton( 'right', GAME_RIGHT );
-    this._updateButton( 'up', GAME_UP );
-    this._updateButton( 'down', GAME_DOWN );
+    this._updateButton( 'left', Input.GAME_LEFT );
+    this._updateButton( 'right', Input.GAME_RIGHT );
+    this._updateButton( 'up', Input.GAME_UP );
+    this._updateButton( 'down', Input.GAME_DOWN );
 
-    this._updateButton( 'action1', GAME_ACTION_ONE );
-    this._updateButton( 'action2', GAME_ACTION_TWO );
-    this._updateButton( 'action3', GAME_ACTION_THREE );
-    this._updateButton( 'action4', GAME_ACTION_FOUR );
-    this._updateButton( 'leftTrigger', GAME_LEFT_TRIGGER );
-    this._updateButton( 'rightTrigger', GAME_RIGHT_TRIGGER );
+    this._updateButton( 'action1', Input.GAME_ACTION_ONE );
+    this._updateButton( 'action2', Input.GAME_ACTION_TWO );
+    this._updateButton( 'action3', Input.GAME_ACTION_THREE );
+    this._updateButton( 'action4', Input.GAME_ACTION_FOUR );
+    this._updateButton( 'leftTrigger', Input.GAME_LEFT_TRIGGER );
+    this._updateButton( 'rightTrigger', Input.GAME_RIGHT_TRIGGER );
 
-    this._updateButton( 'pause', GAME_PAUSE );
+    this._updateButton( 'pause', Input.GAME_PAUSE );
 
-    this._updateButton( 'menuLeft', MENU_LEFT );
-    this._updateButton( 'menuRight', MENU_RIGHT );
-    this._updateButton( 'menuUp', MENU_UP );
-    this._updateButton( 'menuDown', MENU_DOWN );
+    this._updateButton( 'menuLeft', Input.MENU_LEFT );
+    this._updateButton( 'menuRight', Input.MENU_RIGHT );
+    this._updateButton( 'menuUp', Input.MENU_UP );
+    this._updateButton( 'menuDown', Input.MENU_DOWN );
 
-    this._updateButton( 'menuConfirm', MENU_CONFIRM );
-    this._updateButton( 'menuBack', MENU_BACK );
+    this._updateButton( 'menuConfirm', Input.MENU_CONFIRM );
+    this._updateButton( 'menuBack', Input.MENU_BACK );
   }
 
   _updateButton( name, index ) {
@@ -303,5 +284,24 @@ class Input {
     this[name] = { pressed, down, up };
   }
 }
+
+Input.GAME_LEFT = 0;
+Input.GAME_RIGHT = 1;
+Input.GAME_UP = 2;
+Input.GAME_DOWN = 3;
+Input.GAME_ACTION_ONE = 4;
+Input.GAME_ACTION_TWO = 5;
+Input.GAME_ACTION_THREE = 6;
+Input.GAME_ACTION_FOUR = 7;
+Input.GAME_PAUSE = 8;
+Input.GAME_LEFT_TRIGGER = 9;
+Input.GAME_RIGHT_TRIGGER = 10;
+
+Input.MENU_LEFT = 11;
+Input.MENU_RIGHT = 12;
+Input.MENU_UP = 13;
+Input.MENU_DOWN = 14;
+Input.MENU_CONFIRM = 15;
+Input.MENU_BACK = 16;
 
 export default Input;

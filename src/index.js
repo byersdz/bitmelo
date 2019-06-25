@@ -1,6 +1,3 @@
-import * as keysImport from './Input/Keys';
-
-export { default } from './Engine/Engine';
 
 export { default as Audio } from './Audio/Audio';
 export { default as Frequencies } from './Audio/Frequencies';
@@ -11,7 +8,7 @@ export { default as Font } from './FontData/Font';
 export { default as FontData } from './FontData/FontData';
 
 export { default as Input } from './Input/Input';
-export const Keys = keysImport;
+export { default as Keys } from './Input/Keys';
 
 export { default as MapData } from './MapData/MapData';
 export { default as TileMap } from './MapData/TileMap';
