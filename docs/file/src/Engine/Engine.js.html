@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/Engine/Engine.js | minnow-engine</title>
+  <title data-ice="title">src/Engine/Engine.js | bitmelo</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A game engine for low resolution games."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="minnow-engine"><meta property="twitter:description" content="A game engine for low resolution games."></head>
+<meta name="description" content="A game engine for low resolution games."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="bitmelo"><meta property="twitter:description" content="A game engine for low resolution games."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-<a style="position:relative; top:3px;" href="https://github.com/byersdz/minnow-engine"><img width="20px" src="./image/github.png"></a></header>
+<a style="position:relative; top:3px;" href="https://github.com/byersdz/bitmelo"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -186,7 +186,7 @@ import smallFont from &apos;../FontData/small.font.json&apos;;
 
 class Engine {
   constructor() {
-    this.containerId = &apos;minnow-container&apos;;
+    this.containerId = &apos;bitmelo-container&apos;;
     this.onInit = null;
     this.onDrawStartScreen = null;
     this.onUpdateStartTransition = null;
@@ -215,6 +215,7 @@ class Engine {
       this.onInit();
     }
 
+    this.screen.conainerId = this.containerId;
     this.screen.init();
     this.screen.onScaleChange = ( scale ) =&gt; {
       this.input.canvasScale = scale;
@@ -278,6 +279,7 @@ class Engine {
     }
     else if ( this.onUpdate ) {
       this.onUpdate();
+      this.audio.update();
     }
 
     this.screen.drawScreen();

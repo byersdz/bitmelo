@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/Audio/Audio.js | minnow-engine</title>
+  <title data-ice="title">src/Audio/Audio.js | bitmelo</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A game engine for low resolution games."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="minnow-engine"><meta property="twitter:description" content="A game engine for low resolution games."></head>
+<meta name="description" content="A game engine for low resolution games."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="bitmelo"><meta property="twitter:description" content="A game engine for low resolution games."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-<a style="position:relative; top:3px;" href="https://github.com/byersdz/minnow-engine"><img width="20px" src="./image/github.png"></a></header>
+<a style="position:relative; top:3px;" href="https://github.com/byersdz/bitmelo"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -177,18 +177,45 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Sound from &apos;./Sound&apos;;
 import Frequencies from &apos;./Frequencies&apos;;
 
-const TICS_PER_SOUND = 32;
-
 class Audio {
   constructor() {
     this.context = null;
     this.sounds = [];
+    this.lookAheadTime = 0.05; // in seconds
   }
 
   init() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.context = new AudioContext();
   }
+
+
+  update() {
+    let sound = null;
+    for ( let i = 0; i &lt; this.sounds.length; i += 1 ) {
+      sound = this.sounds[i];
+      if ( sound.isPlayingInfiniteSound ) {
+        const lastScheduledTime = this.context.currentTime - sound.infiniteStartTime + this.lookAheadTime;
+        const totalNumberOfTics = Math.floor( lastScheduledTime / sound.infiniteTicDuration );
+        if ( totalNumberOfTics &gt; sound.infiniteTicsPlayed ) {
+          for ( let tic = sound.infiniteTicsPlayed + 1; tic &lt;= totalNumberOfTics; tic += 1 ) {
+            const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;
+            const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
+            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * sound.infiniteVolume;
+
+            sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );
+            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
+            const currentNote = sound.infiniteNote + sound.arpTics[ticIndex];
+            const currentFrequency = Audio.frequencyForNote( currentNote );
+            sound.infiniteOsc.frequency.setValueAtTime( currentFrequency, time );
+
+            sound.infiniteTicsPlayed = tic;
+          }
+        }
+      }
+    }
+  }
+
 
   addSound( soundData ) {
     this.sounds.push( new Sound( soundData ) );
@@ -201,92 +228,35 @@ class Audio {
       return;
     }
 
+    if ( duration &lt; 0 ) {
+      this.playInfiniteSound( soundIndex, note, volume, speed );
+      return;
+    }
+
     const sound = this.sounds[soundIndex];
 
     const osc = this.context.createOscillator();
+    osc.type = Audio.oscTypeForWaveValue( sound.wave );
 
-    switch ( sound.wave ) {
-      case 0:
-        osc.type = &apos;sine&apos;;
-        break;
-      case 1:
-        osc.type = &apos;triangle&apos;;
-        break;
-      case 2:
-        osc.type = &apos;square&apos;;
-        break;
-      case 3:
-        osc.type = &apos;sawtooth&apos;;
-        break;
-      default:
-        osc.type = &apos;sine&apos;;
-        break;
-    }
+    const ticDuration = Audio.ticDurationForSpeedValue( speed );
 
-    let fullDuration = 1;
-
-    switch ( speed ) {
-      case -1:
-        fullDuration = 1.5;
-        break;
-      case -2:
-        fullDuration = 2;
-        break;
-      case -3:
-        fullDuration = 2.5;
-        break;
-      case -4:
-        fullDuration = 3;
-        break;
-      case 1:
-        fullDuration = 0.75;
-        break;
-      case 2:
-        fullDuration = 0.5;
-        break;
-      case 3:
-        fullDuration = 0.25;
-        break;
-      default:
-        fullDuration = 1;
-        break;
-    }
-
-    const ticDuration = fullDuration / TICS_PER_SOUND;
-
-    let trimmedNote = note;
-    if ( trimmedNote &lt; 0 ) {
-      trimmedNote = 0;
-    }
-    else if ( trimmedNote &gt;= Frequencies.length ) {
-      trimmedNote = Frequencies.length - 1;
-    }
-    osc.frequency.value = Frequencies[trimmedNote];
+    osc.frequency.value = Audio.frequencyForNote( note );
 
     const gainNode = this.context.createGain();
 
-    const initialVolume = sound.volumeTics[0] * volume;
-    gainNode.gain.setValueAtTime( Audio.valueForVolume( initialVolume ), this.context.currentTime );
+    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;
+    gainNode.gain.setValueAtTime( initialVolume, this.context.currentTime );
 
     osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
 
     for ( let tic = 1; tic &lt; duration; tic += 1 ) {
       const time = this.context.currentTime + tic * ticDuration;
       const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
-      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] * volume );
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * volume;
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
       osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
-      const currentNote = trimmedNote + sound.arpTics[ticIndex];
-      let currentFrequency = 0;
-      if ( currentNote &lt; 0 ) {
-        currentFrequency = Frequencies[0];
-      }
-      else if ( currentNote &gt;= Frequencies.length ) {
-        currentFrequency = Frequencies[Frequencies.length - 1];
-      }
-      else {
-        currentFrequency = Frequencies[currentNote];
-      }
+      const currentNote = note + sound.arpTics[ticIndex];
+      const currentFrequency = Audio.frequencyForNote( currentNote );
       osc.frequency.setValueAtTime( currentFrequency, time );
     }
     const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );
@@ -304,6 +274,104 @@ class Audio {
     osc.stop( stopTime );
   }
 
+  stopInfiniteSound( soundIndex ) {
+    const sound = this.sounds[soundIndex];
+    if ( sound.isPlayingInfiniteSound ) {
+      const stopTime = this.context.currentTime + ( sound.releaseLength * sound.infiniteTicDuration );
+      if ( sound.releaseMode === Sound.RELEASE_EXPO ) {
+        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0, stopTime );
+      }
+      else {
+        // default to linear
+        sound.infiniteGain.gain.linearRampToValueAtTime( 0, stopTime );
+      }
+      sound.infiniteTicsPlayed = 0;
+      sound.infiniteOsc.stop( stopTime );
+      sound.isPlayingInfiniteSound = false;
+    }
+  }
+
+  stopAllInfiniteSounds() {
+    for ( let i = 0; i &lt; this.sounds.length; i += 1 ) {
+      this.stopInfiniteSound( i );
+    }
+  }
+
+  playInfiniteSound( soundIndex, note, volume, speed ) {
+    const sound = this.sounds[soundIndex];
+    if ( sound.isPlayingInfiniteSound ) {
+      this.stopSound( soundIndex );
+    }
+
+    sound.isPlayingInfiniteSound = true;
+    sound.infiniteStartTime = this.context.currentTime;
+    sound.infiniteOsc = this.context.createOscillator();
+    sound.infiniteTicDuration = Audio.ticDurationForSpeedValue( speed );
+    sound.infiniteGain = this.context.createGain();
+    sound.infiniteVolume = volume;
+    sound.infiniteNote = note;
+
+    sound.infiniteOsc.frequency.value = Audio.frequencyForNote( note );
+    sound.infiniteOsc.type = Audio.oscTypeForWaveValue( sound.wave );
+
+    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;
+    sound.infiniteGain.gain.setValueAtTime( initialVolume, this.context.currentTime );
+
+    sound.infiniteOsc.connect( sound.infiniteGain ).connect( this.context.destination );
+    sound.infiniteOsc.start();
+  }
+
+  static frequencyForNote( note ) {
+    let trimmedNote = note;
+    if ( trimmedNote &lt; 0 ) {
+      trimmedNote = 0;
+    }
+    else if ( trimmedNote &gt;= Frequencies.length ) {
+      trimmedNote = Frequencies.length - 1;
+    }
+    return Frequencies[trimmedNote];
+  }
+
+  static ticDurationForSpeedValue( speed ) {
+    return Audio.fullDurationForSpeedValue( speed ) / Audio.TICS_PER_SOUND;
+  }
+
+  static fullDurationForSpeedValue( speed ) {
+    switch ( speed ) {
+      case -1:
+        return 1.5;
+      case -2:
+        return 2;
+      case -3:
+        return 2.5;
+      case -4:
+        return 3;
+      case 1:
+        return 0.75;
+      case 2:
+        return 0.5;
+      case 3:
+        return 0.25;
+      default:
+        return 1;
+    }
+  }
+
+  static oscTypeForWaveValue( waveValue ) {
+    switch ( waveValue ) {
+      case 0:
+        return &apos;sine&apos;;
+      case 1:
+        return &apos;triangle&apos;;
+      case 2:
+        return &apos;square&apos;;
+      case 3:
+        return &apos;sawtooth&apos;;
+      default:
+        return &apos;sine&apos;;
+    }
+  }
+
   static valueForVolume( volume ) {
     const normalizedValue = volume / 15;
     return normalizedValue ** 2.5;
@@ -316,8 +384,8 @@ class Audio {
         return 0;
       }
 
-      if ( tic &gt;= TICS_PER_SOUND ) {
-        return TICS_PER_SOUND - 1;
+      if ( tic &gt;= Audio.TICS_PER_SOUND ) {
+        return Audio.TICS_PER_SOUND - 1;
       }
 
       return tic;
@@ -334,6 +402,8 @@ class Audio {
     return loopStart + loopAdd;
   }
 }
+
+Audio.TICS_PER_SOUND = 32;
 
 export default Audio;
 </code></pre>

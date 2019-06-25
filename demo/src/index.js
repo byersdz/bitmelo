@@ -1,5 +1,5 @@
 import { Engine } from '../../src/index';
-import { SCALE_FIT_WINDOW } from '../../src/Screen/Screen';
+import Screen from '../../src/Screen/Screen';
 import Notes from '../../src/Audio/Notes';
 import tileset from '../data/test.tileset.json';
 import tileset2 from '../data/test2.tileset.json';
@@ -17,7 +17,7 @@ const engine = new Engine();
 engine.onInit = () => {
   engine.screen.hideCursor = true;
   engine.screen.scale = 4;
-  engine.screen.scaleMode = SCALE_FIT_WINDOW;
+  engine.screen.scaleMode = Screen.SCALE_FIT_WINDOW;
   engine.tileData.addTileset( tileset );
   engine.tileData.addTileset( tileset2 );
   engine.mapData.addTileMap( tileMap );

@@ -1,9 +1,6 @@
 
 import standardPalette from './standardPalette';
 
-export const SCALE_CONSTANT = 1;
-export const SCALE_FIT_WINDOW = 2;
-
 /**
  * Represents a game screen for low resolution games.
  * Has simple drawing functions using an indexed palette of a maximum of 256 colors
@@ -18,7 +15,7 @@ class Screen {
     this.scale = 3;
     this.maxScale = -1;
     this.minScale = 1;
-    this.scaleMode = SCALE_CONSTANT;
+    this.scaleMode = Screen.SCALE_CONSTANT;
     this.horizontalScaleCushion = 0;
     this.verticalScaleCushion = 0;
     this.rescaleOnWindowResize = true;
@@ -52,7 +49,7 @@ class Screen {
 
     this._setScale();
 
-    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {
+    if ( this.rescaleOnWindowResize && this.scaleMode !== Screen.SCALE_CONSTANT ) {
       window.onresize = () => {
         this._setScale();
         this._setCanvasStyle();
@@ -83,17 +80,6 @@ class Screen {
     }
 
     if ( !this._palette ) {
-      // set the default palette
-      /*
-      this._palette = [
-        [0x00, 0x00, 0x00],
-        [0x00, 0x00, 0x00],
-        [0xff, 0xff, 0xff],
-        [0xff, 0x00, 0x00],
-        [0x00, 0xff, 0x00],
-        [0x00, 0x00, 0xff],
-      ];
-      */
       this._palette = standardPalette;
     }
 
@@ -101,7 +87,7 @@ class Screen {
   }
 
   _setScale() {
-    if ( this.scaleMode === SCALE_FIT_WINDOW ) {
+    if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {
       const maxWidth = window.innerWidth - this.horizontalScaleCushion;
       const maxHeight = window.innerHeight - this.verticalScaleCushion;
 
@@ -774,5 +760,8 @@ class Screen {
     this._context.putImageData( this._imageData, 0, 0 );
   }
 }
+
+Screen.SCALE_CONSTANT = 1;
+Screen.SCALE_FIT_WINDOW = 2;
 
 export default Screen;
