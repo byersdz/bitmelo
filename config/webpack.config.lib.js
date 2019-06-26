@@ -6,7 +6,7 @@ module.exports = merge( common, {
   mode: 'development',
   output: {
     path: path.resolve(__dirname, '../lib'),
-    filename: 'bitmelo.js',
+    filename: `bitmelo.${ process.env.npm_package_version }.js`,
     library: 'bitmelo',
     libraryTarget: 'umd'
   }
