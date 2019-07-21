@@ -91,7 +91,7 @@ class Engine {
   _update() {
     this.input.pollInput();
 
-    if ( this.startTransitionFrames > 0 ) {
+    if ( this.clickToBegin && this.startTransitionFrames > 0 ) {
       this.startTransitionFrames -= 1;
       if ( this.onUpdateStartTransition ) {
         this.clearInput();
