@@ -661,24 +661,24 @@ class Screen {
    * Draw a TileMap layer to the screen
    * @param {number} x - origin x position on the TileMap
    * @param {number} y - origin y position on the TileMap
-   * @param {number} width - how many tiles wide to draw
-   * @param {number} height - how many tiles high to draw
+   * @param {number} width - how many tiles wide to draw, -1 is the width of the Tile Map
+   * @param {number} height - how many tiles high to draw, -1 is the height of the Tile Map
    * @param {number} screenX - origin x position on the screen
    * @param {number} screenY - origin y position on the screen
    * @param {number} map - the index of the tilemap to draw
    * @param {number} layer - the index of the layer to draw
    */
-  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {
+  drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0 ) {
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
     let maxX = x + width;
     let maxY = y + height;
 
-    if ( maxX >= tileMap.width ) {
+    if ( maxX >= tileMap.width || width < 0 ) {
       maxX = tileMap.width - 1;
     }
-    if ( maxY >= tileMap.height ) {
+    if ( maxY >= tileMap.height || height < 0 ) {
       maxY = tileMap.height - 1;
     }
 
