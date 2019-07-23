@@ -5,9 +5,15 @@ class Sound {
     this.volumeTics = new Int8Array( 32 );
     this.pitchTics = new Int8Array( 32 );
     this.arpTics = new Int8Array( 32 );
-    this.useLoop = false;
-    this.loopStart = -1;
-    this.loopEnd = -1;
+    this.useVolumeLoop = false;
+    this.volumeLoopStart = -1;
+    this.volumeLoopEnd = -1;
+    this.usePitchLoop = false;
+    this.pitchLoopStart = -1;
+    this.pitchLoopEnd = -1;
+    this.useArpLoop = false;
+    this.arpLoopStart = -1;
+    this.arpLoopEnd = -1;
     this.wave = 0;
     this.pitchScale = 10;
     this.releaseLength = 1;
@@ -27,12 +33,19 @@ class Sound {
         volumeTics,
         pitchTics,
         arpTics,
-        useLoop,
-        loopStart,
-        loopEnd,
         wave,
         pitchScale,
         releaseLength,
+        releaseMode,
+        useVolumeLoop,
+        volumeLoopStart,
+        volumeLoopEnd,
+        usePitchLoop,
+        pitchLoopStart,
+        pitchLoopEnd,
+        useArpLoop,
+        arpLoopStart,
+        arpLoopEnd,
       } = data;
 
       if ( volumeTics && Array.isArray( volumeTics ) ) {
@@ -54,11 +67,18 @@ class Sound {
       }
 
       this.wave = wave;
-      this.useLoop = useLoop;
-      this.loopStart = loopStart;
-      this.loopEnd = loopEnd;
       this.pitchScale = pitchScale;
       this.releaseLength = releaseLength;
+      this.releaseMode = releaseMode;
+      this.useVolumeLoop = useVolumeLoop;
+      this.volumeLoopStart = volumeLoopStart;
+      this.volumeLoopEnd = volumeLoopEnd;
+      this.usePitchLoop = usePitchLoop;
+      this.pitchLoopStart = pitchLoopStart;
+      this.pitchLoopEnd = pitchLoopEnd;
+      this.useArpLoop = useArpLoop;
+      this.arpLoopStart = arpLoopStart;
+      this.arpLoopEnd = arpLoopEnd;
     }
   }
 }

@@ -24,12 +24,19 @@ class Audio {
         if ( totalNumberOfTics > sound.infiniteTicsPlayed ) {
           for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {
             const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;
-            const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
-            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * sound.infiniteVolume;
+            const volumeTicIndex = Audio.indexAtTic(
+              tic, sound.useVolumeLoop,
+              sound.volumeLoopStart,
+              sound.volumeLoopEnd,
+            );
+            const pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
+            const arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
+
+            const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * sound.infiniteVolume;
 
             sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );
-            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
-            const currentNote = sound.infiniteNote + sound.arpTics[ticIndex];
+            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );
+            const currentNote = sound.infiniteNote + sound.arpTics[arpTicIndex];
             const currentFrequency = Audio.frequencyForNote( currentNote );
             sound.infiniteOsc.frequency.setValueAtTime( currentFrequency, time );
 
@@ -75,11 +82,13 @@ class Audio {
 
     for ( let tic = 1; tic < duration; tic += 1 ) {
       const time = this.context.currentTime + tic * ticDuration;
-      const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );
-      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * volume;
+      const volumeTicIndex = Audio.indexAtTic( tic, sound.useVolumeLoop, sound.volumeLoopStart, sound.volumeLoopEnd );
+      const pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
+      const arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * volume;
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
-      osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );
-      const currentNote = note + sound.arpTics[ticIndex];
+      osc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );
+      const currentNote = note + sound.arpTics[arpTicIndex];
       const currentFrequency = Audio.frequencyForNote( currentNote );
       osc.frequency.setValueAtTime( currentFrequency, time );
     }
