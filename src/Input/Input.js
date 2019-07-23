@@ -82,11 +82,11 @@ class Input {
         e.preventDefault();
       };
 
-      this.canvas.addEventListener( 'mouseenter', this._mouseEnter.bind( this ), false );
-      this.canvas.addEventListener( 'mousemove', this._mouseMove.bind( this ), false );
-      this.canvas.addEventListener( 'mousedown', this._mouseDown.bind( this ), false );
-      this.canvas.addEventListener( 'mouseup', this._mouseUp.bind( this ), false );
-      this.canvas.addEventListener( 'mouseleave', this._mouseLeave.bind( this ), false );
+      this.canvas.addEventListener( 'pointerenter', this._pointerEnter.bind( this ), false );
+      this.canvas.addEventListener( 'pointermove', this._pointerMove.bind( this ), false );
+      this.canvas.addEventListener( 'pointerdown', this._pointerDown.bind( this ), false );
+      this.canvas.addEventListener( 'pointerup', this._pointerUp.bind( this ), false );
+      this.canvas.addEventListener( 'pointerleave', this._pointerLeave.bind( this ), false );
     }
   }
 
@@ -108,13 +108,13 @@ class Input {
     }
   }
 
-  _mouseEnter() {
+  _pointerEnter() {
     this.mouse.isOffScreen = false;
     this._currentMouseLeft = false;
     this._currentMouseRight = false;
   }
 
-  _mouseMove( e ) {
+  _pointerMove( e ) {
     const canvasRect = this.canvas.getBoundingClientRect();
     this.mouse.position = {
       x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),
@@ -122,7 +122,7 @@ class Input {
     };
   }
 
-  _mouseDown( e ) {
+  _pointerDown( e ) {
     if ( e.button === 0 ) {
       // left button
       this._currentMouseLeft = true;
@@ -135,7 +135,7 @@ class Input {
     }
   }
 
-  _mouseUp( e ) {
+  _pointerUp( e ) {
     if ( e.button === 0 ) {
       // left button
       this._currentMouseLeft = false;
@@ -146,7 +146,7 @@ class Input {
     }
   }
 
-  _mouseLeave() {
+  _pointerLeave() {
     this.mouse.isOffScreen = true;
   }
 
