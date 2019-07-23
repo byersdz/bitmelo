@@ -135,7 +135,7 @@ engine.onInit = () => {
     arpLoopEnd: 31,
     pitchScale: 400,
     releaseLength: 10,
-    releaseMode: Sound.RELEASE_LINEAR,
+    releaseMode: Sound.RELEASE_EXPO,
   };
   engine.audio.addSound( testSound );
 };

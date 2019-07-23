@@ -112,7 +112,7 @@ class Audio {
     if ( sound.isPlayingInfiniteSound ) {
       const stopTime = this.context.currentTime + ( sound.releaseLength * sound.infiniteTicDuration );
       if ( sound.releaseMode === Sound.RELEASE_EXPO ) {
-        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0, stopTime );
+        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0.0001, stopTime );
       }
       else {
         // default to linear
