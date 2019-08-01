@@ -133,7 +133,7 @@ class Audio {
   playInfiniteSound( soundIndex, note, volume, speed ) {
     const sound = this.sounds[soundIndex];
     if ( sound.isPlayingInfiniteSound ) {
-      this.stopSound( soundIndex );
+      this.stopInfiniteSound( soundIndex );
     }
 
     sound.isPlayingInfiniteSound = true;
