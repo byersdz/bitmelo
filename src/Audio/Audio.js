@@ -22,15 +22,18 @@ class Audio {
         const lastScheduledTime = this.context.currentTime - sound.infiniteStartTime + this.lookAheadTime;
         const totalNumberOfTics = Math.floor( lastScheduledTime / sound.infiniteTicDuration );
         if ( totalNumberOfTics > sound.infiniteTicsPlayed ) {
+          let volumeTicIndex = 0;
+          let pitchTicIndex = 0;
+          let arpTicIndex = 0;
           for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {
             const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;
-            const volumeTicIndex = Audio.indexAtTic(
+            volumeTicIndex = Audio.indexAtTic(
               tic, sound.useVolumeLoop,
               sound.volumeLoopStart,
               sound.volumeLoopEnd,
             );
-            const pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
-            const arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
+            pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
+            arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
 
             const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * sound.infiniteVolume;
 
@@ -42,6 +45,10 @@ class Audio {
 
             sound.infiniteTicsPlayed = tic;
           }
+
+          sound.lastVolumeTic = volumeTicIndex;
+          sound.lastPitchTic = pitchTicIndex;
+          sound.lastArpTic = arpTicIndex;
         }
       }
     }

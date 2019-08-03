@@ -28,6 +28,11 @@ class Sound {
     this.infiniteVolume = 0;
     this.infiniteNote = 0;
 
+    // used so the last ticked played can be viewed in the editor
+    this.lastVolumeTic = 0;
+    this.lastPitchTic = 0;
+    this.lastArpTic = 0;
+
     if ( data ) {
       const {
         volumeTics,
