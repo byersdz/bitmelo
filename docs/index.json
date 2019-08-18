@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/Audio/Audio.js",
-    "content": "import Sound from './Sound';\nimport Frequencies from './Frequencies';\n\nclass Audio {\n  constructor() {\n    this.context = null;\n    this.sounds = [];\n    this.lookAheadTime = 0.05; // in seconds\n  }\n\n  init() {\n    const AudioContext = window.AudioContext || window.webkitAudioContext;\n    this.context = new AudioContext();\n  }\n\n\n  update() {\n    let sound = null;\n    for ( let i = 0; i < this.sounds.length; i += 1 ) {\n      sound = this.sounds[i];\n      if ( sound.isPlayingInfiniteSound ) {\n        const lastScheduledTime = this.context.currentTime - sound.infiniteStartTime + this.lookAheadTime;\n        const totalNumberOfTics = Math.floor( lastScheduledTime / sound.infiniteTicDuration );\n        if ( totalNumberOfTics > sound.infiniteTicsPlayed ) {\n          for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {\n            const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;\n            const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );\n            const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * sound.infiniteVolume;\n\n            sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );\n            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );\n            const currentNote = sound.infiniteNote + sound.arpTics[ticIndex];\n            const currentFrequency = Audio.frequencyForNote( currentNote );\n            sound.infiniteOsc.frequency.setValueAtTime( currentFrequency, time );\n\n            sound.infiniteTicsPlayed = tic;\n          }\n        }\n      }\n    }\n  }\n\n\n  addSound( soundData ) {\n    this.sounds.push( new Sound( soundData ) );\n    return this.sounds.length - 1;\n  }\n\n  playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {\n    if ( soundIndex >= this.sounds.length || soundIndex < 0 ) {\n      console.error( 'Invalid sound index' );\n      return;\n    }\n\n    if ( duration < 0 ) {\n      this.playInfiniteSound( soundIndex, note, volume, speed );\n      return;\n    }\n\n    const sound = this.sounds[soundIndex];\n\n    const osc = this.context.createOscillator();\n    osc.type = Audio.oscTypeForWaveValue( sound.wave );\n\n    const ticDuration = Audio.ticDurationForSpeedValue( speed );\n\n    osc.frequency.value = Audio.frequencyForNote( note );\n\n    const gainNode = this.context.createGain();\n\n    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;\n    gainNode.gain.setValueAtTime( initialVolume, this.context.currentTime );\n\n    osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );\n\n    for ( let tic = 1; tic < duration; tic += 1 ) {\n      const time = this.context.currentTime + tic * ticDuration;\n      const ticIndex = Audio.indexAtTic( tic, sound.useLoop, sound.loopStart, sound.loopEnd );\n      const currentVolume = Audio.valueForVolume( sound.volumeTics[ticIndex] ) * volume;\n      gainNode.gain.linearRampToValueAtTime( currentVolume, time );\n      osc.detune.linearRampToValueAtTime( sound.pitchTics[ticIndex] * sound.pitchScale, time );\n      const currentNote = note + sound.arpTics[ticIndex];\n      const currentFrequency = Audio.frequencyForNote( currentNote );\n      osc.frequency.setValueAtTime( currentFrequency, time );\n    }\n    const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );\n\n    if ( sound.releaseMode === Sound.RELEASE_EXPO ) {\n      gainNode.gain.exponentialRampToValueAtTime( 0, stopTime );\n    }\n    else {\n      // default to linear\n      gainNode.gain.linearRampToValueAtTime( 0, stopTime );\n    }\n    osc.connect( gainNode ).connect( this.context.destination );\n    osc.start();\n\n    osc.stop( stopTime );\n  }\n\n  stopInfiniteSound( soundIndex ) {\n    const sound = this.sounds[soundIndex];\n    if ( sound.isPlayingInfiniteSound ) {\n      const stopTime = this.context.currentTime + ( sound.releaseLength * sound.infiniteTicDuration );\n      if ( sound.releaseMode === Sound.RELEASE_EXPO ) {\n        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0, stopTime );\n      }\n      else {\n        // default to linear\n        sound.infiniteGain.gain.linearRampToValueAtTime( 0, stopTime );\n      }\n      sound.infiniteTicsPlayed = 0;\n      sound.infiniteOsc.stop( stopTime );\n      sound.isPlayingInfiniteSound = false;\n    }\n  }\n\n  stopAllInfiniteSounds() {\n    for ( let i = 0; i < this.sounds.length; i += 1 ) {\n      this.stopInfiniteSound( i );\n    }\n  }\n\n  playInfiniteSound( soundIndex, note, volume, speed ) {\n    const sound = this.sounds[soundIndex];\n    if ( sound.isPlayingInfiniteSound ) {\n      this.stopSound( soundIndex );\n    }\n\n    sound.isPlayingInfiniteSound = true;\n    sound.infiniteStartTime = this.context.currentTime;\n    sound.infiniteOsc = this.context.createOscillator();\n    sound.infiniteTicDuration = Audio.ticDurationForSpeedValue( speed );\n    sound.infiniteGain = this.context.createGain();\n    sound.infiniteVolume = volume;\n    sound.infiniteNote = note;\n\n    sound.infiniteOsc.frequency.value = Audio.frequencyForNote( note );\n    sound.infiniteOsc.type = Audio.oscTypeForWaveValue( sound.wave );\n\n    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;\n    sound.infiniteGain.gain.setValueAtTime( initialVolume, this.context.currentTime );\n\n    sound.infiniteOsc.connect( sound.infiniteGain ).connect( this.context.destination );\n    sound.infiniteOsc.start();\n  }\n\n  static frequencyForNote( note ) {\n    let trimmedNote = note;\n    if ( trimmedNote < 0 ) {\n      trimmedNote = 0;\n    }\n    else if ( trimmedNote >= Frequencies.length ) {\n      trimmedNote = Frequencies.length - 1;\n    }\n    return Frequencies[trimmedNote];\n  }\n\n  static ticDurationForSpeedValue( speed ) {\n    return Audio.fullDurationForSpeedValue( speed ) / Audio.TICS_PER_SOUND;\n  }\n\n  static fullDurationForSpeedValue( speed ) {\n    switch ( speed ) {\n      case -1:\n        return 1.5;\n      case -2:\n        return 2;\n      case -3:\n        return 2.5;\n      case -4:\n        return 3;\n      case 1:\n        return 0.75;\n      case 2:\n        return 0.5;\n      case 3:\n        return 0.25;\n      default:\n        return 1;\n    }\n  }\n\n  static oscTypeForWaveValue( waveValue ) {\n    switch ( waveValue ) {\n      case 0:\n        return 'sine';\n      case 1:\n        return 'triangle';\n      case 2:\n        return 'square';\n      case 3:\n        return 'sawtooth';\n      default:\n        return 'sine';\n    }\n  }\n\n  static valueForVolume( volume ) {\n    const normalizedValue = volume / 15;\n    return normalizedValue ** 2.5;\n  }\n\n  static indexAtTic( tic, useLoop, loopStart, loopEnd ) {\n    if ( !useLoop || loopStart < 0 || loopEnd < loopStart ) {\n      // no looping\n      if ( tic < 0 ) {\n        return 0;\n      }\n\n      if ( tic >= Audio.TICS_PER_SOUND ) {\n        return Audio.TICS_PER_SOUND - 1;\n      }\n\n      return tic;\n    }\n\n    if ( tic <= loopEnd ) {\n      // not looping yet\n      return tic;\n    }\n\n    const loopLength = loopEnd - loopStart + 1;\n    const loopAdd = ( tic - loopStart ) % loopLength;\n\n    return loopStart + loopAdd;\n  }\n}\n\nAudio.TICS_PER_SOUND = 32;\n\nexport default Audio;\n",
+    "content": "import Sound from './Sound';\nimport Frequencies from './Frequencies';\n\n/**\n * Handles playing of audio and adding audio data.\n */\nclass Audio {\n  constructor() {\n    /**\n     * The AudioContext used. Created in init.\n     */\n    this.context = null;\n\n    /**\n     * Array of sounds used, of the Sound class type.\n     * Add a sound from data using the addSound method.\n     */\n    this.sounds = [];\n\n    /**\n     * Time in second we should look ahead during update to add audio events to the context.\n     */\n    this.lookAheadTime = 0.05; // in seconds\n  }\n\n  /**\n   * Initialize the audio context. Called automatically by the Engine.\n   */\n  init() {\n    const AudioContext = window.AudioContext || window.webkitAudioContext;\n    this.context = new AudioContext();\n  }\n\n  /**\n   * Update audio events. Called automatically by the Engine in the update loop.\n   */\n  update() {\n    let sound = null;\n    for ( let i = 0; i < this.sounds.length; i += 1 ) {\n      sound = this.sounds[i];\n      if ( sound.isPlayingInfiniteSound ) {\n        const lastScheduledTime = this.context.currentTime - sound.infiniteStartTime + this.lookAheadTime;\n        const totalNumberOfTics = Math.floor( lastScheduledTime / sound.infiniteTicDuration );\n        if ( totalNumberOfTics > sound.infiniteTicsPlayed ) {\n          let volumeTicIndex = 0;\n          let pitchTicIndex = 0;\n          let arpTicIndex = 0;\n          for ( let tic = sound.infiniteTicsPlayed + 1; tic <= totalNumberOfTics; tic += 1 ) {\n            const time = sound.infiniteStartTime + tic * sound.infiniteTicDuration;\n            volumeTicIndex = Audio.indexAtTic(\n              tic, sound.useVolumeLoop,\n              sound.volumeLoopStart,\n              sound.volumeLoopEnd,\n            );\n            pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );\n            arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );\n\n            const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * sound.infiniteVolume;\n\n            sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );\n            sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );\n            const currentNote = sound.infiniteNote + sound.arpTics[arpTicIndex];\n            const currentFrequency = Audio.frequencyForNote( currentNote );\n            sound.infiniteOsc.frequency.setValueAtTime( currentFrequency, time );\n\n            sound.infiniteTicsPlayed = tic;\n          }\n\n          sound.lastVolumeTic = volumeTicIndex;\n          sound.lastPitchTic = pitchTicIndex;\n          sound.lastArpTic = arpTicIndex;\n        }\n      }\n    }\n  }\n\n  /**\n   * Add a Sound instance to the sounds array from data.\n   * @param {*} soundData\n   */\n  addSound( soundData ) {\n    this.sounds.push( new Sound( soundData ) );\n    return this.sounds.length - 1;\n  }\n\n  /**\n   * Play a sound\n   * @param {*} soundIndex\n   * @param {*} note\n   * @param {*} duration\n   * @param {*} volume\n   * @param {*} speed\n   */\n  playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {\n    if ( soundIndex >= this.sounds.length || soundIndex < 0 ) {\n      console.error( 'Invalid sound index' );\n      return;\n    }\n\n    if ( duration < 0 ) {\n      this.playInfiniteSound( soundIndex, note, volume, speed );\n      return;\n    }\n\n    const sound = this.sounds[soundIndex];\n\n    const osc = this.context.createOscillator();\n    osc.type = Audio.oscTypeForWaveValue( sound.wave );\n\n    const ticDuration = Audio.ticDurationForSpeedValue( speed );\n\n    osc.frequency.value = Audio.frequencyForNote( note );\n\n    const gainNode = this.context.createGain();\n\n    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;\n    gainNode.gain.setValueAtTime( initialVolume, this.context.currentTime );\n\n    osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );\n\n    for ( let tic = 1; tic < duration; tic += 1 ) {\n      const time = this.context.currentTime + tic * ticDuration;\n      const volumeTicIndex = Audio.indexAtTic( tic, sound.useVolumeLoop, sound.volumeLoopStart, sound.volumeLoopEnd );\n      const pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );\n      const arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );\n      const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * volume;\n      gainNode.gain.linearRampToValueAtTime( currentVolume, time );\n      osc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );\n      const currentNote = note + sound.arpTics[arpTicIndex];\n      const currentFrequency = Audio.frequencyForNote( currentNote );\n      osc.frequency.setValueAtTime( currentFrequency, time );\n    }\n    const stopTime = this.context.currentTime + ( duration * ticDuration ) + ( sound.releaseLength * ticDuration );\n\n    if ( sound.releaseMode === Sound.RELEASE_EXPO ) {\n      gainNode.gain.exponentialRampToValueAtTime( 0, stopTime );\n    }\n    else {\n      // default to linear\n      gainNode.gain.linearRampToValueAtTime( 0, stopTime );\n    }\n    osc.connect( gainNode ).connect( this.context.destination );\n    osc.start();\n\n    osc.stop( stopTime );\n  }\n\n  /**\n   * Stop a sound that is being played infinitely\n   * @param {*} soundIndex\n   */\n  stopInfiniteSound( soundIndex ) {\n    const sound = this.sounds[soundIndex];\n    if ( sound.isPlayingInfiniteSound ) {\n      const stopTime = this.context.currentTime + ( sound.releaseLength * sound.infiniteTicDuration );\n      if ( sound.releaseMode === Sound.RELEASE_EXPO ) {\n        sound.infiniteGain.gain.exponentialRampToValueAtTime( 0.0001, stopTime );\n      }\n      else {\n        // default to linear\n        sound.infiniteGain.gain.linearRampToValueAtTime( 0, stopTime );\n      }\n      sound.infiniteTicsPlayed = 0;\n      sound.infiniteOsc.stop( stopTime );\n      sound.isPlayingInfiniteSound = false;\n    }\n  }\n\n  /**\n   * Stop all infinitely playing sounds\n   */\n  stopAllInfiniteSounds() {\n    for ( let i = 0; i < this.sounds.length; i += 1 ) {\n      this.stopInfiniteSound( i );\n    }\n  }\n\n  /**\n   * Play a sound infinitely. Only one instance of a sound at each index can be played at a time.\n   * @param {*} soundIndex\n   * @param {*} note\n   * @param {*} volume\n   * @param {*} speed\n   */\n  playInfiniteSound( soundIndex, note, volume, speed ) {\n    const sound = this.sounds[soundIndex];\n    if ( sound.isPlayingInfiniteSound ) {\n      this.stopInfiniteSound( soundIndex );\n    }\n\n    sound.isPlayingInfiniteSound = true;\n    sound.infiniteStartTime = this.context.currentTime;\n    sound.infiniteOsc = this.context.createOscillator();\n    sound.infiniteTicDuration = Audio.ticDurationForSpeedValue( speed );\n    sound.infiniteGain = this.context.createGain();\n    sound.infiniteVolume = volume;\n    sound.infiniteNote = note;\n\n    sound.infiniteOsc.frequency.value = Audio.frequencyForNote( note );\n    sound.infiniteOsc.type = Audio.oscTypeForWaveValue( sound.wave );\n\n    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;\n    sound.infiniteGain.gain.setValueAtTime( initialVolume, this.context.currentTime );\n\n    sound.infiniteOsc.connect( sound.infiniteGain ).connect( this.context.destination );\n    sound.infiniteOsc.start();\n  }\n\n  /**\n   * Get the frequency in hertz for a note number.\n   * @param {*} note\n   */\n  static frequencyForNote( note ) {\n    let trimmedNote = note;\n    if ( trimmedNote < 0 ) {\n      trimmedNote = 0;\n    }\n    else if ( trimmedNote >= Frequencies.length ) {\n      trimmedNote = Frequencies.length - 1;\n    }\n    return Frequencies[trimmedNote];\n  }\n\n  /**\n   * Get the duration in seconds for a tic at a given speed number.\n   * @param {*} speed\n   */\n  static ticDurationForSpeedValue( speed ) {\n    return Audio.fullDurationForSpeedValue( speed ) / Audio.TICS_PER_SOUND;\n  }\n\n  /**\n   * Get the total length of a sound in seconds for a given speed number\n   * @param {*} speed\n   */\n  static fullDurationForSpeedValue( speed ) {\n    switch ( speed ) {\n      case -1:\n        return 1.5;\n      case -2:\n        return 2;\n      case -3:\n        return 2.5;\n      case -4:\n        return 3;\n      case 1:\n        return 0.75;\n      case 2:\n        return 0.5;\n      case 3:\n        return 0.25;\n      default:\n        return 1;\n    }\n  }\n\n  /**\n   * Get the wave type for a wave index\n   * @param {*} waveValue\n   */\n  static oscTypeForWaveValue( waveValue ) {\n    switch ( waveValue ) {\n      case 0:\n        return 'sine';\n      case 1:\n        return 'triangle';\n      case 2:\n        return 'square';\n      case 3:\n        return 'sawtooth';\n      default:\n        return 'sine';\n    }\n  }\n\n  /**\n   * Get a 0 - 1 volume value for a 0 - 15 value used by the Sound class.\n   * @param {*} volume\n   */\n  static valueForVolume( volume ) {\n    const normalizedValue = volume / 15;\n    return normalizedValue ** 2.5;\n  }\n\n  /**\n   * Get the current tic index, taking into account looping.\n   * @param {*} tic\n   * @param {*} useLoop\n   * @param {*} loopStart\n   * @param {*} loopEnd\n   */\n  static indexAtTic( tic, useLoop, loopStart, loopEnd ) {\n    if ( !useLoop || loopStart < 0 || loopEnd < loopStart ) {\n      // no looping\n      if ( tic < 0 ) {\n        return 0;\n      }\n\n      if ( tic >= Audio.TICS_PER_SOUND ) {\n        return Audio.TICS_PER_SOUND - 1;\n      }\n\n      return tic;\n    }\n\n    if ( tic <= loopEnd ) {\n      // not looping yet\n      return tic;\n    }\n\n    const loopLength = loopEnd - loopStart + 1;\n    const loopAdd = ( tic - loopStart ) % loopLength;\n\n    return loopStart + loopAdd;\n  }\n}\n\nAudio.TICS_PER_SOUND = 32;\n\nexport default Audio;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Audio/Audio.js",
     "access": "public",
@@ -585,9 +585,8 @@
     "export": true,
     "importPath": "bitmelo/src/Audio/Audio.js",
     "importStyle": "Audio",
-    "description": null,
-    "lineNumber": 4,
-    "undocument": true,
+    "description": "Handles playing of audio and adding audio data.",
+    "lineNumber": 7,
     "interface": false
   },
   {
@@ -601,7 +600,7 @@
     "longname": "src/Audio/Audio.js~Audio#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 5,
+    "lineNumber": 8,
     "undocument": true
   },
   {
@@ -612,9 +611,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#context",
     "access": "public",
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
+    "description": "The AudioContext used. Created in init.",
+    "lineNumber": 12,
     "type": {
       "types": [
         "*"
@@ -629,9 +627,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#sounds",
     "access": "public",
-    "description": null,
-    "lineNumber": 7,
-    "undocument": true,
+    "description": "Array of sounds used, of the Sound class type.\nAdd a sound from data using the addSound method.",
+    "lineNumber": 18,
     "type": {
       "types": [
         "*[]"
@@ -646,9 +643,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#lookAheadTime",
     "access": "public",
-    "description": null,
-    "lineNumber": 8,
-    "undocument": true,
+    "description": "Time in second we should look ahead during update to add audio events to the context.",
+    "lineNumber": 23,
     "type": {
       "types": [
         "number"
@@ -665,9 +661,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#init",
     "access": "public",
-    "description": null,
-    "lineNumber": 11,
-    "undocument": true,
+    "description": "Initialize the audio context. Called automatically by the Engine.",
+    "lineNumber": 29,
     "params": [],
     "return": null
   },
@@ -681,9 +676,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#update",
     "access": "public",
-    "description": null,
-    "lineNumber": 17,
-    "undocument": true,
+    "description": "Update audio events. Called automatically by the Engine in the update loop.",
+    "lineNumber": 37,
     "params": [],
     "return": null
   },
@@ -697,15 +691,18 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#addSound",
     "access": "public",
-    "description": null,
-    "lineNumber": 44,
-    "undocument": true,
+    "description": "Add a Sound instance to the sounds array from data.",
+    "lineNumber": 81,
     "params": [
       {
-        "name": "soundData",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "soundData",
+        "description": ""
       }
     ],
     "return": {
@@ -724,48 +721,58 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#playSound",
     "access": "public",
-    "description": null,
-    "lineNumber": 49,
-    "undocument": true,
+    "description": "Play a sound",
+    "lineNumber": 94,
     "params": [
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "soundIndex",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "note",
+        "description": ""
+      },
+      {
+        "nullable": null,
         "types": [
           "*"
-        ]
-      },
-      {
+        ],
+        "spread": false,
+        "optional": false,
         "name": "duration",
-        "optional": true,
-        "types": [
-          "number"
-        ],
-        "defaultRaw": 32,
-        "defaultValue": "32"
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "volume",
-        "optional": true,
-        "types": [
-          "number"
-        ],
-        "defaultRaw": 1,
-        "defaultValue": "1"
+        "description": ""
       },
       {
-        "name": "speed",
-        "optional": true,
+        "nullable": null,
         "types": [
-          "number"
+          "*"
         ],
-        "defaultRaw": 0,
-        "defaultValue": "0"
+        "spread": false,
+        "optional": false,
+        "name": "speed",
+        "description": ""
       }
     ],
     "return": null
@@ -780,15 +787,18 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#stopInfiniteSound",
     "access": "public",
-    "description": null,
-    "lineNumber": 101,
-    "undocument": true,
+    "description": "Stop a sound that is being played infinitely",
+    "lineNumber": 152,
     "params": [
       {
-        "name": "soundIndex",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "soundIndex",
+        "description": ""
       }
     ],
     "return": null
@@ -803,9 +813,8 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#stopAllInfiniteSounds",
     "access": "public",
-    "description": null,
-    "lineNumber": 118,
-    "undocument": true,
+    "description": "Stop all infinitely playing sounds",
+    "lineNumber": 172,
     "params": [],
     "return": null
   },
@@ -819,33 +828,48 @@
     "static": false,
     "longname": "src/Audio/Audio.js~Audio#playInfiniteSound",
     "access": "public",
-    "description": null,
-    "lineNumber": 124,
-    "undocument": true,
+    "description": "Play a sound infinitely. Only one instance of a sound at each index can be played at a time.",
+    "lineNumber": 185,
     "params": [
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "soundIndex",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "note",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "volume",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
-        "name": "speed",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "speed",
+        "description": ""
       }
     ],
     "return": null
@@ -860,15 +884,18 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.frequencyForNote",
     "access": "public",
-    "description": null,
-    "lineNumber": 148,
-    "undocument": true,
+    "description": "Get the frequency in hertz for a note number.",
+    "lineNumber": 213,
     "params": [
       {
-        "name": "note",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "note",
+        "description": ""
       }
     ],
     "return": {
@@ -887,15 +914,18 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.ticDurationForSpeedValue",
     "access": "public",
-    "description": null,
-    "lineNumber": 159,
-    "undocument": true,
+    "description": "Get the duration in seconds for a tic at a given speed number.",
+    "lineNumber": 228,
     "params": [
       {
-        "name": "speed",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "speed",
+        "description": ""
       }
     ],
     "return": {
@@ -914,15 +944,18 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.fullDurationForSpeedValue",
     "access": "public",
-    "description": null,
-    "lineNumber": 163,
-    "undocument": true,
+    "description": "Get the total length of a sound in seconds for a given speed number",
+    "lineNumber": 236,
     "params": [
       {
-        "name": "speed",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "speed",
+        "description": ""
       }
     ],
     "return": {
@@ -941,15 +974,18 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.oscTypeForWaveValue",
     "access": "public",
-    "description": null,
-    "lineNumber": 184,
-    "undocument": true,
+    "description": "Get the wave type for a wave index",
+    "lineNumber": 261,
     "params": [
       {
-        "name": "waveValue",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "waveValue",
+        "description": ""
       }
     ],
     "return": {
@@ -968,15 +1004,18 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.valueForVolume",
     "access": "public",
-    "description": null,
-    "lineNumber": 199,
-    "undocument": true,
+    "description": "Get a 0 - 1 volume value for a 0 - 15 value used by the Sound class.",
+    "lineNumber": 280,
     "params": [
       {
-        "name": "volume",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "volume",
+        "description": ""
       }
     ],
     "return": {
@@ -995,33 +1034,48 @@
     "static": true,
     "longname": "src/Audio/Audio.js~Audio.indexAtTic",
     "access": "public",
-    "description": null,
-    "lineNumber": 204,
-    "undocument": true,
+    "description": "Get the current tic index, taking into account looping.",
+    "lineNumber": 292,
     "params": [
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "tic",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "useLoop",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "loopStart",
-        "types": [
-          "*"
-        ]
+        "description": ""
       },
       {
-        "name": "loopEnd",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "loopEnd",
+        "description": ""
       }
     ],
     "return": {
@@ -1034,7 +1088,7 @@
     "__docId__": 68,
     "kind": "file",
     "name": "src/Audio/Frequencies.js",
-    "content": "\nimport Notes from './Notes';\n\nconst Frequencies = new Array( 108 );\n\nFrequencies[Notes.C0] = 16.35160;\nFrequencies[Notes.Cs0] = 17.32391;\nFrequencies[Notes.D0] = 18.35405;\nFrequencies[Notes.Ds0] = 19.44544;\nFrequencies[Notes.E0] = 20.60172;\nFrequencies[Notes.F0] = 21.82676;\nFrequencies[Notes.Fs0] = 23.12465;\nFrequencies[Notes.G0] = 24.49971;\nFrequencies[Notes.Gs0] = 25.95654;\nFrequencies[Notes.A0] = 27.50000;\nFrequencies[Notes.As0] = 29.13524;\nFrequencies[Notes.B0] = 30.86771;\n\nFrequencies[Notes.C1] = 32.70320;\nFrequencies[Notes.Cs1] = 34.64783;\nFrequencies[Notes.D1] = 36.70810;\nFrequencies[Notes.Ds1] = 38.89087;\nFrequencies[Notes.E1] = 41.20344;\nFrequencies[Notes.F1] = 43.65353;\nFrequencies[Notes.Fs1] = 46.24930;\nFrequencies[Notes.G1] = 48.99943;\nFrequencies[Notes.Gs1] = 51.91309;\nFrequencies[Notes.A1] = 55.00000;\nFrequencies[Notes.As1] = 58.27047;\nFrequencies[Notes.B1] = 61.73541;\n\nFrequencies[Notes.C2] = 65.40639;\nFrequencies[Notes.Cs2] = 69.29566;\nFrequencies[Notes.D2] = 73.41619;\nFrequencies[Notes.Ds2] = 77.78175;\nFrequencies[Notes.E2] = 82.40689;\nFrequencies[Notes.F2] = 87.30706;\nFrequencies[Notes.Fs2] = 92.49861;\nFrequencies[Notes.G2] = 97.99886;\nFrequencies[Notes.Gs2] = 103.8262;\nFrequencies[Notes.A2] = 110.0000;\nFrequencies[Notes.As2] = 116.5409;\nFrequencies[Notes.B2] = 123.4708;\n\nFrequencies[Notes.C3] = 130.8128;\nFrequencies[Notes.Cs3] = 138.5913;\nFrequencies[Notes.D3] = 146.8324;\nFrequencies[Notes.Ds3] = 155.5635;\nFrequencies[Notes.E3] = 164.8138;\nFrequencies[Notes.F3] = 174.6141;\nFrequencies[Notes.Fs3] = 184.9972;\nFrequencies[Notes.G3] = 195.9977;\nFrequencies[Notes.Gs3] = 207.6523;\nFrequencies[Notes.A3] = 220.0000;\nFrequencies[Notes.As3] = 233.0819;\nFrequencies[Notes.B3] = 246.9417;\n\nFrequencies[Notes.C4] = 261.6256;\nFrequencies[Notes.Cs4] = 277.1826;\nFrequencies[Notes.D4] = 293.6648;\nFrequencies[Notes.Ds4] = 311.1270;\nFrequencies[Notes.E4] = 329.6276;\nFrequencies[Notes.F4] = 349.2282;\nFrequencies[Notes.Fs4] = 369.9944;\nFrequencies[Notes.G4] = 391.9954;\nFrequencies[Notes.Gs4] = 415.3047;\nFrequencies[Notes.A4] = 440.0000;\nFrequencies[Notes.As4] = 466.1638;\nFrequencies[Notes.B4] = 493.8833;\n\nFrequencies[Notes.C5] = 523.2511;\nFrequencies[Notes.Cs5] = 554.3653;\nFrequencies[Notes.D5] = 587.3295;\nFrequencies[Notes.Ds5] = 622.2540;\nFrequencies[Notes.E5] = 659.2551;\nFrequencies[Notes.F5] = 698.4565;\nFrequencies[Notes.Fs5] = 739.9888;\nFrequencies[Notes.G5] = 783.9909;\nFrequencies[Notes.Gs5] = 830.6094;\nFrequencies[Notes.A5] = 880.0000;\nFrequencies[Notes.As5] = 932.3275;\nFrequencies[Notes.B5] = 987.7666;\n\nFrequencies[Notes.C6] = 1046.502;\nFrequencies[Notes.Cs6] = 1108.731;\nFrequencies[Notes.D6] = 1174.659;\nFrequencies[Notes.Ds6] = 1244.508;\nFrequencies[Notes.E6] = 1318.510;\nFrequencies[Notes.F6] = 1396.913;\nFrequencies[Notes.Fs6] = 1479.978;\nFrequencies[Notes.G6] = 1567.982;\nFrequencies[Notes.Gs6] = 1661.219;\nFrequencies[Notes.A6] = 1760.000;\nFrequencies[Notes.As6] = 1864.655;\nFrequencies[Notes.B6] = 1975.533;\n\nFrequencies[Notes.C7] = 2093.005;\nFrequencies[Notes.Cs7] = 2217.461;\nFrequencies[Notes.D7] = 2349.318;\nFrequencies[Notes.Ds7] = 2489.016;\nFrequencies[Notes.E7] = 2637.020;\nFrequencies[Notes.F7] = 2793.826;\nFrequencies[Notes.Fs7] = 2959.955;\nFrequencies[Notes.G7] = 3135.963;\nFrequencies[Notes.Gs7] = 3322.438;\nFrequencies[Notes.A7] = 3520.000;\nFrequencies[Notes.As7] = 3729.310;\nFrequencies[Notes.B7] = 3951.066;\n\nFrequencies[Notes.C8] = 4186.009;\nFrequencies[Notes.Cs8] = 4434.922;\nFrequencies[Notes.D8] = 4698.636;\nFrequencies[Notes.Ds8] = 4978.032;\nFrequencies[Notes.E8] = 5274.041;\nFrequencies[Notes.F8] = 5587.652;\nFrequencies[Notes.Fs8] = 5919.911;\nFrequencies[Notes.G8] = 6271.927;\nFrequencies[Notes.Gs8] = 6644.875;\nFrequencies[Notes.A8] = 7040.000;\nFrequencies[Notes.As8] = 7458.620;\nFrequencies[Notes.B8] = 7902.133;\n\nexport default Frequencies;\n",
+    "content": "\nimport Notes from './Notes';\n\n/**\n * Array of Frequency values for notes.\n */\nconst Frequencies = new Array( 108 );\n\nFrequencies[Notes.C0] = 16.35160;\nFrequencies[Notes.Cs0] = 17.32391;\nFrequencies[Notes.D0] = 18.35405;\nFrequencies[Notes.Ds0] = 19.44544;\nFrequencies[Notes.E0] = 20.60172;\nFrequencies[Notes.F0] = 21.82676;\nFrequencies[Notes.Fs0] = 23.12465;\nFrequencies[Notes.G0] = 24.49971;\nFrequencies[Notes.Gs0] = 25.95654;\nFrequencies[Notes.A0] = 27.50000;\nFrequencies[Notes.As0] = 29.13524;\nFrequencies[Notes.B0] = 30.86771;\n\nFrequencies[Notes.C1] = 32.70320;\nFrequencies[Notes.Cs1] = 34.64783;\nFrequencies[Notes.D1] = 36.70810;\nFrequencies[Notes.Ds1] = 38.89087;\nFrequencies[Notes.E1] = 41.20344;\nFrequencies[Notes.F1] = 43.65353;\nFrequencies[Notes.Fs1] = 46.24930;\nFrequencies[Notes.G1] = 48.99943;\nFrequencies[Notes.Gs1] = 51.91309;\nFrequencies[Notes.A1] = 55.00000;\nFrequencies[Notes.As1] = 58.27047;\nFrequencies[Notes.B1] = 61.73541;\n\nFrequencies[Notes.C2] = 65.40639;\nFrequencies[Notes.Cs2] = 69.29566;\nFrequencies[Notes.D2] = 73.41619;\nFrequencies[Notes.Ds2] = 77.78175;\nFrequencies[Notes.E2] = 82.40689;\nFrequencies[Notes.F2] = 87.30706;\nFrequencies[Notes.Fs2] = 92.49861;\nFrequencies[Notes.G2] = 97.99886;\nFrequencies[Notes.Gs2] = 103.8262;\nFrequencies[Notes.A2] = 110.0000;\nFrequencies[Notes.As2] = 116.5409;\nFrequencies[Notes.B2] = 123.4708;\n\nFrequencies[Notes.C3] = 130.8128;\nFrequencies[Notes.Cs3] = 138.5913;\nFrequencies[Notes.D3] = 146.8324;\nFrequencies[Notes.Ds3] = 155.5635;\nFrequencies[Notes.E3] = 164.8138;\nFrequencies[Notes.F3] = 174.6141;\nFrequencies[Notes.Fs3] = 184.9972;\nFrequencies[Notes.G3] = 195.9977;\nFrequencies[Notes.Gs3] = 207.6523;\nFrequencies[Notes.A3] = 220.0000;\nFrequencies[Notes.As3] = 233.0819;\nFrequencies[Notes.B3] = 246.9417;\n\nFrequencies[Notes.C4] = 261.6256;\nFrequencies[Notes.Cs4] = 277.1826;\nFrequencies[Notes.D4] = 293.6648;\nFrequencies[Notes.Ds4] = 311.1270;\nFrequencies[Notes.E4] = 329.6276;\nFrequencies[Notes.F4] = 349.2282;\nFrequencies[Notes.Fs4] = 369.9944;\nFrequencies[Notes.G4] = 391.9954;\nFrequencies[Notes.Gs4] = 415.3047;\nFrequencies[Notes.A4] = 440.0000;\nFrequencies[Notes.As4] = 466.1638;\nFrequencies[Notes.B4] = 493.8833;\n\nFrequencies[Notes.C5] = 523.2511;\nFrequencies[Notes.Cs5] = 554.3653;\nFrequencies[Notes.D5] = 587.3295;\nFrequencies[Notes.Ds5] = 622.2540;\nFrequencies[Notes.E5] = 659.2551;\nFrequencies[Notes.F5] = 698.4565;\nFrequencies[Notes.Fs5] = 739.9888;\nFrequencies[Notes.G5] = 783.9909;\nFrequencies[Notes.Gs5] = 830.6094;\nFrequencies[Notes.A5] = 880.0000;\nFrequencies[Notes.As5] = 932.3275;\nFrequencies[Notes.B5] = 987.7666;\n\nFrequencies[Notes.C6] = 1046.502;\nFrequencies[Notes.Cs6] = 1108.731;\nFrequencies[Notes.D6] = 1174.659;\nFrequencies[Notes.Ds6] = 1244.508;\nFrequencies[Notes.E6] = 1318.510;\nFrequencies[Notes.F6] = 1396.913;\nFrequencies[Notes.Fs6] = 1479.978;\nFrequencies[Notes.G6] = 1567.982;\nFrequencies[Notes.Gs6] = 1661.219;\nFrequencies[Notes.A6] = 1760.000;\nFrequencies[Notes.As6] = 1864.655;\nFrequencies[Notes.B6] = 1975.533;\n\nFrequencies[Notes.C7] = 2093.005;\nFrequencies[Notes.Cs7] = 2217.461;\nFrequencies[Notes.D7] = 2349.318;\nFrequencies[Notes.Ds7] = 2489.016;\nFrequencies[Notes.E7] = 2637.020;\nFrequencies[Notes.F7] = 2793.826;\nFrequencies[Notes.Fs7] = 2959.955;\nFrequencies[Notes.G7] = 3135.963;\nFrequencies[Notes.Gs7] = 3322.438;\nFrequencies[Notes.A7] = 3520.000;\nFrequencies[Notes.As7] = 3729.310;\nFrequencies[Notes.B7] = 3951.066;\n\nFrequencies[Notes.C8] = 4186.009;\nFrequencies[Notes.Cs8] = 4434.922;\nFrequencies[Notes.D8] = 4698.636;\nFrequencies[Notes.Ds8] = 4978.032;\nFrequencies[Notes.E8] = 5274.041;\nFrequencies[Notes.F8] = 5587.652;\nFrequencies[Notes.Fs8] = 5919.911;\nFrequencies[Notes.G8] = 6271.927;\nFrequencies[Notes.Gs8] = 6644.875;\nFrequencies[Notes.A8] = 7040.000;\nFrequencies[Notes.As8] = 7458.620;\nFrequencies[Notes.B8] = 7902.133;\n\nexport default Frequencies;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Audio/Frequencies.js",
     "access": "public",
@@ -1045,7 +1099,7 @@
     "__docId__": 69,
     "kind": "file",
     "name": "src/Audio/Notes.js",
-    "content": "\nconst Notes = {};\n\nNotes.C0 = 0;\nNotes.Cs0 = 1;\nNotes.Db0 = 1;\nNotes.D0 = 2;\nNotes.Ds0 = 3;\nNotes.Eb0 = 3;\nNotes.E0 = 4;\nNotes.F0 = 5;\nNotes.Fs0 = 6;\nNotes.Gb0 = 6;\nNotes.G0 = 7;\nNotes.Gs0 = 8;\nNotes.Ab0 = 8;\nNotes.A0 = 9;\nNotes.As0 = 10;\nNotes.Bb0 = 10;\nNotes.B0 = 11;\n\nNotes.C1 = 12;\nNotes.Cs1 = 13;\nNotes.Db1 = 13;\nNotes.D1 = 14;\nNotes.Ds1 = 15;\nNotes.Eb1 = 15;\nNotes.E1 = 16;\nNotes.F1 = 17;\nNotes.Fs1 = 18;\nNotes.Gb1 = 18;\nNotes.G1 = 19;\nNotes.Gs1 = 20;\nNotes.Ab1 = 20;\nNotes.A1 = 21;\nNotes.As1 = 22;\nNotes.Bb1 = 22;\nNotes.B1 = 23;\n\nNotes.C2 = 24;\nNotes.Cs2 = 25;\nNotes.Db2 = 25;\nNotes.D2 = 26;\nNotes.Ds2 = 27;\nNotes.Eb2 = 27;\nNotes.E2 = 28;\nNotes.F2 = 29;\nNotes.Fs2 = 30;\nNotes.Gb2 = 30;\nNotes.G2 = 31;\nNotes.Gs2 = 32;\nNotes.Ab2 = 32;\nNotes.A2 = 33;\nNotes.As2 = 34;\nNotes.Bb2 = 34;\nNotes.B2 = 35;\n\nNotes.C3 = 36;\nNotes.Cs3 = 37;\nNotes.Db3 = 37;\nNotes.D3 = 38;\nNotes.Ds3 = 39;\nNotes.Eb3 = 39;\nNotes.E3 = 40;\nNotes.F3 = 41;\nNotes.Fs3 = 42;\nNotes.Gb3 = 42;\nNotes.G3 = 43;\nNotes.Gs3 = 44;\nNotes.Ab3 = 44;\nNotes.A3 = 45;\nNotes.As3 = 46;\nNotes.Bb3 = 46;\nNotes.B3 = 47;\n\nNotes.C4 = 48;\nNotes.Cs4 = 49;\nNotes.Db4 = 49;\nNotes.D4 = 50;\nNotes.Ds4 = 51;\nNotes.Eb4 = 51;\nNotes.E4 = 52;\nNotes.F4 = 53;\nNotes.Fs4 = 54;\nNotes.Gb4 = 54;\nNotes.G4 = 55;\nNotes.Gs4 = 56;\nNotes.Ab4 = 56;\nNotes.A4 = 57;\nNotes.As4 = 58;\nNotes.Bb4 = 58;\nNotes.B4 = 59;\n\nNotes.C5 = 60;\nNotes.Cs5 = 61;\nNotes.Db5 = 61;\nNotes.D5 = 62;\nNotes.Ds5 = 63;\nNotes.Eb5 = 63;\nNotes.E5 = 64;\nNotes.F5 = 65;\nNotes.Fs5 = 66;\nNotes.Gb5 = 66;\nNotes.G5 = 67;\nNotes.Gs5 = 68;\nNotes.Ab5 = 68;\nNotes.A5 = 69;\nNotes.As5 = 70;\nNotes.Bb5 = 70;\nNotes.B5 = 71;\n\nNotes.C6 = 72;\nNotes.Cs6 = 73;\nNotes.Db6 = 73;\nNotes.D6 = 74;\nNotes.Ds6 = 75;\nNotes.Eb6 = 75;\nNotes.E6 = 76;\nNotes.F6 = 77;\nNotes.Fs6 = 78;\nNotes.Gb6 = 78;\nNotes.G6 = 79;\nNotes.Gs6 = 80;\nNotes.Ab6 = 80;\nNotes.A6 = 81;\nNotes.As6 = 82;\nNotes.Bb6 = 82;\nNotes.B6 = 83;\n\nNotes.C7 = 84;\nNotes.Cs7 = 85;\nNotes.Db7 = 85;\nNotes.D7 = 86;\nNotes.Ds7 = 87;\nNotes.Eb7 = 87;\nNotes.E7 = 88;\nNotes.F7 = 89;\nNotes.Fs7 = 90;\nNotes.Gb7 = 90;\nNotes.G7 = 91;\nNotes.Gs7 = 92;\nNotes.Ab7 = 92;\nNotes.A7 = 93;\nNotes.As7 = 94;\nNotes.Bb7 = 94;\nNotes.B7 = 95;\n\nNotes.C8 = 96;\nNotes.Cs8 = 97;\nNotes.Db8 = 97;\nNotes.D8 = 98;\nNotes.Ds8 = 99;\nNotes.Eb8 = 99;\nNotes.E8 = 100;\nNotes.F8 = 101;\nNotes.Fs8 = 102;\nNotes.Gb8 = 102;\nNotes.G8 = 103;\nNotes.Gs8 = 104;\nNotes.Ab8 = 104;\nNotes.A8 = 105;\nNotes.As8 = 106;\nNotes.Bb8 = 106;\nNotes.B8 = 107;\n\nexport default Notes;\n",
+    "content": "\n/**\n * Object mapping Node identifiers to numbers. AKA Notes.C4 = 48\n */\nconst Notes = {};\n\nNotes.C0 = 0;\nNotes.Cs0 = 1;\nNotes.Db0 = 1;\nNotes.D0 = 2;\nNotes.Ds0 = 3;\nNotes.Eb0 = 3;\nNotes.E0 = 4;\nNotes.F0 = 5;\nNotes.Fs0 = 6;\nNotes.Gb0 = 6;\nNotes.G0 = 7;\nNotes.Gs0 = 8;\nNotes.Ab0 = 8;\nNotes.A0 = 9;\nNotes.As0 = 10;\nNotes.Bb0 = 10;\nNotes.B0 = 11;\n\nNotes.C1 = 12;\nNotes.Cs1 = 13;\nNotes.Db1 = 13;\nNotes.D1 = 14;\nNotes.Ds1 = 15;\nNotes.Eb1 = 15;\nNotes.E1 = 16;\nNotes.F1 = 17;\nNotes.Fs1 = 18;\nNotes.Gb1 = 18;\nNotes.G1 = 19;\nNotes.Gs1 = 20;\nNotes.Ab1 = 20;\nNotes.A1 = 21;\nNotes.As1 = 22;\nNotes.Bb1 = 22;\nNotes.B1 = 23;\n\nNotes.C2 = 24;\nNotes.Cs2 = 25;\nNotes.Db2 = 25;\nNotes.D2 = 26;\nNotes.Ds2 = 27;\nNotes.Eb2 = 27;\nNotes.E2 = 28;\nNotes.F2 = 29;\nNotes.Fs2 = 30;\nNotes.Gb2 = 30;\nNotes.G2 = 31;\nNotes.Gs2 = 32;\nNotes.Ab2 = 32;\nNotes.A2 = 33;\nNotes.As2 = 34;\nNotes.Bb2 = 34;\nNotes.B2 = 35;\n\nNotes.C3 = 36;\nNotes.Cs3 = 37;\nNotes.Db3 = 37;\nNotes.D3 = 38;\nNotes.Ds3 = 39;\nNotes.Eb3 = 39;\nNotes.E3 = 40;\nNotes.F3 = 41;\nNotes.Fs3 = 42;\nNotes.Gb3 = 42;\nNotes.G3 = 43;\nNotes.Gs3 = 44;\nNotes.Ab3 = 44;\nNotes.A3 = 45;\nNotes.As3 = 46;\nNotes.Bb3 = 46;\nNotes.B3 = 47;\n\nNotes.C4 = 48;\nNotes.Cs4 = 49;\nNotes.Db4 = 49;\nNotes.D4 = 50;\nNotes.Ds4 = 51;\nNotes.Eb4 = 51;\nNotes.E4 = 52;\nNotes.F4 = 53;\nNotes.Fs4 = 54;\nNotes.Gb4 = 54;\nNotes.G4 = 55;\nNotes.Gs4 = 56;\nNotes.Ab4 = 56;\nNotes.A4 = 57;\nNotes.As4 = 58;\nNotes.Bb4 = 58;\nNotes.B4 = 59;\n\nNotes.C5 = 60;\nNotes.Cs5 = 61;\nNotes.Db5 = 61;\nNotes.D5 = 62;\nNotes.Ds5 = 63;\nNotes.Eb5 = 63;\nNotes.E5 = 64;\nNotes.F5 = 65;\nNotes.Fs5 = 66;\nNotes.Gb5 = 66;\nNotes.G5 = 67;\nNotes.Gs5 = 68;\nNotes.Ab5 = 68;\nNotes.A5 = 69;\nNotes.As5 = 70;\nNotes.Bb5 = 70;\nNotes.B5 = 71;\n\nNotes.C6 = 72;\nNotes.Cs6 = 73;\nNotes.Db6 = 73;\nNotes.D6 = 74;\nNotes.Ds6 = 75;\nNotes.Eb6 = 75;\nNotes.E6 = 76;\nNotes.F6 = 77;\nNotes.Fs6 = 78;\nNotes.Gb6 = 78;\nNotes.G6 = 79;\nNotes.Gs6 = 80;\nNotes.Ab6 = 80;\nNotes.A6 = 81;\nNotes.As6 = 82;\nNotes.Bb6 = 82;\nNotes.B6 = 83;\n\nNotes.C7 = 84;\nNotes.Cs7 = 85;\nNotes.Db7 = 85;\nNotes.D7 = 86;\nNotes.Ds7 = 87;\nNotes.Eb7 = 87;\nNotes.E7 = 88;\nNotes.F7 = 89;\nNotes.Fs7 = 90;\nNotes.Gb7 = 90;\nNotes.G7 = 91;\nNotes.Gs7 = 92;\nNotes.Ab7 = 92;\nNotes.A7 = 93;\nNotes.As7 = 94;\nNotes.Bb7 = 94;\nNotes.B7 = 95;\n\nNotes.C8 = 96;\nNotes.Cs8 = 97;\nNotes.Db8 = 97;\nNotes.D8 = 98;\nNotes.Ds8 = 99;\nNotes.Eb8 = 99;\nNotes.E8 = 100;\nNotes.F8 = 101;\nNotes.Fs8 = 102;\nNotes.Gb8 = 102;\nNotes.G8 = 103;\nNotes.Gs8 = 104;\nNotes.Ab8 = 104;\nNotes.A8 = 105;\nNotes.As8 = 106;\nNotes.Bb8 = 106;\nNotes.B8 = 107;\n\nexport default Notes;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Audio/Notes.js",
     "access": "public",
@@ -1063,9 +1117,8 @@
     "export": true,
     "importPath": "bitmelo/src/Audio/Notes.js",
     "importStyle": "Notes",
-    "description": null,
-    "lineNumber": 2,
-    "undocument": true,
+    "description": "Object mapping Node identifiers to numbers. AKA Notes.C4 = 48",
+    "lineNumber": 5,
     "type": {
       "types": [
         "{}"
@@ -1076,7 +1129,7 @@
     "__docId__": 71,
     "kind": "file",
     "name": "src/Audio/Sound.js",
-    "content": "\n\nclass Sound {\n  constructor( data ) {\n    this.volumeTics = new Int8Array( 32 );\n    this.pitchTics = new Int8Array( 32 );\n    this.arpTics = new Int8Array( 32 );\n    this.useLoop = false;\n    this.loopStart = -1;\n    this.loopEnd = -1;\n    this.wave = 0;\n    this.pitchScale = 10;\n    this.releaseLength = 1;\n    this.releaseMode = Sound.RELEASE_LINEAR;\n\n    this.isPlayingInfiniteSound = false;\n    this.infiniteStartTime = 0;\n    this.infiniteOsc = null;\n    this.infiniteGain = null;\n    this.infiniteTicDuration = 0;\n    this.infiniteTicsPlayed = 0;\n    this.infiniteVolume = 0;\n    this.infiniteNote = 0;\n\n    if ( data ) {\n      const {\n        volumeTics,\n        pitchTics,\n        arpTics,\n        useLoop,\n        loopStart,\n        loopEnd,\n        wave,\n        pitchScale,\n        releaseLength,\n      } = data;\n\n      if ( volumeTics && Array.isArray( volumeTics ) ) {\n        for ( let i = 0; i < volumeTics.length; i += 1 ) {\n          this.volumeTics[i] = volumeTics[i];\n        }\n      }\n\n      if ( pitchTics && Array.isArray( pitchTics ) ) {\n        for ( let i = 0; i < pitchTics.length; i += 1 ) {\n          this.pitchTics[i] = pitchTics[i];\n        }\n      }\n\n      if ( arpTics && Array.isArray( arpTics ) ) {\n        for ( let i = 0; i < arpTics.length; i += 1 ) {\n          this.arpTics[i] = arpTics[i];\n        }\n      }\n\n      this.wave = wave;\n      this.useLoop = useLoop;\n      this.loopStart = loopStart;\n      this.loopEnd = loopEnd;\n      this.pitchScale = pitchScale;\n      this.releaseLength = releaseLength;\n    }\n  }\n}\n\nSound.RELEASE_LINEAR = 'linear';\nSound.RELEASE_EXPO = 'expo';\n\nexport default Sound;\n",
+    "content": "\n/**\n * Represents a sound that can be played.\n */\nclass Sound {\n  constructor( data ) {\n    /**\n     * Array of volume values for the duration of the sound.\n     * Each value must be 0 to 15.\n     * Length of the array must always be 32.\n     */\n    this.volumeTics = new Int8Array( 32 );\n\n    /**\n     * Array of pitch values for the duration of the sound.\n     * Each value must be -10 to 10.\n     * Length of the array must always be 32.\n     */\n    this.pitchTics = new Int8Array( 32 );\n\n    /**\n     * Array of arp values for the duration of the sound.\n     * Each value is the number of notes above or below the note of the sound.\n     * Length of the array must always be 32.\n     */\n    this.arpTics = new Int8Array( 32 );\n\n    /**\n     * Should we loop over the volumeTics when playing a sound?\n     * If false the last volume tic will be played infinitely once reaching it.\n     */\n    this.useVolumeLoop = false;\n\n    /**\n     * The volumeTics index we will start looping at if useVolumeLoop is true.\n     */\n    this.volumeLoopStart = -1;\n\n    /**\n     * The volumeTics index we will stop looping at if useVolumeLoop is true.\n     */\n    this.volumeLoopEnd = -1;\n\n    /**\n     * Should we loop over the pitchTics when playing a sound?\n     * If false the last pitch tic will be played infinitely once reaching it.\n     */\n    this.usePitchLoop = false;\n\n    /**\n     * The pitchTics index we will start looping at if usePitchLoop is true.\n     */\n    this.pitchLoopStart = -1;\n\n    /**\n     * The pitchTics index we will stop looping at if usePitchLoop is true.\n     */\n    this.pitchLoopEnd = -1;\n\n    /**\n     * Should we loop over the arpTics when playing a sound?\n     * If false the last arp tic will be played infinitely once reaching it.\n     */\n    this.useArpLoop = false;\n\n    /**\n     * The arpTics index we will start looping at if useArpLoop is true.\n     */\n    this.arpLoopStart = -1;\n\n    /**\n     * The arpTics index we will stop looping at id useArpLoop is true.\n     */\n    this.arpLoopEnd = -1;\n\n    /**\n     * The Wave index used by this sound.\n     * 0 is Sine.\n     * 1 is Triangle.\n     * 2 is Square.\n     * 3 is Sawtooth.\n     */\n    this.wave = 0;\n\n    /**\n     * The pitch scale used by the pitchTics. Value is in cents.\n     */\n    this.pitchScale = 10;\n\n    /**\n     * Number of tics to ramp down playing of the sound.\n     * Must always be at least 1.\n     */\n    this.releaseLength = 1;\n\n    /**\n     * The ramp type used when ramping down after stopping a sound.\n     * 'linear' uses a linear ramp\n     * 'expo' uses an exponential ramp\n     */\n    this.releaseMode = Sound.RELEASE_LINEAR;\n\n    /**\n     * Is an infinite sound currently playing on this sound?\n     */\n    this.isPlayingInfiniteSound = false;\n\n    /**\n     * The start time of the current infinite sound.\n     */\n    this.infiniteStartTime = 0;\n\n    /**\n     * The oscillator node of the current infinite sound.\n     */\n    this.infiniteOsc = null;\n\n    /**\n     * The gain node of the current infinite sound.\n     */\n    this.infiniteGain = null;\n\n    /**\n     * The duration of a tic in the current infinite sound.\n     */\n    this.infiniteTicDuration = 0;\n\n    /**\n     * The number of tics played in the current infinite sound.\n     */\n    this.infiniteTicsPlayed = 0;\n\n    /**\n     * The volume of the current infinite sound.\n     */\n    this.infiniteVolume = 0;\n\n    /**\n     * The note of the current infinite sound.\n     */\n    this.infiniteNote = 0;\n\n    /**\n     * The last volume tic played.\n     */\n    this.lastVolumeTic = 0;\n\n    /**\n     * The last pitch tic played.\n     */\n    this.lastPitchTic = 0;\n\n    /**\n     * The last arp tic played.\n     */\n    this.lastArpTic = 0;\n\n    if ( data ) {\n      const {\n        volumeTics,\n        pitchTics,\n        arpTics,\n        wave,\n        pitchScale,\n        releaseLength,\n        releaseMode,\n        useVolumeLoop,\n        volumeLoopStart,\n        volumeLoopEnd,\n        usePitchLoop,\n        pitchLoopStart,\n        pitchLoopEnd,\n        useArpLoop,\n        arpLoopStart,\n        arpLoopEnd,\n      } = data;\n\n      if ( volumeTics && Array.isArray( volumeTics ) ) {\n        for ( let i = 0; i < volumeTics.length; i += 1 ) {\n          this.volumeTics[i] = volumeTics[i];\n        }\n      }\n\n      if ( pitchTics && Array.isArray( pitchTics ) ) {\n        for ( let i = 0; i < pitchTics.length; i += 1 ) {\n          this.pitchTics[i] = pitchTics[i];\n        }\n      }\n\n      if ( arpTics && Array.isArray( arpTics ) ) {\n        for ( let i = 0; i < arpTics.length; i += 1 ) {\n          this.arpTics[i] = arpTics[i];\n        }\n      }\n\n      this.wave = wave;\n      this.pitchScale = pitchScale;\n      this.releaseLength = releaseLength;\n      this.releaseMode = releaseMode;\n      this.useVolumeLoop = useVolumeLoop;\n      this.volumeLoopStart = volumeLoopStart;\n      this.volumeLoopEnd = volumeLoopEnd;\n      this.usePitchLoop = usePitchLoop;\n      this.pitchLoopStart = pitchLoopStart;\n      this.pitchLoopEnd = pitchLoopEnd;\n      this.useArpLoop = useArpLoop;\n      this.arpLoopStart = arpLoopStart;\n      this.arpLoopEnd = arpLoopEnd;\n    }\n  }\n}\n\nSound.RELEASE_LINEAR = 'linear';\nSound.RELEASE_EXPO = 'expo';\n\nexport default Sound;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Audio/Sound.js",
     "access": "public",
@@ -1094,9 +1147,8 @@
     "export": true,
     "importPath": "bitmelo/src/Audio/Sound.js",
     "importStyle": "Sound",
-    "description": null,
-    "lineNumber": 3,
-    "undocument": true,
+    "description": "Represents a sound that can be played.",
+    "lineNumber": 5,
     "interface": false
   },
   {
@@ -1110,7 +1162,7 @@
     "longname": "src/Audio/Sound.js~Sound#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 6,
     "undocument": true
   },
   {
@@ -1121,9 +1173,8 @@
     "static": false,
     "longname": "src/Audio/Sound.js~Sound#volumeTics",
     "access": "public",
-    "description": null,
-    "lineNumber": 5,
-    "undocument": true,
+    "description": "Array of volume values for the duration of the sound.\nEach value must be 0 to 15.\nLength of the array must always be 32.",
+    "lineNumber": 12,
     "type": {
       "types": [
         "*"
@@ -1138,9 +1189,8 @@
     "static": false,
     "longname": "src/Audio/Sound.js~Sound#pitchTics",
     "access": "public",
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
+    "description": "Array of pitch values for the duration of the sound.\nEach value must be -10 to 10.\nLength of the array must always be 32.",
+    "lineNumber": 19,
     "type": {
       "types": [
         "*"
@@ -1155,9 +1205,8 @@
     "static": false,
     "longname": "src/Audio/Sound.js~Sound#arpTics",
     "access": "public",
-    "description": null,
-    "lineNumber": 7,
-    "undocument": true,
+    "description": "Array of arp values for the duration of the sound.\nEach value is the number of notes above or below the note of the sound.\nLength of the array must always be 32.",
+    "lineNumber": 26,
     "type": {
       "types": [
         "*"
@@ -1167,14 +1216,13 @@
   {
     "__docId__": 77,
     "kind": "member",
-    "name": "useLoop",
+    "name": "useVolumeLoop",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#useLoop",
+    "longname": "src/Audio/Sound.js~Sound#useVolumeLoop",
     "access": "public",
-    "description": null,
-    "lineNumber": 8,
-    "undocument": true,
+    "description": "Should we loop over the volumeTics when playing a sound?\nIf false the last volume tic will be played infinitely once reaching it.",
+    "lineNumber": 32,
     "type": {
       "types": [
         "boolean"
@@ -1184,14 +1232,13 @@
   {
     "__docId__": 78,
     "kind": "member",
-    "name": "loopStart",
+    "name": "volumeLoopStart",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#loopStart",
+    "longname": "src/Audio/Sound.js~Sound#volumeLoopStart",
     "access": "public",
-    "description": null,
-    "lineNumber": 9,
-    "undocument": true,
+    "description": "The volumeTics index we will start looping at if useVolumeLoop is true.",
+    "lineNumber": 37,
     "type": {
       "types": [
         "*"
@@ -1201,14 +1248,13 @@
   {
     "__docId__": 79,
     "kind": "member",
-    "name": "loopEnd",
+    "name": "volumeLoopEnd",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#loopEnd",
+    "longname": "src/Audio/Sound.js~Sound#volumeLoopEnd",
     "access": "public",
-    "description": null,
-    "lineNumber": 10,
-    "undocument": true,
+    "description": "The volumeTics index we will stop looping at if useVolumeLoop is true.",
+    "lineNumber": 42,
     "type": {
       "types": [
         "*"
@@ -1218,82 +1264,13 @@
   {
     "__docId__": 80,
     "kind": "member",
-    "name": "wave",
+    "name": "usePitchLoop",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#wave",
+    "longname": "src/Audio/Sound.js~Sound#usePitchLoop",
     "access": "public",
-    "description": null,
-    "lineNumber": 11,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 81,
-    "kind": "member",
-    "name": "pitchScale",
-    "memberof": "src/Audio/Sound.js~Sound",
-    "static": false,
-    "longname": "src/Audio/Sound.js~Sound#pitchScale",
-    "access": "public",
-    "description": null,
-    "lineNumber": 12,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 82,
-    "kind": "member",
-    "name": "releaseLength",
-    "memberof": "src/Audio/Sound.js~Sound",
-    "static": false,
-    "longname": "src/Audio/Sound.js~Sound#releaseLength",
-    "access": "public",
-    "description": null,
-    "lineNumber": 13,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 83,
-    "kind": "member",
-    "name": "releaseMode",
-    "memberof": "src/Audio/Sound.js~Sound",
-    "static": false,
-    "longname": "src/Audio/Sound.js~Sound#releaseMode",
-    "access": "public",
-    "description": null,
-    "lineNumber": 14,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 84,
-    "kind": "member",
-    "name": "isPlayingInfiniteSound",
-    "memberof": "src/Audio/Sound.js~Sound",
-    "static": false,
-    "longname": "src/Audio/Sound.js~Sound#isPlayingInfiniteSound",
-    "access": "public",
-    "description": null,
-    "lineNumber": 16,
-    "undocument": true,
+    "description": "Should we loop over the pitchTics when playing a sound?\nIf false the last pitch tic will be played infinitely once reaching it.",
+    "lineNumber": 48,
     "type": {
       "types": [
         "boolean"
@@ -1301,16 +1278,95 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 81,
     "kind": "member",
-    "name": "infiniteStartTime",
+    "name": "pitchLoopStart",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteStartTime",
+    "longname": "src/Audio/Sound.js~Sound#pitchLoopStart",
     "access": "public",
-    "description": null,
-    "lineNumber": 17,
-    "undocument": true,
+    "description": "The pitchTics index we will start looping at if usePitchLoop is true.",
+    "lineNumber": 53,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 82,
+    "kind": "member",
+    "name": "pitchLoopEnd",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#pitchLoopEnd",
+    "access": "public",
+    "description": "The pitchTics index we will stop looping at if usePitchLoop is true.",
+    "lineNumber": 58,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 83,
+    "kind": "member",
+    "name": "useArpLoop",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#useArpLoop",
+    "access": "public",
+    "description": "Should we loop over the arpTics when playing a sound?\nIf false the last arp tic will be played infinitely once reaching it.",
+    "lineNumber": 64,
+    "type": {
+      "types": [
+        "boolean"
+      ]
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "member",
+    "name": "arpLoopStart",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#arpLoopStart",
+    "access": "public",
+    "description": "The arpTics index we will start looping at if useArpLoop is true.",
+    "lineNumber": 69,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "member",
+    "name": "arpLoopEnd",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#arpLoopEnd",
+    "access": "public",
+    "description": "The arpTics index we will stop looping at id useArpLoop is true.",
+    "lineNumber": 74,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "member",
+    "name": "wave",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#wave",
+    "access": "public",
+    "description": "The Wave index used by this sound.\n0 is Sine.\n1 is Triangle.\n2 is Square.\n3 is Sawtooth.",
+    "lineNumber": 83,
     "type": {
       "types": [
         "number"
@@ -1318,50 +1374,31 @@
     }
   },
   {
-    "__docId__": 86,
-    "kind": "member",
-    "name": "infiniteOsc",
-    "memberof": "src/Audio/Sound.js~Sound",
-    "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteOsc",
-    "access": "public",
-    "description": null,
-    "lineNumber": 18,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
     "__docId__": 87,
     "kind": "member",
-    "name": "infiniteGain",
+    "name": "pitchScale",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteGain",
+    "longname": "src/Audio/Sound.js~Sound#pitchScale",
     "access": "public",
-    "description": null,
-    "lineNumber": 19,
-    "undocument": true,
+    "description": "The pitch scale used by the pitchTics. Value is in cents.",
+    "lineNumber": 88,
     "type": {
       "types": [
-        "*"
+        "number"
       ]
     }
   },
   {
     "__docId__": 88,
     "kind": "member",
-    "name": "infiniteTicDuration",
+    "name": "releaseLength",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteTicDuration",
+    "longname": "src/Audio/Sound.js~Sound#releaseLength",
     "access": "public",
-    "description": null,
-    "lineNumber": 20,
-    "undocument": true,
+    "description": "Number of tics to ramp down playing of the sound.\nMust always be at least 1.",
+    "lineNumber": 94,
     "type": {
       "types": [
         "number"
@@ -1371,31 +1408,45 @@
   {
     "__docId__": 89,
     "kind": "member",
-    "name": "infiniteTicsPlayed",
+    "name": "releaseMode",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteTicsPlayed",
+    "longname": "src/Audio/Sound.js~Sound#releaseMode",
     "access": "public",
-    "description": null,
-    "lineNumber": 21,
-    "undocument": true,
+    "description": "The ramp type used when ramping down after stopping a sound.\n'linear' uses a linear ramp\n'expo' uses an exponential ramp",
+    "lineNumber": 101,
     "type": {
       "types": [
-        "number"
+        "*"
       ]
     }
   },
   {
     "__docId__": 90,
     "kind": "member",
-    "name": "infiniteVolume",
+    "name": "isPlayingInfiniteSound",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
-    "longname": "src/Audio/Sound.js~Sound#infiniteVolume",
+    "longname": "src/Audio/Sound.js~Sound#isPlayingInfiniteSound",
     "access": "public",
-    "description": null,
-    "lineNumber": 22,
-    "undocument": true,
+    "description": "Is an infinite sound currently playing on this sound?",
+    "lineNumber": 106,
+    "type": {
+      "types": [
+        "boolean"
+      ]
+    }
+  },
+  {
+    "__docId__": 91,
+    "kind": "member",
+    "name": "infiniteStartTime",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteStartTime",
+    "access": "public",
+    "description": "The start time of the current infinite sound.",
+    "lineNumber": 111,
     "type": {
       "types": [
         "number"
@@ -1403,16 +1454,95 @@
     }
   },
   {
-    "__docId__": 91,
+    "__docId__": 92,
+    "kind": "member",
+    "name": "infiniteOsc",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteOsc",
+    "access": "public",
+    "description": "The oscillator node of the current infinite sound.",
+    "lineNumber": 116,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 93,
+    "kind": "member",
+    "name": "infiniteGain",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteGain",
+    "access": "public",
+    "description": "The gain node of the current infinite sound.",
+    "lineNumber": 121,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 94,
+    "kind": "member",
+    "name": "infiniteTicDuration",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteTicDuration",
+    "access": "public",
+    "description": "The duration of a tic in the current infinite sound.",
+    "lineNumber": 126,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 95,
+    "kind": "member",
+    "name": "infiniteTicsPlayed",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteTicsPlayed",
+    "access": "public",
+    "description": "The number of tics played in the current infinite sound.",
+    "lineNumber": 131,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 96,
+    "kind": "member",
+    "name": "infiniteVolume",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#infiniteVolume",
+    "access": "public",
+    "description": "The volume of the current infinite sound.",
+    "lineNumber": 136,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 97,
     "kind": "member",
     "name": "infiniteNote",
     "memberof": "src/Audio/Sound.js~Sound",
     "static": false,
     "longname": "src/Audio/Sound.js~Sound#infiniteNote",
     "access": "public",
-    "description": null,
-    "lineNumber": 23,
-    "undocument": true,
+    "description": "The note of the current infinite sound.",
+    "lineNumber": 141,
     "type": {
       "types": [
         "number"
@@ -1421,9 +1551,57 @@
   },
   {
     "__docId__": 98,
+    "kind": "member",
+    "name": "lastVolumeTic",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#lastVolumeTic",
+    "access": "public",
+    "description": "The last volume tic played.",
+    "lineNumber": 146,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 99,
+    "kind": "member",
+    "name": "lastPitchTic",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#lastPitchTic",
+    "access": "public",
+    "description": "The last pitch tic played.",
+    "lineNumber": 151,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 100,
+    "kind": "member",
+    "name": "lastArpTic",
+    "memberof": "src/Audio/Sound.js~Sound",
+    "static": false,
+    "longname": "src/Audio/Sound.js~Sound#lastArpTic",
+    "access": "public",
+    "description": "The last arp tic played.",
+    "lineNumber": 156,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 114,
     "kind": "file",
     "name": "src/Engine/Engine.js",
-    "content": "import Screen from '../Screen/Screen';\nimport Input from '../Input/Input';\nimport TileData from '../TileData/TileData';\nimport MapData from '../MapData/MapData';\nimport FontData from '../FontData/FontData';\nimport Audio from '../Audio/Audio';\n\nimport standardFont from '../FontData/standard.font.json';\nimport smallFont from '../FontData/small.font.json';\n\nclass Engine {\n  constructor() {\n    this.containerId = 'bitmelo-container';\n    this.onInit = null;\n    this.onDrawStartScreen = null;\n    this.onUpdateStartTransition = null;\n    this.startTransitionFrames = 60;\n    this.onUpdate = null;\n    this.clickToBegin = true;\n    this.screen = new Screen();\n    this.input = new Input();\n    this.tileData = new TileData();\n    this.mapData = new MapData();\n    this.fontData = new FontData();\n    this.audio = new Audio();\n\n    this.fontData.addFont( standardFont );\n    this.fontData.addFont( smallFont );\n\n    this._hasBegun = false;\n    this._update = this._update.bind( this );\n  }\n\n  /**\n   * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop\n   */\n  begin() {\n    if ( this.onInit ) {\n      this.onInit();\n    }\n\n    this.screen.conainerId = this.containerId;\n    this.screen.init();\n    this.screen.onScaleChange = ( scale ) => {\n      this.input.canvasScale = scale;\n    };\n\n    this.input.canvas = this.screen.canvas;\n    this.input.canvasScale = this.screen.scale;\n    this.input.screenWidth = this.screen.width;\n    this.input.screenHeight = this.screen.height;\n    this.input.init();\n    this.tileData.init();\n    this.screen.tileData = this.tileData;\n    this.screen.mapData = this.mapData;\n    this.screen.fontData = this.fontData;\n\n    if ( this.clickToBegin ) {\n      if ( this.onDrawStartScreen ) {\n        this.onDrawStartScreen();\n      }\n      else {\n        this.screen.clear( 1 );\n        this.screen.drawText( 'Click to begin...', 10, 10, 2, 1, 0 );\n      }\n      const screenHidesCursor = this.screen.hideCursor;\n      this.screen.hideCursor = false;\n      this.screen._setCanvasStyle();\n      this.screen.drawScreen();\n      this.screen.canvas.addEventListener( 'click', () => {\n        if ( !this._hasBegun ) {\n          this._hasBegun = true;\n          this.screen.hideCursor = screenHidesCursor;\n          this.screen._setCanvasStyle();\n          this.audio.init();\n          this.input.clearInput();\n          requestAnimationFrame( this._update );\n        }\n      } );\n    }\n    else {\n      this._hasBegun = true;\n      this.audio.init();\n      requestAnimationFrame( this._update );\n    }\n  }\n\n  /**\n   * Game loop\n   */\n  _update() {\n    this.input.pollInput();\n\n    if ( this.startTransitionFrames > 0 ) {\n      this.startTransitionFrames -= 1;\n      if ( this.onUpdateStartTransition ) {\n        this.clearInput();\n        this.onUpdateStartTransition();\n      }\n      else {\n        this.screen.clear( 1 );\n      }\n    }\n    else if ( this.onUpdate ) {\n      this.onUpdate();\n      this.audio.update();\n    }\n\n    this.screen.drawScreen();\n    requestAnimationFrame( this._update );\n  }\n}\n\nexport default Engine;\n",
+    "content": "import Screen from '../Screen/Screen';\nimport Input from '../Input/Input';\nimport TileData from '../TileData/TileData';\nimport MapData from '../MapData/MapData';\nimport FontData from '../FontData/FontData';\nimport Audio from '../Audio/Audio';\n\nimport standardFont from '../FontData/standard.font.json';\nimport smallFont from '../FontData/small.font.json';\n\nclass Engine {\n  constructor() {\n    /**\n     * The id of the div that the engine will be contained by\n     */\n    this.containerId = 'bitmelo-container';\n\n    /**\n     * Function to be called when the engine is initialized\n     */\n    this.onInit = null;\n\n    /**\n     * Function to draw the initial screen when the engine loads.\n     * Only seen when clickToBegin is true\n     */\n    this.onDrawStartScreen = null;\n\n    /**\n     * Function to draw the transition frames after start click.\n     * Only seen when clickToBegin is true\n     */\n    this.onUpdateStartTransition = null;\n\n    /**\n     * Number of frames to show after begin click before the game starts.\n     * Only relevant when clickToBegin is true.\n     */\n    this.startTransitionFrames = 60;\n\n    /**\n     * Function to be called every update of the engine.\n     * Perform game logic and rendering here.\n     */\n    this.onUpdate = null;\n\n    /**\n     * Should we require the user to click the screen before the game starts?\n     * This stops a game from automatically starring in a web page which can be annoying.\n     */\n    this.clickToBegin = true;\n\n    /**\n     * Instance of the Screen class used by the Engine. Automatically created by the engine.\n     */\n    this.screen = new Screen();\n\n    /**\n     * Instance of the Input class used by the Engine. Automatically created by the engine.\n     */\n    this.input = new Input();\n\n    /**\n     * Instance of the TileData class used by the Engine. Automatically created by the engine\n     */\n    this.tileData = new TileData();\n\n    /**\n     * Instance of the MapData class used by the Engine. Automatically created by the engine\n     */\n    this.mapData = new MapData();\n\n    /**\n     * Instance of the FontData class used by the Engine. Automatically created by the engine.\n     * The Standard font is automatically added at index 0.\n     * The Small font is automatically added at index 1.\n     */\n    this.fontData = new FontData();\n\n    /**\n     * Instance of the Audio class used by the Engine. Automatically created by the engine.\n     */\n    this.audio = new Audio();\n\n    this.fontData.addFont( standardFont );\n    this.fontData.addFont( smallFont );\n\n    this._hasBegun = false;\n    this._update = this._update.bind( this );\n  }\n\n  /**\n   * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop\n   */\n  begin() {\n    if ( this.onInit ) {\n      this.onInit();\n    }\n\n    this.screen.conainerId = this.containerId;\n    this.screen.init();\n    this.screen.onScaleChange = ( scale ) => {\n      this.input.canvasScale = scale;\n    };\n\n    this.input.canvas = this.screen.canvas;\n    this.input.canvasScale = this.screen.scale;\n    this.input.screenWidth = this.screen.width;\n    this.input.screenHeight = this.screen.height;\n    this.input.init();\n    this.tileData.init();\n    this.screen.tileData = this.tileData;\n    this.screen.mapData = this.mapData;\n    this.screen.fontData = this.fontData;\n\n    if ( this.clickToBegin ) {\n      if ( this.onDrawStartScreen ) {\n        this.onDrawStartScreen();\n      }\n      else {\n        this.screen.clear( 1 );\n        this.screen.drawText( 'Click to begin...', 10, 10, 2, 1, 0 );\n      }\n      const screenHidesCursor = this.screen.hideCursor;\n      this.screen.hideCursor = false;\n      this.screen._setCanvasStyle();\n      this.screen.drawScreen();\n      this.screen.canvas.addEventListener( 'click', () => {\n        if ( !this._hasBegun ) {\n          this._hasBegun = true;\n          this.screen.hideCursor = screenHidesCursor;\n          this.screen._setCanvasStyle();\n          this.audio.init();\n          this.input.clearInput();\n          requestAnimationFrame( this._update );\n        }\n      } );\n    }\n    else {\n      this._hasBegun = true;\n      this.audio.init();\n      requestAnimationFrame( this._update );\n    }\n  }\n\n  /**\n   * Game loop\n   */\n  _update() {\n    this.input.pollInput();\n\n    if ( this.clickToBegin && this.startTransitionFrames > 0 ) {\n      this.startTransitionFrames -= 1;\n      if ( this.onUpdateStartTransition ) {\n        this.clearInput();\n        this.onUpdateStartTransition();\n      }\n      else {\n        this.screen.clear( 1 );\n      }\n    }\n    else if ( this.onUpdate ) {\n      this.onUpdate();\n      this.audio.update();\n    }\n\n    this.screen.drawScreen();\n    requestAnimationFrame( this._update );\n  }\n}\n\nexport default Engine;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Engine/Engine.js",
     "access": "public",
@@ -1431,7 +1609,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 99,
+    "__docId__": 115,
     "kind": "class",
     "name": "Engine",
     "memberof": "src/Engine/Engine.js",
@@ -1447,7 +1625,7 @@
     "interface": false
   },
   {
-    "__docId__": 100,
+    "__docId__": 116,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -1461,16 +1639,15 @@
     "undocument": true
   },
   {
-    "__docId__": 101,
+    "__docId__": 117,
     "kind": "member",
     "name": "containerId",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#containerId",
     "access": "public",
-    "description": null,
-    "lineNumber": 13,
-    "undocument": true,
+    "description": "The id of the div that the engine will be contained by",
+    "lineNumber": 16,
     "type": {
       "types": [
         "string"
@@ -1478,16 +1655,15 @@
     }
   },
   {
-    "__docId__": 102,
+    "__docId__": 118,
     "kind": "member",
     "name": "onInit",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#onInit",
     "access": "public",
-    "description": null,
-    "lineNumber": 14,
-    "undocument": true,
+    "description": "Function to be called when the engine is initialized",
+    "lineNumber": 21,
     "type": {
       "types": [
         "*"
@@ -1495,16 +1671,15 @@
     }
   },
   {
-    "__docId__": 103,
+    "__docId__": 119,
     "kind": "member",
     "name": "onDrawStartScreen",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#onDrawStartScreen",
     "access": "public",
-    "description": null,
-    "lineNumber": 15,
-    "undocument": true,
+    "description": "Function to draw the initial screen when the engine loads.\nOnly seen when clickToBegin is true",
+    "lineNumber": 27,
     "type": {
       "types": [
         "*"
@@ -1512,16 +1687,15 @@
     }
   },
   {
-    "__docId__": 104,
+    "__docId__": 120,
     "kind": "member",
     "name": "onUpdateStartTransition",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#onUpdateStartTransition",
     "access": "public",
-    "description": null,
-    "lineNumber": 16,
-    "undocument": true,
+    "description": "Function to draw the transition frames after start click.\nOnly seen when clickToBegin is true",
+    "lineNumber": 33,
     "type": {
       "types": [
         "*"
@@ -1529,16 +1703,15 @@
     }
   },
   {
-    "__docId__": 105,
+    "__docId__": 121,
     "kind": "member",
     "name": "startTransitionFrames",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#startTransitionFrames",
     "access": "public",
-    "description": null,
-    "lineNumber": 17,
-    "undocument": true,
+    "description": "Number of frames to show after begin click before the game starts.\nOnly relevant when clickToBegin is true.",
+    "lineNumber": 39,
     "type": {
       "types": [
         "number"
@@ -1546,16 +1719,15 @@
     }
   },
   {
-    "__docId__": 106,
+    "__docId__": 122,
     "kind": "member",
     "name": "onUpdate",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#onUpdate",
     "access": "public",
-    "description": null,
-    "lineNumber": 18,
-    "undocument": true,
+    "description": "Function to be called every update of the engine.\nPerform game logic and rendering here.",
+    "lineNumber": 45,
     "type": {
       "types": [
         "*"
@@ -1563,16 +1735,15 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 123,
     "kind": "member",
     "name": "clickToBegin",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#clickToBegin",
     "access": "public",
-    "description": null,
-    "lineNumber": 19,
-    "undocument": true,
+    "description": "Should we require the user to click the screen before the game starts?\nThis stops a game from automatically starring in a web page which can be annoying.",
+    "lineNumber": 51,
     "type": {
       "types": [
         "boolean"
@@ -1580,16 +1751,15 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 124,
     "kind": "member",
     "name": "screen",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#screen",
     "access": "public",
-    "description": null,
-    "lineNumber": 20,
-    "undocument": true,
+    "description": "Instance of the Screen class used by the Engine. Automatically created by the engine.",
+    "lineNumber": 56,
     "type": {
       "types": [
         "*"
@@ -1597,16 +1767,15 @@
     }
   },
   {
-    "__docId__": 109,
+    "__docId__": 125,
     "kind": "member",
     "name": "input",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#input",
     "access": "public",
-    "description": null,
-    "lineNumber": 21,
-    "undocument": true,
+    "description": "Instance of the Input class used by the Engine. Automatically created by the engine.",
+    "lineNumber": 61,
     "type": {
       "types": [
         "*"
@@ -1614,16 +1783,15 @@
     }
   },
   {
-    "__docId__": 110,
+    "__docId__": 126,
     "kind": "member",
     "name": "tileData",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#tileData",
     "access": "public",
-    "description": null,
-    "lineNumber": 22,
-    "undocument": true,
+    "description": "Instance of the TileData class used by the Engine. Automatically created by the engine",
+    "lineNumber": 66,
     "type": {
       "types": [
         "*"
@@ -1631,16 +1799,15 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 127,
     "kind": "member",
     "name": "mapData",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#mapData",
     "access": "public",
-    "description": null,
-    "lineNumber": 23,
-    "undocument": true,
+    "description": "Instance of the MapData class used by the Engine. Automatically created by the engine",
+    "lineNumber": 71,
     "type": {
       "types": [
         "*"
@@ -1648,16 +1815,15 @@
     }
   },
   {
-    "__docId__": 112,
+    "__docId__": 128,
     "kind": "member",
     "name": "fontData",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#fontData",
     "access": "public",
-    "description": null,
-    "lineNumber": 24,
-    "undocument": true,
+    "description": "Instance of the FontData class used by the Engine. Automatically created by the engine.\nThe Standard font is automatically added at index 0.\nThe Small font is automatically added at index 1.",
+    "lineNumber": 78,
     "type": {
       "types": [
         "*"
@@ -1665,16 +1831,15 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 129,
     "kind": "member",
     "name": "audio",
     "memberof": "src/Engine/Engine.js~Engine",
     "static": false,
     "longname": "src/Engine/Engine.js~Engine#audio",
     "access": "public",
-    "description": null,
-    "lineNumber": 25,
-    "undocument": true,
+    "description": "Instance of the Audio class used by the Engine. Automatically created by the engine.",
+    "lineNumber": 83,
     "type": {
       "types": [
         "*"
@@ -1682,7 +1847,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 130,
     "kind": "member",
     "name": "_hasBegun",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -1690,7 +1855,7 @@
     "longname": "src/Engine/Engine.js~Engine#_hasBegun",
     "access": "private",
     "description": null,
-    "lineNumber": 30,
+    "lineNumber": 88,
     "undocument": true,
     "type": {
       "types": [
@@ -1699,7 +1864,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 132,
     "kind": "method",
     "name": "begin",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -1709,12 +1874,12 @@
     "longname": "src/Engine/Engine.js~Engine#begin",
     "access": "public",
     "description": "Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop",
-    "lineNumber": 37,
+    "lineNumber": 95,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 119,
+    "__docId__": 135,
     "kind": "method",
     "name": "_update",
     "memberof": "src/Engine/Engine.js~Engine",
@@ -1724,12 +1889,12 @@
     "longname": "src/Engine/Engine.js~Engine#_update",
     "access": "private",
     "description": "Game loop",
-    "lineNumber": 91,
+    "lineNumber": 149,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 121,
+    "__docId__": 137,
     "kind": "file",
     "name": "src/FontData/Font.js",
     "content": "\n/**\n * Represents a font. Data is stored similarly to tilesets in an array, with the ability to remap characters\n * that have a unicode point larger than the array can hold.\n */\nclass Font {\n  constructor( fontData ) {\n    this.standardWidth = 5;\n    this.letterSpacing = 1;\n\n    this.tileSize = 16;\n    this.width = 16;\n    this.height = 16;\n    this.originX = 1;\n    this.originY = 3;\n\n    this.charData = null;\n    this.data = null;\n\n    if ( fontData ) {\n      this.standardWidth = fontData.standardWidth;\n      this.letterSpacing = fontData.letterSpacing;\n\n      this.tileSize = fontData.tileSize;\n      this.width = fontData.width;\n      this.height = fontData.height;\n      this.originX = fontData.originX;\n      this.originY = fontData.originY;\n      this.charData = fontData.charData;\n\n      this.data = new Uint8ClampedArray( this.width * this.height * this.tileSize * this.tileSize );\n      const { data } = fontData;\n      let runPosition = 0;\n      let dataPosition = 0;\n      while ( runPosition < data.length ) {\n        const runLength = data[runPosition];\n        const paletteId = parseInt( data[runPosition + 1], 10 );\n        for ( let j = 0; j < runLength; j += 1 ) {\n          this.data[dataPosition] = paletteId;\n          dataPosition += 1;\n        }\n        runPosition += 2;\n      }\n    }\n  }\n\n  /**\n   * Get the base index in the data array for the character\n   * @param {number} charCode - the unicode point for the character\n   */\n  baseIndexForChar( charCode ) {\n    let codePoint = charCode;\n    if ( charCode >= this.width * this.height ) {\n      const key = charCode.toString();\n\n      if ( this.charData && this.charData[key] ) {\n        if ( this.charData[key] !== undefined ) {\n          codePoint = this.charData[key].remap;\n        }\n      }\n    }\n    return codePoint * this.tileSize * this.tileSize;\n  }\n\n  /**\n   * Get the width of a character\n   * @param {number} charCode - the unicode point for the character\n   */\n  widthForChar( charCode ) {\n    const charKey = charCode.toString();\n    if ( this.charData && this.charData[charKey] ) {\n      if ( this.charData[charKey].width !== undefined ) {\n        return this.charData[charKey].width;\n      }\n    }\n    return this.standardWidth;\n  }\n}\n\nexport default Font;\n",
@@ -1740,7 +1905,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 122,
+    "__docId__": 138,
     "kind": "class",
     "name": "Font",
     "memberof": "src/FontData/Font.js",
@@ -1755,7 +1920,7 @@
     "interface": false
   },
   {
-    "__docId__": 123,
+    "__docId__": 139,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/FontData/Font.js~Font",
@@ -1769,7 +1934,7 @@
     "undocument": true
   },
   {
-    "__docId__": 124,
+    "__docId__": 140,
     "kind": "member",
     "name": "standardWidth",
     "memberof": "src/FontData/Font.js~Font",
@@ -1786,7 +1951,7 @@
     }
   },
   {
-    "__docId__": 125,
+    "__docId__": 141,
     "kind": "member",
     "name": "letterSpacing",
     "memberof": "src/FontData/Font.js~Font",
@@ -1803,7 +1968,7 @@
     }
   },
   {
-    "__docId__": 126,
+    "__docId__": 142,
     "kind": "member",
     "name": "tileSize",
     "memberof": "src/FontData/Font.js~Font",
@@ -1820,7 +1985,7 @@
     }
   },
   {
-    "__docId__": 127,
+    "__docId__": 143,
     "kind": "member",
     "name": "width",
     "memberof": "src/FontData/Font.js~Font",
@@ -1837,7 +2002,7 @@
     }
   },
   {
-    "__docId__": 128,
+    "__docId__": 144,
     "kind": "member",
     "name": "height",
     "memberof": "src/FontData/Font.js~Font",
@@ -1854,7 +2019,7 @@
     }
   },
   {
-    "__docId__": 129,
+    "__docId__": 145,
     "kind": "member",
     "name": "originX",
     "memberof": "src/FontData/Font.js~Font",
@@ -1871,7 +2036,7 @@
     }
   },
   {
-    "__docId__": 130,
+    "__docId__": 146,
     "kind": "member",
     "name": "originY",
     "memberof": "src/FontData/Font.js~Font",
@@ -1888,7 +2053,7 @@
     }
   },
   {
-    "__docId__": 131,
+    "__docId__": 147,
     "kind": "member",
     "name": "charData",
     "memberof": "src/FontData/Font.js~Font",
@@ -1905,7 +2070,7 @@
     }
   },
   {
-    "__docId__": 132,
+    "__docId__": 148,
     "kind": "member",
     "name": "data",
     "memberof": "src/FontData/Font.js~Font",
@@ -1922,7 +2087,7 @@
     }
   },
   {
-    "__docId__": 142,
+    "__docId__": 158,
     "kind": "method",
     "name": "baseIndexForChar",
     "memberof": "src/FontData/Font.js~Font",
@@ -1952,7 +2117,7 @@
     }
   },
   {
-    "__docId__": 143,
+    "__docId__": 159,
     "kind": "method",
     "name": "widthForChar",
     "memberof": "src/FontData/Font.js~Font",
@@ -1982,7 +2147,7 @@
     }
   },
   {
-    "__docId__": 144,
+    "__docId__": 160,
     "kind": "file",
     "name": "src/FontData/FontData.js",
     "content": "\nimport Font from './Font';\n\n/**\n * Holds all of the font data\n */\nclass FontData {\n  constructor() {\n    this.fonts = [];\n  }\n\n  addFont( fontData ) {\n    this.fonts.push( new Font( fontData ) );\n  }\n}\n\nexport default FontData;\n",
@@ -1993,7 +2158,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 145,
+    "__docId__": 161,
     "kind": "class",
     "name": "FontData",
     "memberof": "src/FontData/FontData.js",
@@ -2008,7 +2173,7 @@
     "interface": false
   },
   {
-    "__docId__": 146,
+    "__docId__": 162,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/FontData/FontData.js~FontData",
@@ -2022,7 +2187,7 @@
     "undocument": true
   },
   {
-    "__docId__": 147,
+    "__docId__": 163,
     "kind": "member",
     "name": "fonts",
     "memberof": "src/FontData/FontData.js~FontData",
@@ -2039,7 +2204,7 @@
     }
   },
   {
-    "__docId__": 148,
+    "__docId__": 164,
     "kind": "method",
     "name": "addFont",
     "memberof": "src/FontData/FontData.js~FontData",
@@ -2062,7 +2227,7 @@
     "return": null
   },
   {
-    "__docId__": 149,
+    "__docId__": 165,
     "kind": "file",
     "name": "src/index.js",
     "content": "\nexport { default as Audio } from './Audio/Audio';\nexport { default as Frequencies } from './Audio/Frequencies';\nexport { default as Notes } from './Audio/Notes';\nexport { default as Sound } from './Audio/Sound';\n\nexport { default as Font } from './FontData/Font';\nexport { default as FontData } from './FontData/FontData';\n\nexport { default as Input } from './Input/Input';\nexport { default as Keys } from './Input/Keys';\n\nexport { default as MapData } from './MapData/MapData';\nexport { default as TileMap } from './MapData/TileMap';\n\nexport { default as Engine } from './Engine/Engine';\n\nexport { default as Screen } from './Screen/Screen';\nexport { default as standardPalette } from './Screen/standardPalette';\n\nexport { default as TileData } from './TileData/TileData';\n",
@@ -2073,10 +2238,10 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 150,
+    "__docId__": 166,
     "kind": "file",
     "name": "src/Input/Input.js",
-    "content": "import Keys from './Keys';\n\n/**\n * Handle game input\n */\nclass Input {\n  constructor() {\n    this.canvas = null;\n    this.canvasScale = 1;\n    this.screenWidth = 1;\n    this.screenHeight = 1;\n\n    this.mouse = {};\n    this.mouse.isOffScreen = true;\n    this.mouse.position = {\n      x: -1,\n      y: -1,\n    };\n\n    this.mouse.left = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this.mouse.right = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this._keysRaw = new Uint8ClampedArray( 256 );\n    this._currentKeys = new Uint8ClampedArray( 256 );\n    this._lastKeys = new Uint8ClampedArray( 256 );\n\n    this._buttonsToKeys = new Uint8ClampedArray( 32 );\n\n    // default button mappings\n    this._buttonsToKeys[Input.GAME_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[Input.GAME_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[Input.GAME_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[Input.GAME_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[Input.GAME_ACTION_ONE] = Keys.Z_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_TWO] = Keys.X_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_THREE] = Keys.A_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_FOUR] = Keys.S_KEY;\n    this._buttonsToKeys[Input.GAME_LEFT_TRIGGER] = Keys.Q_KEY;\n    this._buttonsToKeys[Input.GAME_RIGHT_TRIGGER] = Keys.W_KEY;\n\n    this._buttonsToKeys[Input.GAME_PAUSE] = Keys.P_KEY;\n\n    this._buttonsToKeys[Input.MENU_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[Input.MENU_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[Input.MENU_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[Input.MENU_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;\n    this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;\n\n    this._currentButtons = new Uint8ClampedArray( 32 );\n    this._lastButtons = new Uint8ClampedArray( 32 );\n\n    this._currentMouseLeft = false;\n    this._lastMouseLeft = false;\n    this._forceMouseLeftDown = false;\n\n    this._currentMouseRight = false;\n    this._lastMouseRight = false;\n    this._forceMouseRightDown = false;\n  }\n\n  /**\n   * Do initial setup. Add event listeners.\n   */\n  init() {\n    window.addEventListener( 'keydown', this._keyDown.bind( this ), false );\n    window.addEventListener( 'keyup', this._keyUp.bind( this ), false );\n\n    if ( this.canvas ) {\n      this.canvas.oncontextmenu = ( e ) => {\n        e.preventDefault();\n      };\n\n      this.canvas.addEventListener( 'mouseenter', this._mouseEnter.bind( this ), false );\n      this.canvas.addEventListener( 'mousemove', this._mouseMove.bind( this ), false );\n      this.canvas.addEventListener( 'mousedown', this._mouseDown.bind( this ), false );\n      this.canvas.addEventListener( 'mouseup', this._mouseUp.bind( this ), false );\n      this.canvas.addEventListener( 'mouseleave', this._mouseLeave.bind( this ), false );\n    }\n  }\n\n  _keyDown( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 1;\n    }\n  }\n\n  _keyUp( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 0;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 0;\n    }\n  }\n\n  _mouseEnter() {\n    this.mouse.isOffScreen = false;\n    this._currentMouseLeft = false;\n    this._currentMouseRight = false;\n  }\n\n  _mouseMove( e ) {\n    const canvasRect = this.canvas.getBoundingClientRect();\n    this.mouse.position = {\n      x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),\n      y: this.screenHeight - Math.floor( ( e.clientY - canvasRect.top ) / this.canvasScale ) - 1,\n    };\n  }\n\n  _mouseDown( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = true;\n      this._forceMouseLeftDown = true;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = true;\n      this._forceMouseRightDown = true;\n    }\n  }\n\n  _mouseUp( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = false;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = false;\n    }\n  }\n\n  _mouseLeave() {\n    this.mouse.isOffScreen = true;\n  }\n\n  /**\n   * clear out all of the input\n   */\n  clearInput() {\n    for ( let i = 0; i < 256; i += 1 ) {\n      this._keysRaw[i] = 0;\n      this._lastKeys[i] = 0;\n      this._currentKeys[i] = 0;\n    }\n  }\n\n  /**\n   * Update the input, should be done first thing in the game loop.\n   */\n  pollInput() {\n    for ( let i = 0; i < 256; i += 1 ) {\n      this._lastKeys[i] = this._currentKeys[i];\n      this._currentKeys[i] = this._keysRaw[i];\n    }\n\n    this._updateButtons();\n\n    this.mouse.left.pressed = this._forceMouseLeftDown ? true : this._currentMouseLeft;\n    this.mouse.left.down = this._forceMouseLeftDown ? true : this._currentMouseLeft && !this._lastMouseLeft;\n    this.mouse.left.up = !this._currentMouseLeft && this._lastMouseLeft;\n\n    this.mouse.right.pressed = this._forceMouseRightDown ? true : this._currentMouseRight;\n    this.mouse.right.down = this._forceMouseRightDown ? true : this._currentMouseRight && !this._lastMouseRight;\n    this.mouse.right.up = !this._currentMouseRight && this._lastMouseRight;\n\n    this._forceMouseLeftDown = false;\n    this._forceMouseRightDown = false;\n\n    this._lastMouseLeft = this._currentMouseLeft;\n    this._lastMouseRight = this._currentMouseRight;\n  }\n\n  /**\n   * return true if the key is currently held down\n   * @param {number} keyCode\n   */\n  getKeyPressed( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    return this._currentKeys[keyCode] > 0;\n  }\n\n  /**\n   * return true if the key was pressed down this frame\n   * @param {number} keyCode\n   */\n  getKeyDown( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return current && !last;\n  }\n\n  /**\n   * return true if the key was released this frame\n   * @param {number} keyCode\n   */\n  getKeyUp( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return !current && last;\n  }\n\n  /**\n   * return true if the button is currently held down\n   * @param {number} buttonCode\n   */\n  getButtonPressed( buttonCode ) {\n    return this.getKeyPressed( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was pressed down this frame\n   * @param {number} buttonCode\n   */\n  getButtonDown( buttonCode ) {\n    return this.getKeyDown( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was released this frame\n   * @param {number} buttonCode\n   */\n  getButtonUp( buttonCode ) {\n    return this.getKeyUp( this._buttonsToKeys[buttonCode] );\n  }\n\n  _updateButtons() {\n    this._updateButton( 'left', Input.GAME_LEFT );\n    this._updateButton( 'right', Input.GAME_RIGHT );\n    this._updateButton( 'up', Input.GAME_UP );\n    this._updateButton( 'down', Input.GAME_DOWN );\n\n    this._updateButton( 'action1', Input.GAME_ACTION_ONE );\n    this._updateButton( 'action2', Input.GAME_ACTION_TWO );\n    this._updateButton( 'action3', Input.GAME_ACTION_THREE );\n    this._updateButton( 'action4', Input.GAME_ACTION_FOUR );\n    this._updateButton( 'leftTrigger', Input.GAME_LEFT_TRIGGER );\n    this._updateButton( 'rightTrigger', Input.GAME_RIGHT_TRIGGER );\n\n    this._updateButton( 'pause', Input.GAME_PAUSE );\n\n    this._updateButton( 'menuLeft', Input.MENU_LEFT );\n    this._updateButton( 'menuRight', Input.MENU_RIGHT );\n    this._updateButton( 'menuUp', Input.MENU_UP );\n    this._updateButton( 'menuDown', Input.MENU_DOWN );\n\n    this._updateButton( 'menuConfirm', Input.MENU_CONFIRM );\n    this._updateButton( 'menuBack', Input.MENU_BACK );\n  }\n\n  _updateButton( name, index ) {\n    const key = this._buttonsToKeys[index];\n    const pressed = this.getKeyPressed( key );\n    const down = this.getKeyDown( key );\n    const up = this.getKeyUp( key );\n\n    this[name] = { pressed, down, up };\n  }\n}\n\nInput.GAME_LEFT = 0;\nInput.GAME_RIGHT = 1;\nInput.GAME_UP = 2;\nInput.GAME_DOWN = 3;\nInput.GAME_ACTION_ONE = 4;\nInput.GAME_ACTION_TWO = 5;\nInput.GAME_ACTION_THREE = 6;\nInput.GAME_ACTION_FOUR = 7;\nInput.GAME_PAUSE = 8;\nInput.GAME_LEFT_TRIGGER = 9;\nInput.GAME_RIGHT_TRIGGER = 10;\n\nInput.MENU_LEFT = 11;\nInput.MENU_RIGHT = 12;\nInput.MENU_UP = 13;\nInput.MENU_DOWN = 14;\nInput.MENU_CONFIRM = 15;\nInput.MENU_BACK = 16;\n\nexport default Input;\n",
+    "content": "import Keys from './Keys';\n\n/**\n * Handle game input\n */\nclass Input {\n  constructor() {\n    this.canvas = null;\n    this.canvasScale = 1;\n    this.screenWidth = 1;\n    this.screenHeight = 1;\n\n    this.mouse = {};\n    this.mouse.isOffScreen = true;\n    this.mouse.position = {\n      x: -1,\n      y: -1,\n    };\n\n    this.mouse.left = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this.mouse.right = {\n      pressed: false,\n      down: false,\n      up: false,\n    };\n\n    this._keysRaw = new Uint8ClampedArray( 256 );\n    this._currentKeys = new Uint8ClampedArray( 256 );\n    this._lastKeys = new Uint8ClampedArray( 256 );\n\n    this._buttonsToKeys = new Uint8ClampedArray( 32 );\n\n    // default button mappings\n    this._buttonsToKeys[Input.GAME_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[Input.GAME_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[Input.GAME_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[Input.GAME_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[Input.GAME_ACTION_ONE] = Keys.Z_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_TWO] = Keys.X_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_THREE] = Keys.A_KEY;\n    this._buttonsToKeys[Input.GAME_ACTION_FOUR] = Keys.S_KEY;\n    this._buttonsToKeys[Input.GAME_LEFT_TRIGGER] = Keys.Q_KEY;\n    this._buttonsToKeys[Input.GAME_RIGHT_TRIGGER] = Keys.W_KEY;\n\n    this._buttonsToKeys[Input.GAME_PAUSE] = Keys.P_KEY;\n\n    this._buttonsToKeys[Input.MENU_LEFT] = Keys.LEFT_ARROW;\n    this._buttonsToKeys[Input.MENU_RIGHT] = Keys.RIGHT_ARROW;\n    this._buttonsToKeys[Input.MENU_UP] = Keys.UP_ARROW;\n    this._buttonsToKeys[Input.MENU_DOWN] = Keys.DOWN_ARROW;\n\n    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;\n    this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;\n\n    this._currentButtons = new Uint8ClampedArray( 32 );\n    this._lastButtons = new Uint8ClampedArray( 32 );\n\n    this._currentMouseLeft = false;\n    this._lastMouseLeft = false;\n    this._forceMouseLeftDown = false;\n\n    this._currentMouseRight = false;\n    this._lastMouseRight = false;\n    this._forceMouseRightDown = false;\n  }\n\n  /**\n   * Do initial setup. Add event listeners.\n   */\n  init() {\n    window.addEventListener( 'keydown', this._keyDown.bind( this ), false );\n    window.addEventListener( 'keyup', this._keyUp.bind( this ), false );\n\n    if ( this.canvas ) {\n      this.canvas.oncontextmenu = ( e ) => {\n        e.preventDefault();\n      };\n\n      this.canvas.addEventListener( 'pointerenter', this._pointerEnter.bind( this ), false );\n      this.canvas.addEventListener( 'pointermove', this._pointerMove.bind( this ), false );\n      this.canvas.addEventListener( 'pointerdown', this._pointerDown.bind( this ), false );\n      this.canvas.addEventListener( 'pointerup', this._pointerUp.bind( this ), false );\n      this.canvas.addEventListener( 'pointerleave', this._pointerLeave.bind( this ), false );\n    }\n  }\n\n  _keyDown( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 1;\n    }\n  }\n\n  _keyUp( e ) {\n    if ( e.code ) {\n      this._keysRaw[Keys.codesToKeyCodes[e.code]] = 0;\n    }\n    else {\n      this._keysRaw[e.keyCode] = 0;\n    }\n  }\n\n  _pointerEnter() {\n    this.mouse.isOffScreen = false;\n    this._currentMouseLeft = false;\n    this._currentMouseRight = false;\n  }\n\n  _pointerMove( e ) {\n    const canvasRect = this.canvas.getBoundingClientRect();\n    this.mouse.position = {\n      x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),\n      y: this.screenHeight - Math.floor( ( e.clientY - canvasRect.top ) / this.canvasScale ) - 1,\n    };\n  }\n\n  _pointerDown( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = true;\n      this._forceMouseLeftDown = true;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = true;\n      this._forceMouseRightDown = true;\n    }\n  }\n\n  _pointerUp( e ) {\n    if ( e.button === 0 ) {\n      // left button\n      this._currentMouseLeft = false;\n    }\n    else if ( e.button === 2 ) {\n      // right button\n      this._currentMouseRight = false;\n    }\n  }\n\n  _pointerLeave() {\n    this.mouse.isOffScreen = true;\n  }\n\n  /**\n   * clear out all of the input\n   */\n  clearInput() {\n    for ( let i = 0; i < 256; i += 1 ) {\n      this._keysRaw[i] = 0;\n      this._lastKeys[i] = 0;\n      this._currentKeys[i] = 0;\n    }\n  }\n\n  /**\n   * Update the input, should be done first thing in the game loop.\n   */\n  pollInput() {\n    for ( let i = 0; i < 256; i += 1 ) {\n      this._lastKeys[i] = this._currentKeys[i];\n      this._currentKeys[i] = this._keysRaw[i];\n    }\n\n    this._updateButtons();\n\n    this.mouse.left.pressed = this._forceMouseLeftDown ? true : this._currentMouseLeft;\n    this.mouse.left.down = this._forceMouseLeftDown ? true : this._currentMouseLeft && !this._lastMouseLeft;\n    this.mouse.left.up = !this._currentMouseLeft && this._lastMouseLeft;\n\n    this.mouse.right.pressed = this._forceMouseRightDown ? true : this._currentMouseRight;\n    this.mouse.right.down = this._forceMouseRightDown ? true : this._currentMouseRight && !this._lastMouseRight;\n    this.mouse.right.up = !this._currentMouseRight && this._lastMouseRight;\n\n    this._forceMouseLeftDown = false;\n    this._forceMouseRightDown = false;\n\n    this._lastMouseLeft = this._currentMouseLeft;\n    this._lastMouseRight = this._currentMouseRight;\n  }\n\n  /**\n   * return true if the key is currently held down\n   * @param {number} keyCode\n   */\n  getKeyPressed( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    return this._currentKeys[keyCode] > 0;\n  }\n\n  /**\n   * return true if the key was pressed down this frame\n   * @param {number} keyCode\n   */\n  getKeyDown( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return current && !last;\n  }\n\n  /**\n   * return true if the key was released this frame\n   * @param {number} keyCode\n   */\n  getKeyUp( keyCode ) {\n    if ( keyCode < 0 || keyCode >= 256 ) {\n      return false;\n    }\n\n    const current = this._currentKeys[keyCode] > 0;\n    const last = this._lastKeys[keyCode] > 0;\n    return !current && last;\n  }\n\n  /**\n   * return true if the button is currently held down\n   * @param {number} buttonCode\n   */\n  getButtonPressed( buttonCode ) {\n    return this.getKeyPressed( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was pressed down this frame\n   * @param {number} buttonCode\n   */\n  getButtonDown( buttonCode ) {\n    return this.getKeyDown( this._buttonsToKeys[buttonCode] );\n  }\n\n  /**\n   * return true if the button was released this frame\n   * @param {number} buttonCode\n   */\n  getButtonUp( buttonCode ) {\n    return this.getKeyUp( this._buttonsToKeys[buttonCode] );\n  }\n\n  _updateButtons() {\n    this._updateButton( 'left', Input.GAME_LEFT );\n    this._updateButton( 'right', Input.GAME_RIGHT );\n    this._updateButton( 'up', Input.GAME_UP );\n    this._updateButton( 'down', Input.GAME_DOWN );\n\n    this._updateButton( 'action1', Input.GAME_ACTION_ONE );\n    this._updateButton( 'action2', Input.GAME_ACTION_TWO );\n    this._updateButton( 'action3', Input.GAME_ACTION_THREE );\n    this._updateButton( 'action4', Input.GAME_ACTION_FOUR );\n    this._updateButton( 'leftTrigger', Input.GAME_LEFT_TRIGGER );\n    this._updateButton( 'rightTrigger', Input.GAME_RIGHT_TRIGGER );\n\n    this._updateButton( 'pause', Input.GAME_PAUSE );\n\n    this._updateButton( 'menuLeft', Input.MENU_LEFT );\n    this._updateButton( 'menuRight', Input.MENU_RIGHT );\n    this._updateButton( 'menuUp', Input.MENU_UP );\n    this._updateButton( 'menuDown', Input.MENU_DOWN );\n\n    this._updateButton( 'menuConfirm', Input.MENU_CONFIRM );\n    this._updateButton( 'menuBack', Input.MENU_BACK );\n  }\n\n  _updateButton( name, index ) {\n    const key = this._buttonsToKeys[index];\n    const pressed = this.getKeyPressed( key );\n    const down = this.getKeyDown( key );\n    const up = this.getKeyUp( key );\n\n    this[name] = { pressed, down, up };\n  }\n}\n\nInput.GAME_LEFT = 0;\nInput.GAME_RIGHT = 1;\nInput.GAME_UP = 2;\nInput.GAME_DOWN = 3;\nInput.GAME_ACTION_ONE = 4;\nInput.GAME_ACTION_TWO = 5;\nInput.GAME_ACTION_THREE = 6;\nInput.GAME_ACTION_FOUR = 7;\nInput.GAME_PAUSE = 8;\nInput.GAME_LEFT_TRIGGER = 9;\nInput.GAME_RIGHT_TRIGGER = 10;\n\nInput.MENU_LEFT = 11;\nInput.MENU_RIGHT = 12;\nInput.MENU_UP = 13;\nInput.MENU_DOWN = 14;\nInput.MENU_CONFIRM = 15;\nInput.MENU_BACK = 16;\n\nexport default Input;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Input/Input.js",
     "access": "public",
@@ -2084,7 +2249,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 151,
+    "__docId__": 167,
     "kind": "class",
     "name": "Input",
     "memberof": "src/Input/Input.js",
@@ -2099,7 +2264,7 @@
     "interface": false
   },
   {
-    "__docId__": 152,
+    "__docId__": 168,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Input/Input.js~Input",
@@ -2113,7 +2278,7 @@
     "undocument": true
   },
   {
-    "__docId__": 153,
+    "__docId__": 169,
     "kind": "member",
     "name": "canvas",
     "memberof": "src/Input/Input.js~Input",
@@ -2130,7 +2295,7 @@
     }
   },
   {
-    "__docId__": 154,
+    "__docId__": 170,
     "kind": "member",
     "name": "canvasScale",
     "memberof": "src/Input/Input.js~Input",
@@ -2147,7 +2312,7 @@
     }
   },
   {
-    "__docId__": 155,
+    "__docId__": 171,
     "kind": "member",
     "name": "screenWidth",
     "memberof": "src/Input/Input.js~Input",
@@ -2164,7 +2329,7 @@
     }
   },
   {
-    "__docId__": 156,
+    "__docId__": 172,
     "kind": "member",
     "name": "screenHeight",
     "memberof": "src/Input/Input.js~Input",
@@ -2181,7 +2346,7 @@
     }
   },
   {
-    "__docId__": 157,
+    "__docId__": 173,
     "kind": "member",
     "name": "mouse",
     "memberof": "src/Input/Input.js~Input",
@@ -2198,7 +2363,7 @@
     }
   },
   {
-    "__docId__": 158,
+    "__docId__": 174,
     "kind": "member",
     "name": "_keysRaw",
     "memberof": "src/Input/Input.js~Input",
@@ -2215,7 +2380,7 @@
     }
   },
   {
-    "__docId__": 159,
+    "__docId__": 175,
     "kind": "member",
     "name": "_currentKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -2232,7 +2397,7 @@
     }
   },
   {
-    "__docId__": 160,
+    "__docId__": 176,
     "kind": "member",
     "name": "_lastKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -2249,7 +2414,7 @@
     }
   },
   {
-    "__docId__": 161,
+    "__docId__": 177,
     "kind": "member",
     "name": "_buttonsToKeys",
     "memberof": "src/Input/Input.js~Input",
@@ -2266,7 +2431,7 @@
     }
   },
   {
-    "__docId__": 162,
+    "__docId__": 178,
     "kind": "member",
     "name": "_currentButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -2283,7 +2448,7 @@
     }
   },
   {
-    "__docId__": 163,
+    "__docId__": 179,
     "kind": "member",
     "name": "_lastButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -2300,7 +2465,7 @@
     }
   },
   {
-    "__docId__": 164,
+    "__docId__": 180,
     "kind": "member",
     "name": "_currentMouseLeft",
     "memberof": "src/Input/Input.js~Input",
@@ -2317,7 +2482,7 @@
     }
   },
   {
-    "__docId__": 165,
+    "__docId__": 181,
     "kind": "member",
     "name": "_lastMouseLeft",
     "memberof": "src/Input/Input.js~Input",
@@ -2334,7 +2499,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 182,
     "kind": "member",
     "name": "_forceMouseLeftDown",
     "memberof": "src/Input/Input.js~Input",
@@ -2351,7 +2516,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 183,
     "kind": "member",
     "name": "_currentMouseRight",
     "memberof": "src/Input/Input.js~Input",
@@ -2368,7 +2533,7 @@
     }
   },
   {
-    "__docId__": 168,
+    "__docId__": 184,
     "kind": "member",
     "name": "_lastMouseRight",
     "memberof": "src/Input/Input.js~Input",
@@ -2385,7 +2550,7 @@
     }
   },
   {
-    "__docId__": 169,
+    "__docId__": 185,
     "kind": "member",
     "name": "_forceMouseRightDown",
     "memberof": "src/Input/Input.js~Input",
@@ -2402,7 +2567,7 @@
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 186,
     "kind": "method",
     "name": "init",
     "memberof": "src/Input/Input.js~Input",
@@ -2417,7 +2582,7 @@
     "return": null
   },
   {
-    "__docId__": 171,
+    "__docId__": 187,
     "kind": "method",
     "name": "_keyDown",
     "memberof": "src/Input/Input.js~Input",
@@ -2440,7 +2605,7 @@
     "return": null
   },
   {
-    "__docId__": 172,
+    "__docId__": 188,
     "kind": "method",
     "name": "_keyUp",
     "memberof": "src/Input/Input.js~Input",
@@ -2463,14 +2628,14 @@
     "return": null
   },
   {
-    "__docId__": 173,
+    "__docId__": 189,
     "kind": "method",
-    "name": "_mouseEnter",
+    "name": "_pointerEnter",
     "memberof": "src/Input/Input.js~Input",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/Input/Input.js~Input#_mouseEnter",
+    "longname": "src/Input/Input.js~Input#_pointerEnter",
     "access": "private",
     "description": null,
     "lineNumber": 111,
@@ -2479,14 +2644,14 @@
     "return": null
   },
   {
-    "__docId__": 176,
+    "__docId__": 192,
     "kind": "method",
-    "name": "_mouseMove",
+    "name": "_pointerMove",
     "memberof": "src/Input/Input.js~Input",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/Input/Input.js~Input#_mouseMove",
+    "longname": "src/Input/Input.js~Input#_pointerMove",
     "access": "private",
     "description": null,
     "lineNumber": 117,
@@ -2502,14 +2667,14 @@
     "return": null
   },
   {
-    "__docId__": 177,
+    "__docId__": 193,
     "kind": "method",
-    "name": "_mouseDown",
+    "name": "_pointerDown",
     "memberof": "src/Input/Input.js~Input",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/Input/Input.js~Input#_mouseDown",
+    "longname": "src/Input/Input.js~Input#_pointerDown",
     "access": "private",
     "description": null,
     "lineNumber": 125,
@@ -2525,14 +2690,14 @@
     "return": null
   },
   {
-    "__docId__": 182,
+    "__docId__": 198,
     "kind": "method",
-    "name": "_mouseUp",
+    "name": "_pointerUp",
     "memberof": "src/Input/Input.js~Input",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/Input/Input.js~Input#_mouseUp",
+    "longname": "src/Input/Input.js~Input#_pointerUp",
     "access": "private",
     "description": null,
     "lineNumber": 138,
@@ -2548,14 +2713,14 @@
     "return": null
   },
   {
-    "__docId__": 185,
+    "__docId__": 201,
     "kind": "method",
-    "name": "_mouseLeave",
+    "name": "_pointerLeave",
     "memberof": "src/Input/Input.js~Input",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/Input/Input.js~Input#_mouseLeave",
+    "longname": "src/Input/Input.js~Input#_pointerLeave",
     "access": "private",
     "description": null,
     "lineNumber": 149,
@@ -2564,7 +2729,7 @@
     "return": null
   },
   {
-    "__docId__": 186,
+    "__docId__": 202,
     "kind": "method",
     "name": "clearInput",
     "memberof": "src/Input/Input.js~Input",
@@ -2579,7 +2744,7 @@
     "return": null
   },
   {
-    "__docId__": 187,
+    "__docId__": 203,
     "kind": "method",
     "name": "pollInput",
     "memberof": "src/Input/Input.js~Input",
@@ -2594,7 +2759,7 @@
     "return": null
   },
   {
-    "__docId__": 192,
+    "__docId__": 208,
     "kind": "method",
     "name": "getKeyPressed",
     "memberof": "src/Input/Input.js~Input",
@@ -2624,7 +2789,7 @@
     }
   },
   {
-    "__docId__": 193,
+    "__docId__": 209,
     "kind": "method",
     "name": "getKeyDown",
     "memberof": "src/Input/Input.js~Input",
@@ -2654,7 +2819,7 @@
     }
   },
   {
-    "__docId__": 194,
+    "__docId__": 210,
     "kind": "method",
     "name": "getKeyUp",
     "memberof": "src/Input/Input.js~Input",
@@ -2684,7 +2849,7 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 211,
     "kind": "method",
     "name": "getButtonPressed",
     "memberof": "src/Input/Input.js~Input",
@@ -2714,7 +2879,7 @@
     }
   },
   {
-    "__docId__": 196,
+    "__docId__": 212,
     "kind": "method",
     "name": "getButtonDown",
     "memberof": "src/Input/Input.js~Input",
@@ -2744,7 +2909,7 @@
     }
   },
   {
-    "__docId__": 197,
+    "__docId__": 213,
     "kind": "method",
     "name": "getButtonUp",
     "memberof": "src/Input/Input.js~Input",
@@ -2774,7 +2939,7 @@
     }
   },
   {
-    "__docId__": 198,
+    "__docId__": 214,
     "kind": "method",
     "name": "_updateButtons",
     "memberof": "src/Input/Input.js~Input",
@@ -2790,7 +2955,7 @@
     "return": null
   },
   {
-    "__docId__": 199,
+    "__docId__": 215,
     "kind": "method",
     "name": "_updateButton",
     "memberof": "src/Input/Input.js~Input",
@@ -2819,7 +2984,7 @@
     "return": null
   },
   {
-    "__docId__": 200,
+    "__docId__": 216,
     "kind": "member",
     "name": "[name]",
     "memberof": "src/Input/Input.js~Input",
@@ -2836,7 +3001,7 @@
     }
   },
   {
-    "__docId__": 201,
+    "__docId__": 217,
     "kind": "file",
     "name": "src/Input/Keys.js",
     "content": "\nconst Keys = {};\n\nKeys.BACKSPACE = 8;\nKeys.TAB = 9;\nKeys.ENTER = 13;\nKeys.SHIFT = 16;\nKeys.CTRL = 17;\nKeys.ALT = 18;\nKeys.PAUSE_BREAK = 19;\nKeys.CAPSLOCK = 20;\nKeys.ESCAPE = 27;\nKeys.SPACE = 32;\nKeys.PAGE_UP = 33;\nKeys.PAGE_DOWN = 34;\nKeys.END = 35;\nKeys.HOME = 36;\nKeys.LEFT_ARROW = 37;\nKeys.UP_ARROW = 38;\nKeys.RIGHT_ARROW = 39;\nKeys.DOWN_ARROW = 40;\nKeys.INSERT = 45;\nKeys.DELETE = 46;\nKeys.ZERO = 48;\nKeys.ONE = 49;\nKeys.TWO = 50;\nKeys.THREE = 51;\nKeys.FOUR = 52;\nKeys.FIVE = 53;\nKeys.SIX = 54;\nKeys.SEVEN = 55;\nKeys.EIGHT = 56;\nKeys.NINE = 57;\nKeys.A_KEY = 65;\nKeys.B_KEY = 66;\nKeys.C_KEY = 67;\nKeys.D_KEY = 68;\nKeys.E_KEY = 69;\nKeys.F_KEY = 70;\nKeys.G_KEY = 71;\nKeys.H_KEY = 72;\nKeys.I_KEY = 73;\nKeys.J_KEY = 74;\nKeys.K_KEY = 75;\nKeys.L_KEY = 76;\nKeys.M_KEY = 77;\nKeys.N_KEY = 78;\nKeys.O_KEY = 79;\nKeys.P_KEY = 80;\nKeys.Q_KEY = 81;\nKeys.R_KEY = 82;\nKeys.S_KEY = 83;\nKeys.T_KEY = 84;\nKeys.U_KEY = 85;\nKeys.V_KEY = 86;\nKeys.W_KEY = 87;\nKeys.X_KEY = 88;\nKeys.Y_KEY = 89;\nKeys.Z_KEY = 90;\nKeys.LEFT_WINDOW = 91;\nKeys.RIGHT_WINDOW = 92;\nKeys.SELECT = 93;\nKeys.NUM_ZERO = 96;\nKeys.NUM_ONE = 97;\nKeys.NUM_TWO = 98;\nKeys.NUM_THREE = 99;\nKeys.NUM_FOUR = 100;\nKeys.NUM_FIVE = 101;\nKeys.NUM_SIX = 102;\nKeys.NUM_SEVEN = 103;\nKeys.NUM_EIGHT = 104;\nKeys.NUM_NINE = 105;\nKeys.MULTIPLY = 106;\nKeys.ADD = 107;\nKeys.SUBTRACT = 109;\nKeys.DECIMAL_POINT = 110;\nKeys.DIVIDE = 111;\nKeys.F1 = 112;\nKeys.F2 = 113;\nKeys.F3 = 114;\nKeys.F4 = 115;\nKeys.F5 = 116;\nKeys.F6 = 117;\nKeys.F7 = 118;\nKeys.F8 = 119;\nKeys.F9 = 120;\nKeys.F10 = 121;\nKeys.F11 = 122;\nKeys.F12 = 123;\nKeys.NUM_LOCK = 144;\nKeys.SCROLL_LOCK = 145;\nKeys.SEMI_COLON = 186;\nKeys.EQUAL_SIGN = 187;\nKeys.COMMA = 188;\nKeys.DASH = 189;\nKeys.PERIOD = 190;\nKeys.FORWARD_SLASH = 191;\nKeys.GRAVE_ACCENT = 192;\nKeys.OPEN_BRACKET = 219;\nKeys.BACK_SLASH = 220;\nKeys.CLOSE_BRACKET = 221;\nKeys.SINGLE_QUOTE = 222;\n\nKeys.codesToKeyCodes = {\n  Backspace: Keys.BACKSPACE,\n  Tab: Keys.TAB,\n  Enter: Keys.ENTER,\n  ShiftLeft: Keys.SHIFT,\n  ShiftRight: Keys.SHIFT,\n  ControlLeft: Keys.CTRL,\n  ControlRight: Keys.CTRL,\n  AltLeft: Keys.ALT,\n  AltRight: Keys.ALT,\n  CapsLock: Keys.CAPSLOCK,\n  Escape: Keys.ESCAPE,\n  Space: Keys.SPACE,\n  PageUp: Keys.PAGE_UP,\n  PageDown: Keys.PAGE_DOWN,\n  End: Keys.END,\n  Home: Keys.HOME,\n  ArrowLeft: Keys.LEFT_ARROW,\n  ArrowUp: Keys.UP_ARROW,\n  ArrowRight: Keys.RIGHT_ARROW,\n  ArrowDown: Keys.DOWN_ARROW,\n  Insert: Keys.INSERT,\n  Delete: Keys.DELETE,\n  Digit0: Keys.ZERO,\n  Digit1: Keys.ONE,\n  Digit2: Keys.TWO,\n  Digit3: Keys.THREE,\n  Digit4: Keys.FOUR,\n  Digit5: Keys.FIVE,\n  Digit6: Keys.SIX,\n  Digit7: Keys.SEVEN,\n  Digit8: Keys.EIGHT,\n  Digit9: Keys.NINE,\n  KeyA: Keys.A_KEY,\n  KeyB: Keys.B_KEY,\n  KeyC: Keys.C_KEY,\n  KeyD: Keys.D_KEY,\n  KeyE: Keys.E_KEY,\n  KeyF: Keys.F_KEY,\n  KeyG: Keys.G_KEY,\n  KeyH: Keys.H_KEY,\n  KeyI: Keys.I_KEY,\n  KeyJ: Keys.J_KEY,\n  KeyK: Keys.K_KEY,\n  KeyL: Keys.L_KEY,\n  KeyM: Keys.M_KEY,\n  KeyN: Keys.N_KEY,\n  KeyO: Keys.O_KEY,\n  KeyP: Keys.P_KEY,\n  KeyQ: Keys.Q_KEY,\n  KeyR: Keys.R_KEY,\n  KeyS: Keys.S_KEY,\n  KeyT: Keys.T_KEY,\n  KeyU: Keys.U_KEY,\n  KeyV: Keys.V_KEY,\n  KeyW: Keys.W_KEY,\n  KeyX: Keys.X_KEY,\n  KeyY: Keys.Y_KEY,\n  KeyZ: Keys.Z_KEY,\n  Select: Keys.SELECT,\n  Numpad0: Keys.NUM_ZERO,\n  Numpad1: Keys.NUM_ONE,\n  Numpad2: Keys.NUM_TWO,\n  Numpad3: Keys.NUM_THREE,\n  Numpad4: Keys.NUM_FOUR,\n  Numpad5: Keys.NUM_FIVE,\n  Numpad6: Keys.NUM_SIX,\n  Numpad7: Keys.NUM_SEVEN,\n  Numpad8: Keys.NUM_EIGHT,\n  Numpad9: Keys.NUM_NINE,\n  NumpadMultiply: Keys.MULTIPLY,\n  NumpadAdd: Keys.ADD,\n  NumpadSubtract: Keys.SUBTRACT,\n  NumpadDecimal: Keys.DECIMAL_POINT,\n  NumpadDivide: Keys.DIVIDE,\n  F1: Keys.F1,\n  F2: Keys.F2,\n  F3: Keys.F3,\n  F4: Keys.F4,\n  F5: Keys.F5,\n  F6: Keys.F6,\n  F7: Keys.F7,\n  F8: Keys.F8,\n  F9: Keys.F9,\n  F10: Keys.F10,\n  F11: Keys.F11,\n  F12: Keys.F12,\n  NumLock: Keys.NUM_LOCK,\n  ScrollLock: Keys.SCROLL_LOCK,\n  Semicolon: Keys.SEMI_COLON,\n  Equal: Keys.EQUAL_SIGN,\n  NumpadEqual: Keys.EQUAL_SIGN,\n  Comma: Keys.COMMA,\n  NumpadComma: Keys.COMMA,\n  Period: Keys.PERIOD,\n  Slash: Keys.FORWARD_SLASH,\n  Backquote: Keys.GRAVE_ACCENT,\n  BracketLeft: Keys.OPEN_BRACKET,\n  Backslash: Keys.BACK_SLASH,\n  BracketRight: Keys.CLOSE_BRACKET,\n  Quote: Keys.SINGLE_QUOTE,\n  Minus: Keys.DASH,\n  NumpadEnter: Keys.ENTER,\n};\n\nexport default Keys;\n",
@@ -2847,7 +3012,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 202,
+    "__docId__": 218,
     "kind": "variable",
     "name": "Keys",
     "memberof": "src/Input/Keys.js",
@@ -2867,7 +3032,7 @@
     }
   },
   {
-    "__docId__": 203,
+    "__docId__": 219,
     "kind": "file",
     "name": "src/MapData/MapData.js",
     "content": "import TileMap from './TileMap';\n\n/**\n * Holds all of the Tile Map data.\n */\nclass MapData {\n  constructor() {\n    this.tileMaps = [];\n  }\n\n  /**\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   */\n  addTileMap( tileMap ) {\n    this.tileMaps.push( new TileMap( tileMap ) );\n    return this.tileMaps.length - 1;\n  }\n\n  /**\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   */\n  getTile( x, y, tileMap = 0, layer = 0 ) {\n    return this.tileMaps[tileMap].getTile( x, y, layer );\n  }\n\n  /**\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   */\n  setTile( gid, x, y, tileMap = 0, layer = 0 ) {\n    this.tileMaps[tileMap].setTile( gid, x, y, layer );\n  }\n}\n\nexport default MapData;\n",
@@ -2878,7 +3043,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 204,
+    "__docId__": 220,
     "kind": "class",
     "name": "MapData",
     "memberof": "src/MapData/MapData.js",
@@ -2893,7 +3058,7 @@
     "interface": false
   },
   {
-    "__docId__": 205,
+    "__docId__": 221,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -2907,7 +3072,7 @@
     "undocument": true
   },
   {
-    "__docId__": 206,
+    "__docId__": 222,
     "kind": "member",
     "name": "tileMaps",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -2924,7 +3089,7 @@
     }
   },
   {
-    "__docId__": 207,
+    "__docId__": 223,
     "kind": "method",
     "name": "addTileMap",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -2954,7 +3119,7 @@
     }
   },
   {
-    "__docId__": 208,
+    "__docId__": 224,
     "kind": "method",
     "name": "getTile",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -3014,7 +3179,7 @@
     }
   },
   {
-    "__docId__": 209,
+    "__docId__": 225,
     "kind": "method",
     "name": "setTile",
     "memberof": "src/MapData/MapData.js~MapData",
@@ -3080,10 +3245,10 @@
     "return": null
   },
   {
-    "__docId__": 210,
+    "__docId__": 226,
     "kind": "file",
     "name": "src/MapData/TileMap.js",
-    "content": "\nexport const MAIN_LAYER = 0;\nexport const BG1_LAYER = 1;\nexport const BG2_LAYER = 2;\nexport const BG3_LAYER = 3;\nexport const FG1_LAYER = 4;\nexport const FG2_LAYER = 5;\nexport const FG3_LAYER = 6;\nexport const COLLISION_LAYER = 7;\nexport const META_LAYER = 8;\n\n/**\n * Represents a Tile Map.\n */\nclass TileMap {\n  constructor( data ) {\n    this.name = '';\n    this.width = 0;\n    this.height = 0;\n    this.layers = new Array( 9 );\n\n    if ( data ) {\n      this.name = data.name;\n      this.width = data.width;\n      this.height = data.height;\n\n      if ( data.main ) {\n        this.layers[MAIN_LAYER] = this._getTypedArrayFromDataLayer( data.main );\n      }\n      if ( data.bg1 ) {\n        this.layers[BG1_LAYER] = this._getTypedArrayFromDataLayer( data.bg1 );\n      }\n      if ( data.bg2 ) {\n        this.layers[BG2_LAYER] = this._getTypedArrayFromDataLayer( data.bg2 );\n      }\n      if ( data.bg3 ) {\n        this.layers[BG3_LAYER] = this._getTypedArrayFromDataLayer( data.bg3 );\n      }\n      if ( data.fg1 ) {\n        this.layers[FG1_LAYER] = this._getTypedArrayFromDataLayer( data.fg1 );\n      }\n      if ( data.fg2 ) {\n        this.layers[FG2_LAYER] = this._getTypedArrayFromDataLayer( data.fg2 );\n      }\n      if ( data.fg3 ) {\n        this.layers[FG3_LAYER] = this._getTypedArrayFromDataLayer( data.fg3 );\n      }\n      if ( data.col ) {\n        this.layers[COLLISION_LAYER] = this._getTypedArrayFromDataLayer( data.col );\n      }\n      if ( data.meta ) {\n        this.layers[META_LAYER] = this._getTypedArrayFromDataLayer( data.meta );\n      }\n    }\n  }\n\n  /**\n   * Convert an array of numbers into a Uint16Array\n   * @param {number[]} dataLayer\n   */\n  _getTypedArrayFromDataLayer( dataLayer ) {\n    const result = new Uint16Array( this.width * this.height );\n    for ( let i = 0; i < dataLayer.length; i += 1 ) {\n      result[i] = dataLayer[i];\n    }\n    return result;\n  }\n\n  /**\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   */\n  getTile( x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    return currentLayer[index];\n  }\n\n  /**\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   */\n  setTile( gid, x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    currentLayer[index] = gid;\n  }\n}\n\nexport default TileMap;\n",
+    "content": "\n/**\n * Represents a Tile Map.\n */\nclass TileMap {\n  constructor( data ) {\n    this.name = '';\n    this.width = 0;\n    this.height = 0;\n    this.layers = [];\n\n    if ( data ) {\n      this.name = data.name;\n      this.width = data.width;\n      this.height = data.height;\n\n      if ( data.layers ) {\n        for ( let i = 0; i < data.layers.length; i += 1 ) {\n          this.layers.push( this._getTypedArrayFromDataLayer( data.layers[i] ) );\n        }\n      }\n    }\n  }\n\n  /**\n   * Convert an array of numbers into a Uint16Array\n   * @param {number[]} dataLayer\n   */\n  _getTypedArrayFromDataLayer( dataLayer ) {\n    const result = new Uint16Array( this.width * this.height );\n    for ( let i = 0; i < dataLayer.length; i += 1 ) {\n      result[i] = dataLayer[i];\n    }\n    return result;\n  }\n\n  /**\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   */\n  getTile( x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    return currentLayer[index];\n  }\n\n  /**\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   */\n  setTile( gid, x, y, layer = 0 ) {\n    const currentLayer = this.layers[layer];\n    const index = y * this.width + x;\n    currentLayer[index] = gid;\n  }\n}\n\nexport default TileMap;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/MapData/TileMap.js",
     "access": "public",
@@ -3091,187 +3256,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 211,
-    "kind": "variable",
-    "name": "MAIN_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~MAIN_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{MAIN_LAYER}",
-    "description": null,
-    "lineNumber": 2,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 212,
-    "kind": "variable",
-    "name": "BG1_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~BG1_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{BG1_LAYER}",
-    "description": null,
-    "lineNumber": 3,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 213,
-    "kind": "variable",
-    "name": "BG2_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~BG2_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{BG2_LAYER}",
-    "description": null,
-    "lineNumber": 4,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 214,
-    "kind": "variable",
-    "name": "BG3_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~BG3_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{BG3_LAYER}",
-    "description": null,
-    "lineNumber": 5,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 215,
-    "kind": "variable",
-    "name": "FG1_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~FG1_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{FG1_LAYER}",
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 216,
-    "kind": "variable",
-    "name": "FG2_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~FG2_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{FG2_LAYER}",
-    "description": null,
-    "lineNumber": 7,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 217,
-    "kind": "variable",
-    "name": "FG3_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~FG3_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{FG3_LAYER}",
-    "description": null,
-    "lineNumber": 8,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 218,
-    "kind": "variable",
-    "name": "COLLISION_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~COLLISION_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{COLLISION_LAYER}",
-    "description": null,
-    "lineNumber": 9,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 219,
-    "kind": "variable",
-    "name": "META_LAYER",
-    "memberof": "src/MapData/TileMap.js",
-    "static": true,
-    "longname": "src/MapData/TileMap.js~META_LAYER",
-    "access": "public",
-    "export": true,
-    "importPath": "bitmelo/src/MapData/TileMap.js",
-    "importStyle": "{META_LAYER}",
-    "description": null,
-    "lineNumber": 10,
-    "undocument": true,
-    "type": {
-      "types": [
-        "number"
-      ]
-    }
-  },
-  {
-    "__docId__": 220,
+    "__docId__": 227,
     "kind": "class",
     "name": "TileMap",
     "memberof": "src/MapData/TileMap.js",
@@ -3282,11 +3267,11 @@
     "importPath": "bitmelo/src/MapData/TileMap.js",
     "importStyle": "TileMap",
     "description": "Represents a Tile Map.",
-    "lineNumber": 15,
+    "lineNumber": 5,
     "interface": false
   },
   {
-    "__docId__": 221,
+    "__docId__": 228,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3296,11 +3281,11 @@
     "longname": "src/MapData/TileMap.js~TileMap#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 16,
+    "lineNumber": 6,
     "undocument": true
   },
   {
-    "__docId__": 222,
+    "__docId__": 229,
     "kind": "member",
     "name": "name",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3308,7 +3293,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#name",
     "access": "public",
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 7,
     "undocument": true,
     "type": {
       "types": [
@@ -3317,7 +3302,7 @@
     }
   },
   {
-    "__docId__": 223,
+    "__docId__": 230,
     "kind": "member",
     "name": "width",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3325,7 +3310,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#width",
     "access": "public",
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 8,
     "undocument": true,
     "type": {
       "types": [
@@ -3334,7 +3319,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 231,
     "kind": "member",
     "name": "height",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3342,7 +3327,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#height",
     "access": "public",
     "description": null,
-    "lineNumber": 19,
+    "lineNumber": 9,
     "undocument": true,
     "type": {
       "types": [
@@ -3351,7 +3336,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 232,
     "kind": "member",
     "name": "layers",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3359,16 +3344,16 @@
     "longname": "src/MapData/TileMap.js~TileMap#layers",
     "access": "public",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 10,
     "undocument": true,
     "type": {
       "types": [
-        "*"
+        "*[]"
       ]
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 236,
     "kind": "method",
     "name": "_getTypedArrayFromDataLayer",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3378,7 +3363,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#_getTypedArrayFromDataLayer",
     "access": "private",
     "description": "Convert an array of numbers into a Uint16Array",
-    "lineNumber": 61,
+    "lineNumber": 29,
     "params": [
       {
         "nullable": null,
@@ -3398,7 +3383,7 @@
     }
   },
   {
-    "__docId__": 230,
+    "__docId__": 237,
     "kind": "method",
     "name": "getTile",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3408,7 +3393,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#getTile",
     "access": "public",
     "description": "Get the tile GID at a given position",
-    "lineNumber": 75,
+    "lineNumber": 43,
     "params": [
       {
         "nullable": null,
@@ -3448,7 +3433,7 @@
     }
   },
   {
-    "__docId__": 231,
+    "__docId__": 238,
     "kind": "method",
     "name": "setTile",
     "memberof": "src/MapData/TileMap.js~TileMap",
@@ -3458,7 +3443,7 @@
     "longname": "src/MapData/TileMap.js~TileMap#setTile",
     "access": "public",
     "description": "Set the tile GID at a given position",
-    "lineNumber": 88,
+    "lineNumber": 56,
     "params": [
       {
         "nullable": null,
@@ -3504,10 +3489,10 @@
     "return": null
   },
   {
-    "__docId__": 232,
+    "__docId__": 239,
     "kind": "file",
     "name": "src/Screen/Screen.js",
-    "content": "\nimport standardPalette from './standardPalette';\n\n/**\n * Represents a game screen for low resolution games.\n * Has simple drawing functions using an indexed palette of a maximum of 256 colors\n * The origin (0, 0) position of the screen is on the bottom left\n */\nclass Screen {\n  constructor() {\n    this.conainerId = 'bitmelo-container';\n    this.container = null;\n    this.width = 320;\n    this.height = 180;\n    this.scale = 3;\n    this.maxScale = -1;\n    this.minScale = 1;\n    this.scaleMode = Screen.SCALE_CONSTANT;\n    this.horizontalScaleCushion = 0;\n    this.verticalScaleCushion = 0;\n    this.rescaleOnWindowResize = true;\n    this.hideCursor = false;\n    this.tileData = null;\n    this.mapData = null;\n    this.fontData = null;\n\n    this.onScaleChange = null;\n\n    this.canvas = null;\n    this._context = null;\n    this._imageData = null;\n    this._screenData = null;\n    this._palette = null;\n    this._generatedPalette = null;\n\n    this._isLittleEndian = true;\n  }\n\n  /**\n   * Do initial setup such as creating the canvas and building the palette\n   */\n  init() {\n    this.container = document.getElementById( this.conainerId );\n\n    this.canvas = document.createElement( 'canvas' );\n    this.canvas.setAttribute( 'id', 'game-device' );\n    this.canvas.setAttribute( 'width', this.width );\n    this.canvas.setAttribute( 'height', this.height );\n\n    this._setScale();\n\n    if ( this.rescaleOnWindowResize && this.scaleMode !== Screen.SCALE_CONSTANT ) {\n      window.onresize = () => {\n        this._setScale();\n        this._setCanvasStyle();\n      };\n    }\n\n    this._setCanvasStyle();\n\n    this.container.appendChild( this.canvas );\n\n    this._context = this.canvas.getContext( '2d', { alpha: false } );\n    this._context.imageSmoothingEnabled = false;\n    this._screenData = new Uint8ClampedArray( this.width * this.height );\n    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );\n\n    // check if we are little endian\n    const buffer = new ArrayBuffer( 4 );\n    const test8 = new Uint8ClampedArray( buffer );\n    const test32 = new Uint32Array( buffer );\n    test32[0] = 0x0a0b0c0d;\n\n    if ( test8[0] === 0x0a\n      && test8[1] === 0x0b\n      && test8[2] === 0x0c\n      && test8[3] === 0x0d\n    ) {\n      this._isLittleEndian = false;\n    }\n\n    if ( !this._palette ) {\n      this._palette = standardPalette;\n    }\n\n    this._buildPalette();\n  }\n\n  _setScale() {\n    if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {\n      const maxWidth = window.innerWidth - this.horizontalScaleCushion;\n      const maxHeight = window.innerHeight - this.verticalScaleCushion;\n\n      const maxHorizScale = Math.floor( maxWidth / this.width );\n      const maxVerticalScale = Math.floor( maxHeight / this.height );\n\n      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;\n      if ( this.scale < this.minScale ) {\n        this.scale = this.minScale;\n      }\n      if ( this.maxScale > 0 && this.scale > this.maxScale ) {\n        this.scale = this.maxScale;\n      }\n    }\n\n    if ( this.onScaleChange ) {\n      this.onScaleChange( this.scale );\n    }\n  }\n\n  _setCanvasStyle() {\n    let containerStyle = '';\n    containerStyle += `width: ${ this.width * this.scale }px;`;\n    containerStyle += `height: ${ this.height * this.scale }px;`;\n\n    this.container.setAttribute( 'style', containerStyle );\n\n    let canvasStyle = '';\n    canvasStyle += 'transform-origin: 50% 0%;';\n    canvasStyle += `transform: scale(${ this.scale });`;\n    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';\n    canvasStyle += 'image-rendering: -moz-crisp-edges;';\n    canvasStyle += 'image-rendering: crisp-edges;';\n    canvasStyle += 'image-rendering: pixelated;';\n\n\n    if ( this.hideCursor ) {\n      canvasStyle += 'cursor: none';\n    }\n\n    this.canvas.setAttribute( 'style', canvasStyle );\n  }\n\n  /**\n   * Set the palette that will used by the Screen.\n   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent\n   *\n   * @example\n   * const palette = [\n   *  [0, 0, 0], // black, the 0 index is transparent\n   *  [0, 0, 0], // black\n   *  [255, 255, 255], // white\n   *  [255, 0, 0], // red\n   *  [0, 255, 0], // green\n   *  [0, 0, 255] // blue\n   * ];\n   *\n   * screen.setPalette( palette );\n   *\n   * @param {Array.<Array.<number>} palette - The array of colors to be used by the screen.\n   * Each index should be a color described by an array of 3 integers in rgb order.\n   * Each integer has a min value of 0 and a max value of 255.\n   */\n  setPalette( palette ) {\n    this._palette = palette;\n    this._buildPalette();\n  }\n\n  /**\n   * Change a single palette color\n   *\n   * @param {number[]} color - The color we want to add\n   * @param {number} index - this palette index we want to set\n   */\n  setPaletteColorAtIndex( color, index ) {\n    this._palette[index] = color;\n    this._buildPalette();\n  }\n\n  /**\n   * Build the palette by converting _palette to the _generatedPalette we will be using internally\n   */\n  _buildPalette() {\n    this._generatedPalette = new Uint32Array( this._palette.length );\n    let currentColor = null;\n    if ( this._isLittleEndian ) {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        let r = 0;\n        let g = 0;\n        let b = 0;\n        if ( typeof currentColor === 'string' ) {\n          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );\n          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );\n          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );\n        }\n        else {\n          r = currentColor[0];\n          g = currentColor[1];\n          b = currentColor[2];\n        }\n        this._generatedPalette[i] = (\n          ( 255 << 24 ) // a\n          | ( b << 16 ) // b\n          | ( g << 8 ) // g\n          | r // r\n        );\n      }\n    }\n    else {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        let r = 0;\n        let g = 0;\n        let b = 0;\n        if ( typeof currentColor === 'string' ) {\n          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );\n          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );\n          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );\n        }\n        else {\n          r = currentColor[0];\n          g = currentColor[1];\n          b = currentColor[2];\n        }\n        this._generatedPalette[i] = (\n          ( r << 24 ) // r\n          | ( g << 16 ) // g\n          | ( b << 8 ) // b\n          | 255 // a\n        );\n      }\n    }\n  }\n\n  /**\n   * Set a pixel on the screen.\n   * The origin (0, 0) of the screen is on the bottom left\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixel( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Set a pixel on the screen, without doing any bounds checking\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixelUnsafe( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Get the pallete index at a given position on the screen\n   * @param {*} x - x position\n   * @param {*} y - y position\n   */\n  getPixel( x, y ) {\n    return this._screenData[y * this.width + x];\n  }\n\n  /**\n   * Fill the screen with the given palette index\n   * @param {*} paletteId - the palette index / defaults to 0 if unspecified\n   */\n  clear( paletteId ) {\n    if ( paletteId ) {\n      this._screenData.fill( paletteId );\n    }\n    else {\n      this._screenData.fill( 0 );\n    }\n  }\n\n  /**\n   * Draw a line between 2 positions\n   * @param {*} x1 - first x position\n   * @param {*} y1 - first y position\n   * @param {*} x2 - second x position\n   * @param {*} y2 - second y position\n   * @param {*} paletteId - palette index to be drawn\n   */\n  drawLine( x1, y1, x2, y2, paletteId ) {\n    if ( x1 === x2 && y1 === y2 ) {\n      // same coordinate, draw a pixel\n      this.setPixel( x1, x2, paletteId );\n      return;\n    }\n\n    if ( x1 === x2 ) {\n      // vertical line\n      if ( x1 < 0 || x1 >= this.width ) {\n        return;\n      }\n\n      let firstY = y1 < y2 ? y1 : y2;\n      let secondY = y1 < y2 ? y2 : y1;\n      if ( secondY < 0 ) {\n        return;\n      }\n      if ( firstY >= this.height ) {\n        return;\n      }\n\n      if ( firstY < 0 ) {\n        firstY = 0;\n      }\n      if ( secondY >= this.height ) {\n        secondY = this.height - 1;\n      }\n      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {\n        this.setPixelUnsafe( x1, currentY, paletteId );\n      }\n\n      return;\n    }\n\n    if ( y1 === y2 ) {\n      // horizontal line\n      if ( y1 < 0 || y1 >= this.height ) {\n        return;\n      }\n\n      let firstX = x1 < x2 ? x1 : x2;\n      let secondX = x1 < x2 ? x2 : x1;\n      if ( secondX < 0 ) {\n        return;\n      }\n      if ( firstX >= this.width ) {\n        return;\n      }\n\n      if ( firstX < 0 ) {\n        firstX = 0;\n      }\n      if ( secondX >= this.width ) {\n        secondX = this.width - 1;\n      }\n      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, y1, paletteId );\n      }\n\n      return;\n    }\n\n    if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {\n      // slope is less than 1\n      if ( x1 > x2 ) {\n        this._drawLineLow( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineLow( x1, y1, x2, y2, paletteId );\n      }\n    }\n    else {\n      // slope is greater than 1\n      if ( y1 > y2 ) {\n        this._drawLineHigh( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineHigh( x1, y1, x2, y2, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a line with a slope less than or equal to 1\n   */\n  _drawLineLow( x1, y1, x2, y2, id ) {\n    const dx = x2 - x1;\n    let dy = y2 - y1;\n    let yIncrement = 1;\n    if ( dy < 0 ) {\n      yIncrement = -1;\n      dy = -dy;\n    }\n\n    let decision = 2 * dy - dx;\n    let y = y1;\n\n    for ( let x = x1; x <= x2; x += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        y += yIncrement;\n        decision = decision - ( 2 * dx );\n      }\n\n      decision = decision + ( 2 * dy );\n    }\n  }\n\n  /**\n   * Draw a line with a slope greater than 1\n   */\n  _drawLineHigh( x1, y1, x2, y2, id ) {\n    let dx = x2 - x1;\n    const dy = y2 - y1;\n    let xIncrement = 1;\n    if ( dx < 0 ) {\n      xIncrement = -1;\n      dx = -dx;\n    }\n\n    let decision = 2 * dx - dy;\n    let x = x1;\n\n    for ( let y = y1; y <= y2; y += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        x += xIncrement;\n        decision = decision - ( 2 * dy );\n      }\n\n      decision = decision + ( 2 * dx );\n    }\n  }\n\n  /**\n   * Draw a filled rectangle\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRect( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    let x1 = x;\n    let y1 = y;\n    let x2 = x + width - 1;\n    let y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( x1 < 0 ) {\n      x1 = 0;\n    }\n    if ( y1 < 0 ) {\n      y1 = 0;\n    }\n\n    if ( x2 >= this.width ) {\n      x2 = this.width - 1;\n    }\n\n    if ( y2 >= this.height ) {\n      y2 = this.height - 1;\n    }\n\n    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {\n      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, currentY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a rectangle border\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRectBorder( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    if ( width === 1 && height === 1 ) {\n      this.setPixel( x, y, paletteId );\n      return;\n    }\n\n    const x2 = x + width - 1;\n    const y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( width === 1 ) {\n      this.drawLine( x, y, x, y2, paletteId );\n      return;\n    }\n\n    if ( height === 1 ) {\n      this.drawLine( x, y, x2, y, paletteId );\n      return;\n    }\n\n    this.drawLine( x, y, x, y2, paletteId ); // left\n    this.drawLine( x, y2, x2, y2, paletteId ); // top\n    this.drawLine( x2, y2, x2, y, paletteId ); // right\n    this.drawLine( x2, y, x, y, paletteId ); // bottom\n  }\n\n  /**\n   * Draw a filled circle\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircle( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    if ( radius === 1 ) {\n      this.drawCircleBorder( centerX, centerY, radius, paletteId );\n      this.setPixel( centerX, centerY, paletteId );\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * Draw a circle border\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircleBorder( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * helper method for drawing filled circles\n   */\n  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {\n    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );\n    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );\n    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );\n    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );\n  }\n\n  /**\n   * helper method for drawing circle borders\n   */\n  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {\n    this.setPixel( centerX + x, centerY + y, paletteId );\n    this.setPixel( centerX - x, centerY + y, paletteId );\n    this.setPixel( centerX + x, centerY - y, paletteId );\n    this.setPixel( centerX - x, centerY - y, paletteId );\n    this.setPixel( centerX + y, centerY + x, paletteId );\n    this.setPixel( centerX - y, centerY + x, paletteId );\n    this.setPixel( centerX + y, centerY - x, paletteId );\n    this.setPixel( centerX - y, centerY - x, paletteId );\n  }\n\n  /**\n   * Draw a tile\n   * @param {number} gid - the gid of the tile\n   * @param {*} x - the x position on the screen\n   * @param {*} y - the y position on the screen\n   */\n  drawTile( gid, x, y ) {\n    if ( !gid ) {\n      return;\n    }\n\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    const { tileSize } = this.tileData;\n\n    if ( x + tileSize < 0 ) {\n      return;\n    }\n\n    if ( y + tileSize < 0 ) {\n      return;\n    }\n\n    const basePosition = ( gid - 1 ) * tileSize * tileSize;\n    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {\n      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {\n        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];\n        this.setPixel( x + tileX, y + tileY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a TileMap layer to the screen\n   * @param {number} x - origin x position on the TileMap\n   * @param {number} y - origin y position on the TileMap\n   * @param {number} width - how many tiles wide to draw\n   * @param {number} height - how many tiles high to draw\n   * @param {number} screenX - origin x position on the screen\n   * @param {number} screenY - origin y position on the screen\n   * @param {number} map - the index of the tilemap to draw\n   * @param {number} layer - the index of the layer to draw\n   */\n  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {\n    const tileMap = this.mapData.tileMaps[map];\n    const layerData = tileMap.layers[layer];\n    const { tileSize } = this.tileData;\n    let maxX = x + width;\n    let maxY = y + height;\n\n    if ( maxX >= tileMap.width ) {\n      maxX = tileMap.width - 1;\n    }\n    if ( maxY >= tileMap.height ) {\n      maxY = tileMap.height - 1;\n    }\n\n    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {\n      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {\n        const gid = layerData[currentY * tileMap.width + currentX];\n        if ( gid ) {\n          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );\n        }\n      }\n    }\n  }\n\n  /**\n   * Draw a line of text to the screen.\n   * Newlines are not supported, this will draw just a single line\n   * @param {string} text - the text to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette if for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    let currentX = x;\n    for ( let i = 0; i < text.length; i += 1 ) {\n      const charCode = text.charCodeAt( i );\n      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );\n      currentX += currentFont.widthForChar( charCode );\n      currentX += currentFont.letterSpacing;\n    }\n  }\n\n  /**\n   * Draw an individual character to the screen\n   * @param {number} charCode - the unicode point to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette id for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    const { tileSize, originX, originY } = currentFont;\n    const basePosition = currentFont.baseIndexForChar( charCode );\n    for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {\n      for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {\n        const id = currentFont.data[basePosition + fontY * tileSize + fontX];\n        if ( id === 1 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );\n        }\n        else if ( id === 2 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );\n        }\n      }\n    }\n  }\n\n  /**\n   * draw the data from {@link _screenData} to the canvas\n   */\n  drawScreen() {\n    const buffer = new ArrayBuffer( this._imageData.data.length );\n    const data8 = new Uint8ClampedArray( buffer );\n    const data32 = new Uint32Array( buffer );\n\n    let index = 0;\n    let screenY = 0;\n    for ( let y = 0; y < this.height; y += 1 ) {\n      for ( let x = 0; x < this.width; x += 1 ) {\n        screenY = this.height - y - 1; // origin from top left to bottom left\n        index = this._screenData[screenY * this.width + x];\n        data32[y * this.width + x] = this._generatedPalette[index];\n      }\n    }\n    this._imageData.data.set( data8 );\n    this._context.putImageData( this._imageData, 0, 0 );\n  }\n}\n\nScreen.SCALE_CONSTANT = 1;\nScreen.SCALE_FIT_WINDOW = 2;\n\nexport default Screen;\n",
+    "content": "\nimport standardPalette from './standardPalette';\n\n/**\n * Represents a game screen for low resolution games.\n * Has simple drawing functions using an indexed palette of a maximum of 256 colors\n * The origin (0, 0) position of the screen is on the bottom left\n */\nclass Screen {\n  constructor() {\n    this.conainerId = 'bitmelo-container';\n    this.container = null;\n    this.width = 320;\n    this.height = 180;\n    this.scale = 3;\n    this.maxScale = -1;\n    this.minScale = 1;\n    this.scaleMode = Screen.SCALE_CONSTANT;\n    this.horizontalScaleCushion = 0;\n    this.verticalScaleCushion = 0;\n    this.rescaleOnWindowResize = true;\n    this.hideCursor = false;\n    this.tileData = null;\n    this.mapData = null;\n    this.fontData = null;\n\n    this.onScaleChange = null;\n\n    this.canvas = null;\n    this._context = null;\n    this._imageData = null;\n    this._screenData = null;\n    this._palette = null;\n    this._generatedPalette = null;\n\n    this._isLittleEndian = true;\n  }\n\n  /**\n   * Do initial setup such as creating the canvas and building the palette\n   */\n  init() {\n    this.container = document.getElementById( this.conainerId );\n\n    this.canvas = document.createElement( 'canvas' );\n    this.canvas.setAttribute( 'id', 'game-device' );\n    this.canvas.setAttribute( 'width', this.width );\n    this.canvas.setAttribute( 'height', this.height );\n\n    this._setScale();\n\n    if ( this.rescaleOnWindowResize && this.scaleMode !== Screen.SCALE_CONSTANT ) {\n      window.onresize = () => {\n        this._setScale();\n        this._setCanvasStyle();\n      };\n    }\n\n    this._setCanvasStyle();\n\n    this.container.appendChild( this.canvas );\n\n    this._context = this.canvas.getContext( '2d', { alpha: false } );\n    this._context.imageSmoothingEnabled = false;\n    this._screenData = new Uint8ClampedArray( this.width * this.height );\n    this._imageData = this._context.getImageData( 0, 0, this.width, this.height );\n\n    // check if we are little endian\n    const buffer = new ArrayBuffer( 4 );\n    const test8 = new Uint8ClampedArray( buffer );\n    const test32 = new Uint32Array( buffer );\n    test32[0] = 0x0a0b0c0d;\n\n    if ( test8[0] === 0x0a\n      && test8[1] === 0x0b\n      && test8[2] === 0x0c\n      && test8[3] === 0x0d\n    ) {\n      this._isLittleEndian = false;\n    }\n\n    if ( !this._palette ) {\n      this._palette = standardPalette;\n    }\n\n    this._buildPalette();\n  }\n\n  _setScale() {\n    if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {\n      const maxWidth = window.innerWidth - this.horizontalScaleCushion;\n      const maxHeight = window.innerHeight - this.verticalScaleCushion;\n\n      const maxHorizScale = Math.floor( maxWidth / this.width );\n      const maxVerticalScale = Math.floor( maxHeight / this.height );\n\n      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;\n      if ( this.scale < this.minScale ) {\n        this.scale = this.minScale;\n      }\n      if ( this.maxScale > 0 && this.scale > this.maxScale ) {\n        this.scale = this.maxScale;\n      }\n    }\n\n    if ( this.onScaleChange ) {\n      this.onScaleChange( this.scale );\n    }\n  }\n\n  _setCanvasStyle() {\n    let containerStyle = '';\n    containerStyle += `width: ${ this.width * this.scale }px;`;\n    containerStyle += `height: ${ this.height * this.scale }px;`;\n\n    this.container.setAttribute( 'style', containerStyle );\n\n    let canvasStyle = '';\n    canvasStyle += 'transform-origin: 50% 0%;';\n    canvasStyle += `transform: scale(${ this.scale });`;\n    canvasStyle += 'image-rendering: -webkit-optimize-contrast;';\n    canvasStyle += 'image-rendering: -moz-crisp-edges;';\n    canvasStyle += 'image-rendering: crisp-edges;';\n    canvasStyle += 'image-rendering: pixelated;';\n\n\n    if ( this.hideCursor ) {\n      canvasStyle += 'cursor: none';\n    }\n\n    this.canvas.setAttribute( 'style', canvasStyle );\n  }\n\n  /**\n   * Set the palette that will used by the Screen.\n   * All colors are drawn fully opaque exept for the palette index at 0 which is transparent\n   *\n   * @example\n   * const palette = [\n   *  [0, 0, 0], // black, the 0 index is transparent\n   *  [0, 0, 0], // black\n   *  [255, 255, 255], // white\n   *  [255, 0, 0], // red\n   *  [0, 255, 0], // green\n   *  [0, 0, 255] // blue\n   * ];\n   *\n   * screen.setPalette( palette );\n   *\n   * @param {Array.<Array.<number>} palette - The array of colors to be used by the screen.\n   * Each index should be a color described by an array of 3 integers in rgb order.\n   * Each integer has a min value of 0 and a max value of 255.\n   */\n  setPalette( palette ) {\n    this._palette = palette;\n    this._buildPalette();\n  }\n\n  /**\n   * Change a single palette color\n   *\n   * @param {number[]} color - The color we want to add\n   * @param {number} index - this palette index we want to set\n   */\n  setPaletteColorAtIndex( color, index ) {\n    this._palette[index] = color;\n    this._buildPalette();\n  }\n\n  /**\n   * Build the palette by converting _palette to the _generatedPalette we will be using internally\n   */\n  _buildPalette() {\n    this._generatedPalette = new Uint32Array( this._palette.length );\n    let currentColor = null;\n    if ( this._isLittleEndian ) {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        let r = 0;\n        let g = 0;\n        let b = 0;\n        if ( typeof currentColor === 'string' ) {\n          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );\n          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );\n          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );\n        }\n        else {\n          r = currentColor[0];\n          g = currentColor[1];\n          b = currentColor[2];\n        }\n        this._generatedPalette[i] = (\n          ( 255 << 24 ) // a\n          | ( b << 16 ) // b\n          | ( g << 8 ) // g\n          | r // r\n        );\n      }\n    }\n    else {\n      for ( let i = 0; i < this._palette.length; i += 1 ) {\n        currentColor = this._palette[i];\n        let r = 0;\n        let g = 0;\n        let b = 0;\n        if ( typeof currentColor === 'string' ) {\n          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );\n          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );\n          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );\n        }\n        else {\n          r = currentColor[0];\n          g = currentColor[1];\n          b = currentColor[2];\n        }\n        this._generatedPalette[i] = (\n          ( r << 24 ) // r\n          | ( g << 16 ) // g\n          | ( b << 8 ) // b\n          | 255 // a\n        );\n      }\n    }\n  }\n\n  /**\n   * Set a pixel on the screen.\n   * The origin (0, 0) of the screen is on the bottom left\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixel( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Set a pixel on the screen, without doing any bounds checking\n   * @param {number} x - x position\n   * @param {number} y - y position\n   * @param {number} paletteId - palette color index\n   */\n  setPixelUnsafe( x, y, paletteId ) {\n    if ( !paletteId ) {\n      return;\n    }\n    this._screenData[y * this.width + x] = paletteId;\n  }\n\n  /**\n   * Get the pallete index at a given position on the screen\n   * @param {*} x - x position\n   * @param {*} y - y position\n   */\n  getPixel( x, y ) {\n    return this._screenData[y * this.width + x];\n  }\n\n  /**\n   * Fill the screen with the given palette index\n   * @param {*} paletteId - the palette index / defaults to 0 if unspecified\n   */\n  clear( paletteId ) {\n    if ( paletteId ) {\n      this._screenData.fill( paletteId );\n    }\n    else {\n      this._screenData.fill( 0 );\n    }\n  }\n\n  /**\n   * Draw a line between 2 positions\n   * @param {*} x1 - first x position\n   * @param {*} y1 - first y position\n   * @param {*} x2 - second x position\n   * @param {*} y2 - second y position\n   * @param {*} paletteId - palette index to be drawn\n   */\n  drawLine( x1, y1, x2, y2, paletteId ) {\n    if ( x1 === x2 && y1 === y2 ) {\n      // same coordinate, draw a pixel\n      this.setPixel( x1, x2, paletteId );\n      return;\n    }\n\n    if ( x1 === x2 ) {\n      // vertical line\n      if ( x1 < 0 || x1 >= this.width ) {\n        return;\n      }\n\n      let firstY = y1 < y2 ? y1 : y2;\n      let secondY = y1 < y2 ? y2 : y1;\n      if ( secondY < 0 ) {\n        return;\n      }\n      if ( firstY >= this.height ) {\n        return;\n      }\n\n      if ( firstY < 0 ) {\n        firstY = 0;\n      }\n      if ( secondY >= this.height ) {\n        secondY = this.height - 1;\n      }\n      for ( let currentY = firstY; currentY <= secondY; currentY += 1 ) {\n        this.setPixelUnsafe( x1, currentY, paletteId );\n      }\n\n      return;\n    }\n\n    if ( y1 === y2 ) {\n      // horizontal line\n      if ( y1 < 0 || y1 >= this.height ) {\n        return;\n      }\n\n      let firstX = x1 < x2 ? x1 : x2;\n      let secondX = x1 < x2 ? x2 : x1;\n      if ( secondX < 0 ) {\n        return;\n      }\n      if ( firstX >= this.width ) {\n        return;\n      }\n\n      if ( firstX < 0 ) {\n        firstX = 0;\n      }\n      if ( secondX >= this.width ) {\n        secondX = this.width - 1;\n      }\n      for ( let currentX = firstX; currentX <= secondX; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, y1, paletteId );\n      }\n\n      return;\n    }\n\n    if ( Math.abs( y2 - y1 ) < Math.abs( x2 - x1 ) ) {\n      // slope is less than 1\n      if ( x1 > x2 ) {\n        this._drawLineLow( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineLow( x1, y1, x2, y2, paletteId );\n      }\n    }\n    else {\n      // slope is greater than 1\n      if ( y1 > y2 ) {\n        this._drawLineHigh( x2, y2, x1, y1, paletteId );\n      }\n      else {\n        this._drawLineHigh( x1, y1, x2, y2, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a line with a slope less than or equal to 1\n   */\n  _drawLineLow( x1, y1, x2, y2, id ) {\n    const dx = x2 - x1;\n    let dy = y2 - y1;\n    let yIncrement = 1;\n    if ( dy < 0 ) {\n      yIncrement = -1;\n      dy = -dy;\n    }\n\n    let decision = 2 * dy - dx;\n    let y = y1;\n\n    for ( let x = x1; x <= x2; x += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        y += yIncrement;\n        decision = decision - ( 2 * dx );\n      }\n\n      decision = decision + ( 2 * dy );\n    }\n  }\n\n  /**\n   * Draw a line with a slope greater than 1\n   */\n  _drawLineHigh( x1, y1, x2, y2, id ) {\n    let dx = x2 - x1;\n    const dy = y2 - y1;\n    let xIncrement = 1;\n    if ( dx < 0 ) {\n      xIncrement = -1;\n      dx = -dx;\n    }\n\n    let decision = 2 * dx - dy;\n    let x = x1;\n\n    for ( let y = y1; y <= y2; y += 1 ) {\n      this.setPixel( x, y, id );\n\n      if ( decision > 0 ) {\n        x += xIncrement;\n        decision = decision - ( 2 * dy );\n      }\n\n      decision = decision + ( 2 * dx );\n    }\n  }\n\n  /**\n   * Draw a filled rectangle\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRect( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    let x1 = x;\n    let y1 = y;\n    let x2 = x + width - 1;\n    let y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( x1 < 0 ) {\n      x1 = 0;\n    }\n    if ( y1 < 0 ) {\n      y1 = 0;\n    }\n\n    if ( x2 >= this.width ) {\n      x2 = this.width - 1;\n    }\n\n    if ( y2 >= this.height ) {\n      y2 = this.height - 1;\n    }\n\n    for ( let currentY = y1; currentY <= y2; currentY += 1 ) {\n      for ( let currentX = x1; currentX <= x2; currentX += 1 ) {\n        this.setPixelUnsafe( currentX, currentY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a rectangle border\n   *\n   * @param {*} x - bottom left x position\n   * @param {*} y - bottom left y position\n   * @param {*} width - width of the rectangle\n   * @param {*} height - height of the rectangle\n   * @param {*} paletteId - the palette color to draw\n   */\n  drawRectBorder( x, y, width, height, paletteId ) {\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    if ( width === 1 && height === 1 ) {\n      this.setPixel( x, y, paletteId );\n      return;\n    }\n\n    const x2 = x + width - 1;\n    const y2 = y + height - 1;\n\n    if ( x2 < 0 ) {\n      return;\n    }\n    if ( y2 < 0 ) {\n      return;\n    }\n\n    if ( width === 1 ) {\n      this.drawLine( x, y, x, y2, paletteId );\n      return;\n    }\n\n    if ( height === 1 ) {\n      this.drawLine( x, y, x2, y, paletteId );\n      return;\n    }\n\n    this.drawLine( x, y, x, y2, paletteId ); // left\n    this.drawLine( x, y2, x2, y2, paletteId ); // top\n    this.drawLine( x2, y2, x2, y, paletteId ); // right\n    this.drawLine( x2, y, x, y, paletteId ); // bottom\n  }\n\n  /**\n   * Draw a filled circle\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircle( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    if ( radius === 1 ) {\n      this.drawCircleBorder( centerX, centerY, radius, paletteId );\n      this.setPixel( centerX, centerY, paletteId );\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this.drawLine( centerX - radius, centerY, centerX + radius, centerY, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleFilledOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * Draw a circle border\n   *\n   * @param {number} centerX - the x coordinate of the center of the circle\n   * @param {numbe} centerY -  the y coordinate of the center of the circle\n   * @param {number} radius - the radius of the circle\n   * @param {number} paletteId - the palette color to draw\n   */\n  drawCircleBorder( centerX, centerY, radius, paletteId ) {\n    if ( radius <= 0 ) {\n      return;\n    }\n\n    let x = 0;\n    let y = radius;\n    this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n\n    let decision = 3 - 2 * radius;\n\n    while ( y >= x ) {\n      x += 1;\n\n      if ( decision > 0 ) {\n        y -= 1;\n        decision = decision + 4 * ( x - y ) + 10;\n      }\n      else {\n        decision = decision + 4 * x + 6;\n      }\n\n      this._drawCircleBorderOctants( centerX, centerY, x, y, paletteId );\n    }\n  }\n\n  /**\n   * helper method for drawing filled circles\n   */\n  _drawCircleFilledOctants( centerX, centerY, x, y, paletteId ) {\n    this.drawLine( centerX - x, centerY + y, centerX + x, centerY + y, paletteId );\n    this.drawLine( centerX - x, centerY - y, centerX + x, centerY - y, paletteId );\n    this.drawLine( centerX - y, centerY + x, centerX + y, centerY + x, paletteId );\n    this.drawLine( centerX - y, centerY - x, centerX + y, centerY - x, paletteId );\n  }\n\n  /**\n   * helper method for drawing circle borders\n   */\n  _drawCircleBorderOctants( centerX, centerY, x, y, paletteId ) {\n    this.setPixel( centerX + x, centerY + y, paletteId );\n    this.setPixel( centerX - x, centerY + y, paletteId );\n    this.setPixel( centerX + x, centerY - y, paletteId );\n    this.setPixel( centerX - x, centerY - y, paletteId );\n    this.setPixel( centerX + y, centerY + x, paletteId );\n    this.setPixel( centerX - y, centerY + x, paletteId );\n    this.setPixel( centerX + y, centerY - x, paletteId );\n    this.setPixel( centerX - y, centerY - x, paletteId );\n  }\n\n  /**\n   * Draw a tile\n   * @param {number} gid - the gid of the tile\n   * @param {*} x - the x position on the screen\n   * @param {*} y - the y position on the screen\n   */\n  drawTile( gid, x, y ) {\n    if ( !gid ) {\n      return;\n    }\n\n    if ( x >= this.width ) {\n      return;\n    }\n\n    if ( y >= this.height ) {\n      return;\n    }\n\n    const { tileSize } = this.tileData;\n\n    if ( x + tileSize < 0 ) {\n      return;\n    }\n\n    if ( y + tileSize < 0 ) {\n      return;\n    }\n\n    const basePosition = ( gid - 1 ) * tileSize * tileSize;\n    for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {\n      for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {\n        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];\n        this.setPixel( x + tileX, y + tileY, paletteId );\n      }\n    }\n  }\n\n  /**\n   * Draw a TileMap layer to the screen\n   * @param {number} x - origin x position on the TileMap\n   * @param {number} y - origin y position on the TileMap\n   * @param {number} width - how many tiles wide to draw, -1 is the width of the Tile Map\n   * @param {number} height - how many tiles high to draw, -1 is the height of the Tile Map\n   * @param {number} screenX - origin x position on the screen\n   * @param {number} screenY - origin y position on the screen\n   * @param {number} map - the index of the tilemap to draw\n   * @param {number} layer - the index of the layer to draw\n   */\n  drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0 ) {\n    const tileMap = this.mapData.tileMaps[map];\n    const layerData = tileMap.layers[layer];\n    const { tileSize } = this.tileData;\n    let maxX = x + width;\n    let maxY = y + height;\n\n    if ( maxX >= tileMap.width || width < 0 ) {\n      maxX = tileMap.width - 1;\n    }\n    if ( maxY >= tileMap.height || height < 0 ) {\n      maxY = tileMap.height - 1;\n    }\n\n    for ( let currentY = y; currentY <= maxY; currentY += 1 ) {\n      for ( let currentX = x; currentX <= maxX; currentX += 1 ) {\n        const gid = layerData[currentY * tileMap.width + currentX];\n        if ( gid ) {\n          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );\n        }\n      }\n    }\n  }\n\n  /**\n   * Draw a line of text to the screen.\n   * Newlines are not supported, this will draw just a single line\n   * @param {string} text - the text to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette if for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    let currentX = x;\n    for ( let i = 0; i < text.length; i += 1 ) {\n      const charCode = text.charCodeAt( i );\n      this.drawChar( charCode, currentX, y, paletteId, outlinePaletteId, font );\n      currentX += currentFont.widthForChar( charCode );\n      currentX += currentFont.letterSpacing;\n    }\n  }\n\n  /**\n   * Draw an individual character to the screen\n   * @param {number} charCode - the unicode point to draw\n   * @param {number} x - the x position on the screen to draw to\n   * @param {number} y - the y position on the screen to draw to\n   * @param {number} paletteId - the palette id for the main color\n   * @param {number} outlinePaletteId - the palette id for the outline color\n   * @param {number} font - the index of the font to use\n   */\n  drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {\n    const currentFont = this.fontData.fonts[font];\n    const { tileSize, originX, originY } = currentFont;\n    const basePosition = currentFont.baseIndexForChar( charCode );\n    for ( let fontY = 0; fontY < tileSize; fontY += 1 ) {\n      for ( let fontX = 0; fontX < tileSize; fontX += 1 ) {\n        const id = currentFont.data[basePosition + fontY * tileSize + fontX];\n        if ( id === 1 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, paletteId );\n        }\n        else if ( id === 2 ) {\n          this.setPixel( x + fontX - originX, y + fontY - originY, outlinePaletteId );\n        }\n      }\n    }\n  }\n\n  /**\n   * draw the data from {@link _screenData} to the canvas\n   */\n  drawScreen() {\n    const buffer = new ArrayBuffer( this._imageData.data.length );\n    const data8 = new Uint8ClampedArray( buffer );\n    const data32 = new Uint32Array( buffer );\n\n    let index = 0;\n    let screenY = 0;\n    for ( let y = 0; y < this.height; y += 1 ) {\n      for ( let x = 0; x < this.width; x += 1 ) {\n        screenY = this.height - y - 1; // origin from top left to bottom left\n        index = this._screenData[screenY * this.width + x];\n        data32[y * this.width + x] = this._generatedPalette[index];\n      }\n    }\n    this._imageData.data.set( data8 );\n    this._context.putImageData( this._imageData, 0, 0 );\n  }\n}\n\nScreen.SCALE_CONSTANT = 1;\nScreen.SCALE_FIT_WINDOW = 2;\n\nexport default Screen;\n",
     "static": true,
     "longname": "C:/Users/byers/Development/Projects/bitmelo/src/Screen/Screen.js",
     "access": "public",
@@ -3515,7 +3500,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 233,
+    "__docId__": 240,
     "kind": "class",
     "name": "Screen",
     "memberof": "src/Screen/Screen.js",
@@ -3530,7 +3515,7 @@
     "interface": false
   },
   {
-    "__docId__": 234,
+    "__docId__": 241,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3544,7 +3529,7 @@
     "undocument": true
   },
   {
-    "__docId__": 235,
+    "__docId__": 242,
     "kind": "member",
     "name": "conainerId",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3561,7 +3546,7 @@
     }
   },
   {
-    "__docId__": 236,
+    "__docId__": 243,
     "kind": "member",
     "name": "container",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3578,7 +3563,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 244,
     "kind": "member",
     "name": "width",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3595,7 +3580,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 245,
     "kind": "member",
     "name": "height",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3612,7 +3597,7 @@
     }
   },
   {
-    "__docId__": 239,
+    "__docId__": 246,
     "kind": "member",
     "name": "scale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3629,7 +3614,7 @@
     }
   },
   {
-    "__docId__": 240,
+    "__docId__": 247,
     "kind": "member",
     "name": "maxScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3646,7 +3631,7 @@
     }
   },
   {
-    "__docId__": 241,
+    "__docId__": 248,
     "kind": "member",
     "name": "minScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3663,7 +3648,7 @@
     }
   },
   {
-    "__docId__": 242,
+    "__docId__": 249,
     "kind": "member",
     "name": "scaleMode",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3680,7 +3665,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 250,
     "kind": "member",
     "name": "horizontalScaleCushion",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3697,7 +3682,7 @@
     }
   },
   {
-    "__docId__": 244,
+    "__docId__": 251,
     "kind": "member",
     "name": "verticalScaleCushion",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3714,7 +3699,7 @@
     }
   },
   {
-    "__docId__": 245,
+    "__docId__": 252,
     "kind": "member",
     "name": "rescaleOnWindowResize",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3731,7 +3716,7 @@
     }
   },
   {
-    "__docId__": 246,
+    "__docId__": 253,
     "kind": "member",
     "name": "hideCursor",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3748,7 +3733,7 @@
     }
   },
   {
-    "__docId__": 247,
+    "__docId__": 254,
     "kind": "member",
     "name": "tileData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3765,7 +3750,7 @@
     }
   },
   {
-    "__docId__": 248,
+    "__docId__": 255,
     "kind": "member",
     "name": "mapData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3782,7 +3767,7 @@
     }
   },
   {
-    "__docId__": 249,
+    "__docId__": 256,
     "kind": "member",
     "name": "fontData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3799,7 +3784,7 @@
     }
   },
   {
-    "__docId__": 250,
+    "__docId__": 257,
     "kind": "member",
     "name": "onScaleChange",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3816,7 +3801,7 @@
     }
   },
   {
-    "__docId__": 251,
+    "__docId__": 258,
     "kind": "member",
     "name": "canvas",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3833,7 +3818,7 @@
     }
   },
   {
-    "__docId__": 252,
+    "__docId__": 259,
     "kind": "member",
     "name": "_context",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3850,7 +3835,7 @@
     }
   },
   {
-    "__docId__": 253,
+    "__docId__": 260,
     "kind": "member",
     "name": "_imageData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3867,7 +3852,7 @@
     }
   },
   {
-    "__docId__": 254,
+    "__docId__": 261,
     "kind": "member",
     "name": "_screenData",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3884,7 +3869,7 @@
     }
   },
   {
-    "__docId__": 255,
+    "__docId__": 262,
     "kind": "member",
     "name": "_palette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3901,7 +3886,7 @@
     }
   },
   {
-    "__docId__": 256,
+    "__docId__": 263,
     "kind": "member",
     "name": "_generatedPalette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3918,7 +3903,7 @@
     }
   },
   {
-    "__docId__": 257,
+    "__docId__": 264,
     "kind": "member",
     "name": "_isLittleEndian",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3935,7 +3920,7 @@
     }
   },
   {
-    "__docId__": 258,
+    "__docId__": 265,
     "kind": "method",
     "name": "init",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3950,7 +3935,7 @@
     "return": null
   },
   {
-    "__docId__": 266,
+    "__docId__": 273,
     "kind": "method",
     "name": "_setScale",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3966,7 +3951,7 @@
     "return": null
   },
   {
-    "__docId__": 270,
+    "__docId__": 277,
     "kind": "method",
     "name": "_setCanvasStyle",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -3982,7 +3967,7 @@
     "return": null
   },
   {
-    "__docId__": 271,
+    "__docId__": 278,
     "kind": "method",
     "name": "setPalette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4011,7 +3996,7 @@
     "return": null
   },
   {
-    "__docId__": 273,
+    "__docId__": 280,
     "kind": "method",
     "name": "setPaletteColorAtIndex",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4047,7 +4032,7 @@
     "return": null
   },
   {
-    "__docId__": 274,
+    "__docId__": 281,
     "kind": "method",
     "name": "_buildPalette",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4062,7 +4047,7 @@
     "return": null
   },
   {
-    "__docId__": 276,
+    "__docId__": 283,
     "kind": "method",
     "name": "setPixel",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4108,7 +4093,7 @@
     "return": null
   },
   {
-    "__docId__": 277,
+    "__docId__": 284,
     "kind": "method",
     "name": "setPixelUnsafe",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4154,7 +4139,7 @@
     "return": null
   },
   {
-    "__docId__": 278,
+    "__docId__": 285,
     "kind": "method",
     "name": "getPixel",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4194,7 +4179,7 @@
     }
   },
   {
-    "__docId__": 279,
+    "__docId__": 286,
     "kind": "method",
     "name": "clear",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4220,7 +4205,7 @@
     "return": null
   },
   {
-    "__docId__": 280,
+    "__docId__": 287,
     "kind": "method",
     "name": "drawLine",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4286,7 +4271,7 @@
     "return": null
   },
   {
-    "__docId__": 281,
+    "__docId__": 288,
     "kind": "method",
     "name": "_drawLineLow",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4332,7 +4317,7 @@
     "return": null
   },
   {
-    "__docId__": 282,
+    "__docId__": 289,
     "kind": "method",
     "name": "_drawLineHigh",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4378,7 +4363,7 @@
     "return": null
   },
   {
-    "__docId__": 283,
+    "__docId__": 290,
     "kind": "method",
     "name": "drawRect",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4444,7 +4429,7 @@
     "return": null
   },
   {
-    "__docId__": 284,
+    "__docId__": 291,
     "kind": "method",
     "name": "drawRectBorder",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4510,7 +4495,7 @@
     "return": null
   },
   {
-    "__docId__": 285,
+    "__docId__": 292,
     "kind": "method",
     "name": "drawCircle",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4566,7 +4551,7 @@
     "return": null
   },
   {
-    "__docId__": 286,
+    "__docId__": 293,
     "kind": "method",
     "name": "drawCircleBorder",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4622,7 +4607,7 @@
     "return": null
   },
   {
-    "__docId__": 287,
+    "__docId__": 294,
     "kind": "method",
     "name": "_drawCircleFilledOctants",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4668,7 +4653,7 @@
     "return": null
   },
   {
-    "__docId__": 288,
+    "__docId__": 295,
     "kind": "method",
     "name": "_drawCircleBorderOctants",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4714,7 +4699,7 @@
     "return": null
   },
   {
-    "__docId__": 289,
+    "__docId__": 296,
     "kind": "method",
     "name": "drawTile",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4760,7 +4745,7 @@
     "return": null
   },
   {
-    "__docId__": 290,
+    "__docId__": 297,
     "kind": "method",
     "name": "drawMap",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4800,7 +4785,7 @@
         "spread": false,
         "optional": false,
         "name": "width",
-        "description": "how many tiles wide to draw"
+        "description": "how many tiles wide to draw, -1 is the width of the Tile Map"
       },
       {
         "nullable": null,
@@ -4810,7 +4795,7 @@
         "spread": false,
         "optional": false,
         "name": "height",
-        "description": "how many tiles high to draw"
+        "description": "how many tiles high to draw, -1 is the height of the Tile Map"
       },
       {
         "nullable": null,
@@ -4856,7 +4841,7 @@
     "return": null
   },
   {
-    "__docId__": 291,
+    "__docId__": 298,
     "kind": "method",
     "name": "drawText",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -4932,7 +4917,7 @@
     "return": null
   },
   {
-    "__docId__": 292,
+    "__docId__": 299,
     "kind": "method",
     "name": "drawChar",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5008,7 +4993,7 @@
     "return": null
   },
   {
-    "__docId__": 293,
+    "__docId__": 300,
     "kind": "method",
     "name": "drawScreen",
     "memberof": "src/Screen/Screen.js~Screen",
@@ -5023,7 +5008,7 @@
     "return": null
   },
   {
-    "__docId__": 294,
+    "__docId__": 301,
     "kind": "file",
     "name": "src/Screen/standardPalette.js",
     "content": "\nexport default [\n  '000000',\n  '000000',\n  'ffffff',\n  '888888',\n  '793115',\n  'c71212',\n  'fb4c1d',\n  'e55b8b',\n  'd49f6c',\n  'e9e52b',\n  'f2f0b1',\n  '27ee2b',\n  '17a438',\n  '16bde9',\n  '1638e9',\n  '2620a0',\n  '5b1ba4',\n];\n",
@@ -5034,7 +5019,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 295,
+    "__docId__": 302,
     "kind": "file",
     "name": "src/TileData/TileData.js",
     "content": "\n/**\n * Holds all of the tile data.\n */\nclass TileData {\n  constructor() {\n    this.tileSize = 16;\n    this.tilesets = [];\n    this.data = null;\n  }\n\n  /**\n   * Parse all of the tilesets and add them to the data array\n   */\n  init() {\n    let numberOfTiles = 0;\n    for ( let i = 0; i < this.tilesets.length; i += 1 ) {\n      const currentTileset = this.tilesets[i];\n      numberOfTiles += currentTileset.width * currentTileset.height;\n    }\n    this.data = new Uint8ClampedArray( numberOfTiles * this.tileSize * this.tileSize );\n\n    let startPosition = 0;\n    let firstGid = 1;\n    for ( let i = 0; i < this.tilesets.length; i += 1 ) {\n      const currentTileset = this.tilesets[i];\n      currentTileset.firstGid = firstGid;\n      const { data } = currentTileset;\n      if ( currentTileset.format === 'array' ) {\n        for ( let j = 0; j < data.length; j += 1 ) {\n          this.data[startPosition + j] = parseInt( data[j], 10 );\n        }\n      }\n      else if ( currentTileset.format === 'run' ) {\n        let runPosition = 0;\n        let dataPosition = 0;\n        while ( runPosition < data.length ) {\n          const runLength = data[runPosition];\n          const paletteId = parseInt( data[runPosition + 1], 10 );\n          for ( let j = 0; j < runLength; j += 1 ) {\n            this.data[startPosition + dataPosition] = paletteId;\n            dataPosition += 1;\n          }\n          runPosition += 2;\n        }\n      }\n      firstGid += currentTileset.width * currentTileset.height;\n      startPosition += currentTileset.width * currentTileset.height * this.tileSize * this.tileSize;\n    }\n  }\n\n  /**\n   * Add a tileset\n   * @param {Object} tileset - the tileset data\n   */\n  addTileset( tileset ) {\n    this.tilesets.push( tileset );\n  }\n\n  /**\n   * Get the GID for a tile\n   * @param {number} x - x position of the tile\n   * @param {number} y - y position of the tile\n   * @param {number} tileset - the index of the tileset\n   */\n  getGid( x, y, tileset = 0 ) {\n    if ( x < 0 || y < 0 ) {\n      return -1;\n    }\n    const currentTileset = this.tilesets[tileset];\n    const { width, height, firstGid } = currentTileset;\n    if ( x >= width || y >= height ) {\n      return -1;\n    }\n    return y * width + x + firstGid;\n  }\n}\n\nexport default TileData;\n",
@@ -5045,7 +5030,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 296,
+    "__docId__": 303,
     "kind": "class",
     "name": "TileData",
     "memberof": "src/TileData/TileData.js",
@@ -5060,7 +5045,7 @@
     "interface": false
   },
   {
-    "__docId__": 297,
+    "__docId__": 304,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5074,7 +5059,7 @@
     "undocument": true
   },
   {
-    "__docId__": 298,
+    "__docId__": 305,
     "kind": "member",
     "name": "tileSize",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5091,7 +5076,7 @@
     }
   },
   {
-    "__docId__": 299,
+    "__docId__": 306,
     "kind": "member",
     "name": "tilesets",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5108,7 +5093,7 @@
     }
   },
   {
-    "__docId__": 300,
+    "__docId__": 307,
     "kind": "member",
     "name": "data",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5125,7 +5110,7 @@
     }
   },
   {
-    "__docId__": 301,
+    "__docId__": 308,
     "kind": "method",
     "name": "init",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5140,7 +5125,7 @@
     "return": null
   },
   {
-    "__docId__": 303,
+    "__docId__": 310,
     "kind": "method",
     "name": "addTileset",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5166,7 +5151,7 @@
     "return": null
   },
   {
-    "__docId__": 304,
+    "__docId__": 311,
     "kind": "method",
     "name": "getGid",
     "memberof": "src/TileData/TileData.js~TileData",
@@ -5225,7 +5210,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"bitmelo\",\n  \"version\": \"0.3.8\",\n  \"description\": \"A game engine for low resolution games.\",\n  \"main\": \"src/index.js\",\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"build\": \"webpack --config config/webpack.config.lib.js\",\n    \"build-min\": \"webpack --config config/webpack.config.lib.min.js\",\n    \"build-docs\": \"esdoc\",\n    \"demo-start\": \"webpack-dev-server --open --config demo/config/webpack.demo.dev.js\",\n    \"demo-build\": \"webpack --config demo/config/webpack.demo.prod.js\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/byersdz/bitmelo.git\"\n  },\n  \"keywords\": [],\n  \"author\": \"David Byers\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/byersdz/bitmelo/issues\"\n  },\n  \"homepage\": \"https://github.com/byersdz/bitmelo#readme\",\n  \"devDependencies\": {\n    \"css-loader\": \"^2.1.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^5.14.0\",\n    \"eslint-config-airbnb-base\": \"^13.1.0\",\n    \"eslint-loader\": \"^2.1.2\",\n    \"eslint-plugin-import\": \"^2.16.0\",\n    \"jest\": \"^24.1.0\",\n    \"style-loader\": \"^0.23.1\",\n    \"webpack\": \"^4.29.3\",\n    \"webpack-cli\": \"^3.2.3\",\n    \"webpack-dev-server\": \"^3.1.14\",\n    \"webpack-merge\": \"^4.2.1\"\n  },\n  \"jest\": {\n    \"moduleNameMapper\": {\n      \"^SRC(.*)$\": \"<rootDir>/src$1\"\n    }\n  }\n}\n",
+    "content": "{\n  \"name\": \"bitmelo\",\n  \"version\": \"0.3.11\",\n  \"description\": \"A game engine for low resolution games.\",\n  \"main\": \"src/index.js\",\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"build\": \"webpack --config config/webpack.config.lib.js\",\n    \"build-min\": \"webpack --config config/webpack.config.lib.min.js\",\n    \"build-docs\": \"esdoc\",\n    \"demo-start\": \"webpack-dev-server --open --config demo/config/webpack.demo.dev.js\",\n    \"demo-build\": \"webpack --config demo/config/webpack.demo.prod.js\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/byersdz/bitmelo.git\"\n  },\n  \"keywords\": [],\n  \"author\": \"David Byers\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/byersdz/bitmelo/issues\"\n  },\n  \"homepage\": \"https://github.com/byersdz/bitmelo#readme\",\n  \"devDependencies\": {\n    \"css-loader\": \"^2.1.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^5.14.0\",\n    \"eslint-config-airbnb-base\": \"^13.1.0\",\n    \"eslint-loader\": \"^2.1.2\",\n    \"eslint-plugin-import\": \"^2.16.0\",\n    \"jest\": \"^24.1.0\",\n    \"style-loader\": \"^0.23.1\",\n    \"webpack\": \"^4.29.3\",\n    \"webpack-cli\": \"^3.2.3\",\n    \"webpack-dev-server\": \"^3.1.14\",\n    \"webpack-merge\": \"^4.2.1\"\n  },\n  \"jest\": {\n    \"moduleNameMapper\": {\n      \"^SRC(.*)$\": \"<rootDir>/src$1\"\n    }\n  }\n}\n",
     "longname": "C:\\Users\\byers\\Development\\Projects\\bitmelo\\package.json",
     "name": "package.json",
     "static": true,

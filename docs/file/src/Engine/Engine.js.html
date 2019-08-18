@@ -39,15 +39,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Keys">Keys</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#mapdata">MapData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MapData/MapData.js~MapData.html">MapData</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MapData/TileMap.js~TileMap.html">TileMap</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG1_LAYER">BG1_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG2_LAYER">BG2_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG3_LAYER">BG3_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-COLLISION_LAYER">COLLISION_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG1_LAYER">FG1_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG2_LAYER">FG2_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG3_LAYER">FG3_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MAIN_LAYER">MAIN_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-META_LAYER">META_LAYER</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#screen">Screen</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Screen/Screen.js~Screen.html">Screen</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tiledata">TileData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/TileData/TileData.js~TileData.html">TileData</a></span></span></li>
 </ul>
@@ -67,18 +58,76 @@ import smallFont from &apos;../FontData/small.font.json&apos;;
 
 class Engine {
   constructor() {
+    /**
+     * The id of the div that the engine will be contained by
+     */
     this.containerId = &apos;bitmelo-container&apos;;
+
+    /**
+     * Function to be called when the engine is initialized
+     */
     this.onInit = null;
+
+    /**
+     * Function to draw the initial screen when the engine loads.
+     * Only seen when clickToBegin is true
+     */
     this.onDrawStartScreen = null;
+
+    /**
+     * Function to draw the transition frames after start click.
+     * Only seen when clickToBegin is true
+     */
     this.onUpdateStartTransition = null;
+
+    /**
+     * Number of frames to show after begin click before the game starts.
+     * Only relevant when clickToBegin is true.
+     */
     this.startTransitionFrames = 60;
+
+    /**
+     * Function to be called every update of the engine.
+     * Perform game logic and rendering here.
+     */
     this.onUpdate = null;
+
+    /**
+     * Should we require the user to click the screen before the game starts?
+     * This stops a game from automatically starring in a web page which can be annoying.
+     */
     this.clickToBegin = true;
+
+    /**
+     * Instance of the Screen class used by the Engine. Automatically created by the engine.
+     */
     this.screen = new Screen();
+
+    /**
+     * Instance of the Input class used by the Engine. Automatically created by the engine.
+     */
     this.input = new Input();
+
+    /**
+     * Instance of the TileData class used by the Engine. Automatically created by the engine
+     */
     this.tileData = new TileData();
+
+    /**
+     * Instance of the MapData class used by the Engine. Automatically created by the engine
+     */
     this.mapData = new MapData();
+
+    /**
+     * Instance of the FontData class used by the Engine. Automatically created by the engine.
+     * The Standard font is automatically added at index 0.
+     * The Small font is automatically added at index 1.
+     */
     this.fontData = new FontData();
+
+    /**
+     * Instance of the Audio class used by the Engine. Automatically created by the engine.
+     */
     this.audio = new Audio();
 
     this.fontData.addFont( standardFont );
@@ -148,7 +197,7 @@ class Engine {
   _update() {
     this.input.pollInput();
 
-    if ( this.startTransitionFrames &gt; 0 ) {
+    if ( this.clickToBegin &amp;&amp; this.startTransitionFrames &gt; 0 ) {
       this.startTransitionFrames -= 1;
       if ( this.onUpdateStartTransition ) {
         this.clearInput();

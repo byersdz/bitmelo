@@ -39,15 +39,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Keys">Keys</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#mapdata">MapData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MapData/MapData.js~MapData.html">MapData</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MapData/TileMap.js~TileMap.html">TileMap</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG1_LAYER">BG1_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG2_LAYER">BG2_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BG3_LAYER">BG3_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-COLLISION_LAYER">COLLISION_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG1_LAYER">FG1_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG2_LAYER">FG2_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FG3_LAYER">FG3_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MAIN_LAYER">MAIN_LAYER</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-META_LAYER">META_LAYER</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#screen">Screen</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Screen/Screen.js~Screen.html">Screen</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tiledata">TileData</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/TileData/TileData.js~TileData.html">TileData</a></span></span></li>
 </ul>
@@ -139,11 +130,11 @@ class Input {
         e.preventDefault();
       };
 
-      this.canvas.addEventListener( &apos;mouseenter&apos;, this._mouseEnter.bind( this ), false );
-      this.canvas.addEventListener( &apos;mousemove&apos;, this._mouseMove.bind( this ), false );
-      this.canvas.addEventListener( &apos;mousedown&apos;, this._mouseDown.bind( this ), false );
-      this.canvas.addEventListener( &apos;mouseup&apos;, this._mouseUp.bind( this ), false );
-      this.canvas.addEventListener( &apos;mouseleave&apos;, this._mouseLeave.bind( this ), false );
+      this.canvas.addEventListener( &apos;pointerenter&apos;, this._pointerEnter.bind( this ), false );
+      this.canvas.addEventListener( &apos;pointermove&apos;, this._pointerMove.bind( this ), false );
+      this.canvas.addEventListener( &apos;pointerdown&apos;, this._pointerDown.bind( this ), false );
+      this.canvas.addEventListener( &apos;pointerup&apos;, this._pointerUp.bind( this ), false );
+      this.canvas.addEventListener( &apos;pointerleave&apos;, this._pointerLeave.bind( this ), false );
     }
   }
 
@@ -165,13 +156,13 @@ class Input {
     }
   }
 
-  _mouseEnter() {
+  _pointerEnter() {
     this.mouse.isOffScreen = false;
     this._currentMouseLeft = false;
     this._currentMouseRight = false;
   }
 
-  _mouseMove( e ) {
+  _pointerMove( e ) {
     const canvasRect = this.canvas.getBoundingClientRect();
     this.mouse.position = {
       x: Math.floor( ( e.clientX - canvasRect.left ) / this.canvasScale ),
@@ -179,7 +170,7 @@ class Input {
     };
   }
 
-  _mouseDown( e ) {
+  _pointerDown( e ) {
     if ( e.button === 0 ) {
       // left button
       this._currentMouseLeft = true;
@@ -192,7 +183,7 @@ class Input {
     }
   }
 
-  _mouseUp( e ) {
+  _pointerUp( e ) {
     if ( e.button === 0 ) {
       // left button
       this._currentMouseLeft = false;
@@ -203,7 +194,7 @@ class Input {
     }
   }
 
-  _mouseLeave() {
+  _pointerLeave() {
     this.mouse.isOffScreen = true;
   }
 

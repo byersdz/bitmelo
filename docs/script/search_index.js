@@ -6,52 +6,10 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "bitmelo/src/mapdata/tilemap.js~bg1_layer",
-    "variable/index.html#static-variable-BG1_LAYER",
-    "<span>BG1_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~bg2_layer",
-    "variable/index.html#static-variable-BG2_LAYER",
-    "<span>BG2_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~bg3_layer",
-    "variable/index.html#static-variable-BG3_LAYER",
-    "<span>BG3_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~collision_layer",
-    "variable/index.html#static-variable-COLLISION_LAYER",
-    "<span>COLLISION_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
     "bitmelo/src/engine/engine.js~engine",
     "class/src/Engine/Engine.js~Engine.html",
     "<span>Engine</span> <span class=\"search-result-import-path\">bitmelo/src/Engine/Engine.js</span>",
     "class"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~fg1_layer",
-    "variable/index.html#static-variable-FG1_LAYER",
-    "<span>FG1_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~fg2_layer",
-    "variable/index.html#static-variable-FG2_LAYER",
-    "<span>FG2_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~fg3_layer",
-    "variable/index.html#static-variable-FG3_LAYER",
-    "<span>FG3_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
   ],
   [
     "bitmelo/src/fontdata/font.js~font",
@@ -75,18 +33,6 @@ window.esdocSearchIndex = [
     "bitmelo/src/input/keys.js~keys",
     "variable/index.html#static-variable-Keys",
     "<span>Keys</span> <span class=\"search-result-import-path\">bitmelo/src/Input/Keys.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~main_layer",
-    "variable/index.html#static-variable-MAIN_LAYER",
-    "<span>MAIN_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
-    "variable"
-  ],
-  [
-    "bitmelo/src/mapdata/tilemap.js~meta_layer",
-    "variable/index.html#static-variable-META_LAYER",
-    "<span>META_LAYER</span> <span class=\"search-result-import-path\">bitmelo/src/MapData/TileMap.js</span>",
     "variable"
   ],
   [
@@ -534,6 +480,18 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/audio/sound.js~sound#arploopend",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-arpLoopEnd",
+    "src/Audio/Sound.js~Sound#arpLoopEnd",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#arploopstart",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-arpLoopStart",
+    "src/Audio/Sound.js~Sound#arpLoopStart",
+    "member"
+  ],
+  [
     "src/audio/sound.js~sound#arptics",
     "class/src/Audio/Sound.js~Sound.html#instance-member-arpTics",
     "src/Audio/Sound.js~Sound#arpTics",
@@ -594,15 +552,33 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/audio/sound.js~sound#loopend",
-    "class/src/Audio/Sound.js~Sound.html#instance-member-loopEnd",
-    "src/Audio/Sound.js~Sound#loopEnd",
+    "src/audio/sound.js~sound#lastarptic",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-lastArpTic",
+    "src/Audio/Sound.js~Sound#lastArpTic",
     "member"
   ],
   [
-    "src/audio/sound.js~sound#loopstart",
-    "class/src/Audio/Sound.js~Sound.html#instance-member-loopStart",
-    "src/Audio/Sound.js~Sound#loopStart",
+    "src/audio/sound.js~sound#lastpitchtic",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-lastPitchTic",
+    "src/Audio/Sound.js~Sound#lastPitchTic",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#lastvolumetic",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-lastVolumeTic",
+    "src/Audio/Sound.js~Sound#lastVolumeTic",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#pitchloopend",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-pitchLoopEnd",
+    "src/Audio/Sound.js~Sound#pitchLoopEnd",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#pitchloopstart",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-pitchLoopStart",
+    "src/Audio/Sound.js~Sound#pitchLoopStart",
     "member"
   ],
   [
@@ -630,9 +606,33 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/audio/sound.js~sound#useloop",
-    "class/src/Audio/Sound.js~Sound.html#instance-member-useLoop",
-    "src/Audio/Sound.js~Sound#useLoop",
+    "src/audio/sound.js~sound#usearploop",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-useArpLoop",
+    "src/Audio/Sound.js~Sound#useArpLoop",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#usepitchloop",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-usePitchLoop",
+    "src/Audio/Sound.js~Sound#usePitchLoop",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#usevolumeloop",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-useVolumeLoop",
+    "src/Audio/Sound.js~Sound#useVolumeLoop",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#volumeloopend",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-volumeLoopEnd",
+    "src/Audio/Sound.js~Sound#volumeLoopEnd",
+    "member"
+  ],
+  [
+    "src/audio/sound.js~sound#volumeloopstart",
+    "class/src/Audio/Sound.js~Sound.html#instance-member-volumeLoopStart",
+    "src/Audio/Sound.js~Sound#volumeLoopStart",
     "member"
   ],
   [
@@ -954,33 +954,33 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/input/input.js~input#_mousedown",
-    "class/src/Input/Input.js~Input.html#instance-method-_mouseDown",
-    "src/Input/Input.js~Input#_mouseDown",
+    "src/input/input.js~input#_pointerdown",
+    "class/src/Input/Input.js~Input.html#instance-method-_pointerDown",
+    "src/Input/Input.js~Input#_pointerDown",
     "method"
   ],
   [
-    "src/input/input.js~input#_mouseenter",
-    "class/src/Input/Input.js~Input.html#instance-method-_mouseEnter",
-    "src/Input/Input.js~Input#_mouseEnter",
+    "src/input/input.js~input#_pointerenter",
+    "class/src/Input/Input.js~Input.html#instance-method-_pointerEnter",
+    "src/Input/Input.js~Input#_pointerEnter",
     "method"
   ],
   [
-    "src/input/input.js~input#_mouseleave",
-    "class/src/Input/Input.js~Input.html#instance-method-_mouseLeave",
-    "src/Input/Input.js~Input#_mouseLeave",
+    "src/input/input.js~input#_pointerleave",
+    "class/src/Input/Input.js~Input.html#instance-method-_pointerLeave",
+    "src/Input/Input.js~Input#_pointerLeave",
     "method"
   ],
   [
-    "src/input/input.js~input#_mousemove",
-    "class/src/Input/Input.js~Input.html#instance-method-_mouseMove",
-    "src/Input/Input.js~Input#_mouseMove",
+    "src/input/input.js~input#_pointermove",
+    "class/src/Input/Input.js~Input.html#instance-method-_pointerMove",
+    "src/Input/Input.js~Input#_pointerMove",
     "method"
   ],
   [
-    "src/input/input.js~input#_mouseup",
-    "class/src/Input/Input.js~Input.html#instance-method-_mouseUp",
-    "src/Input/Input.js~Input#_mouseUp",
+    "src/input/input.js~input#_pointerup",
+    "class/src/Input/Input.js~Input.html#instance-method-_pointerUp",
+    "src/Input/Input.js~Input#_pointerUp",
     "method"
   ],
   [

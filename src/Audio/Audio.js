@@ -1,19 +1,39 @@
 import Sound from './Sound';
 import Frequencies from './Frequencies';
 
+/**
+ * Handles playing of audio and adding audio data.
+ */
 class Audio {
   constructor() {
+    /**
+     * The AudioContext used. Created in init.
+     */
     this.context = null;
+
+    /**
+     * Array of sounds used, of the Sound class type.
+     * Add a sound from data using the addSound method.
+     */
     this.sounds = [];
+
+    /**
+     * Time in second we should look ahead during update to add audio events to the context.
+     */
     this.lookAheadTime = 0.05; // in seconds
   }
 
+  /**
+   * Initialize the audio context. Called automatically by the Engine.
+   */
   init() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.context = new AudioContext();
   }
 
-
+  /**
+   * Update audio events. Called automatically by the Engine in the update loop.
+   */
   update() {
     let sound = null;
     for ( let i = 0; i < this.sounds.length; i += 1 ) {
@@ -54,12 +74,23 @@ class Audio {
     }
   }
 
-
+  /**
+   * Add a Sound instance to the sounds array from data.
+   * @param {*} soundData
+   */
   addSound( soundData ) {
     this.sounds.push( new Sound( soundData ) );
     return this.sounds.length - 1;
   }
 
+  /**
+   * Play a sound
+   * @param {*} soundIndex
+   * @param {*} note
+   * @param {*} duration
+   * @param {*} volume
+   * @param {*} speed
+   */
   playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {
     if ( soundIndex >= this.sounds.length || soundIndex < 0 ) {
       console.error( 'Invalid sound index' );
@@ -114,6 +145,10 @@ class Audio {
     osc.stop( stopTime );
   }
 
+  /**
+   * Stop a sound that is being played infinitely
+   * @param {*} soundIndex
+   */
   stopInfiniteSound( soundIndex ) {
     const sound = this.sounds[soundIndex];
     if ( sound.isPlayingInfiniteSound ) {
@@ -131,12 +166,22 @@ class Audio {
     }
   }
 
+  /**
+   * Stop all infinitely playing sounds
+   */
   stopAllInfiniteSounds() {
     for ( let i = 0; i < this.sounds.length; i += 1 ) {
       this.stopInfiniteSound( i );
     }
   }
 
+  /**
+   * Play a sound infinitely. Only one instance of a sound at each index can be played at a time.
+   * @param {*} soundIndex
+   * @param {*} note
+   * @param {*} volume
+   * @param {*} speed
+   */
   playInfiniteSound( soundIndex, note, volume, speed ) {
     const sound = this.sounds[soundIndex];
     if ( sound.isPlayingInfiniteSound ) {
@@ -161,6 +206,10 @@ class Audio {
     sound.infiniteOsc.start();
   }
 
+  /**
+   * Get the frequency in hertz for a note number.
+   * @param {*} note
+   */
   static frequencyForNote( note ) {
     let trimmedNote = note;
     if ( trimmedNote < 0 ) {
@@ -172,10 +221,18 @@ class Audio {
     return Frequencies[trimmedNote];
   }
 
+  /**
+   * Get the duration in seconds for a tic at a given speed number.
+   * @param {*} speed
+   */
   static ticDurationForSpeedValue( speed ) {
     return Audio.fullDurationForSpeedValue( speed ) / Audio.TICS_PER_SOUND;
   }
 
+  /**
+   * Get the total length of a sound in seconds for a given speed number
+   * @param {*} speed
+   */
   static fullDurationForSpeedValue( speed ) {
     switch ( speed ) {
       case -1:
@@ -197,6 +254,10 @@ class Audio {
     }
   }
 
+  /**
+   * Get the wave type for a wave index
+   * @param {*} waveValue
+   */
   static oscTypeForWaveValue( waveValue ) {
     switch ( waveValue ) {
       case 0:
@@ -212,11 +273,22 @@ class Audio {
     }
   }
 
+  /**
+   * Get a 0 - 1 volume value for a 0 - 15 value used by the Sound class.
+   * @param {*} volume
+   */
   static valueForVolume( volume ) {
     const normalizedValue = volume / 15;
     return normalizedValue ** 2.5;
   }
 
+  /**
+   * Get the current tic index, taking into account looping.
+   * @param {*} tic
+   * @param {*} useLoop
+   * @param {*} loopStart
+   * @param {*} loopEnd
+   */
   static indexAtTic( tic, useLoop, loopStart, loopEnd ) {
     if ( !useLoop || loopStart < 0 || loopEnd < loopStart ) {
       // no looping

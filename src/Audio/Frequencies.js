@@ -1,6 +1,9 @@
 
 import Notes from './Notes';
 
+/**
+ * Array of Frequency values for notes.
+ */
 const Frequencies = new Array( 108 );
 
 Frequencies[Notes.C0] = 16.35160;

@@ -10,18 +10,76 @@ import smallFont from '../FontData/small.font.json';
 
 class Engine {
   constructor() {
+    /**
+     * The id of the div that the engine will be contained by
+     */
     this.containerId = 'bitmelo-container';
+
+    /**
+     * Function to be called when the engine is initialized
+     */
     this.onInit = null;
+
+    /**
+     * Function to draw the initial screen when the engine loads.
+     * Only seen when clickToBegin is true
+     */
     this.onDrawStartScreen = null;
+
+    /**
+     * Function to draw the transition frames after start click.
+     * Only seen when clickToBegin is true
+     */
     this.onUpdateStartTransition = null;
+
+    /**
+     * Number of frames to show after begin click before the game starts.
+     * Only relevant when clickToBegin is true.
+     */
     this.startTransitionFrames = 60;
+
+    /**
+     * Function to be called every update of the engine.
+     * Perform game logic and rendering here.
+     */
     this.onUpdate = null;
+
+    /**
+     * Should we require the user to click the screen before the game starts?
+     * This stops a game from automatically starring in a web page which can be annoying.
+     */
     this.clickToBegin = true;
+
+    /**
+     * Instance of the Screen class used by the Engine. Automatically created by the engine.
+     */
     this.screen = new Screen();
+
+    /**
+     * Instance of the Input class used by the Engine. Automatically created by the engine.
+     */
     this.input = new Input();
+
+    /**
+     * Instance of the TileData class used by the Engine. Automatically created by the engine
+     */
     this.tileData = new TileData();
+
+    /**
+     * Instance of the MapData class used by the Engine. Automatically created by the engine
+     */
     this.mapData = new MapData();
+
+    /**
+     * Instance of the FontData class used by the Engine. Automatically created by the engine.
+     * The Standard font is automatically added at index 0.
+     * The Small font is automatically added at index 1.
+     */
     this.fontData = new FontData();
+
+    /**
+     * Instance of the Audio class used by the Engine. Automatically created by the engine.
+     */
     this.audio = new Audio();
 
     this.fontData.addFont( standardFont );
