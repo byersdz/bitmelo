@@ -1,7 +1,7 @@
 {
-  "coverage": "56.7%",
+  "coverage": "93.29%",
   "expectCount": 194,
-  "actualCount": 110,
+  "actualCount": 181,
   "files": {
     "src/Audio/Audio.js": {
       "expectCount": 18,
@@ -33,129 +33,57 @@
     },
     "src/FontData/Font.js": {
       "expectCount": 13,
-      "actualCount": 3,
+      "actualCount": 12,
       "undocumentLines": [
-        7,
-        8,
-        9,
-        11,
-        12,
-        13,
-        14,
-        15,
-        17,
-        18
+        7
       ]
     },
     "src/FontData/FontData.js": {
       "expectCount": 4,
-      "actualCount": 1,
+      "actualCount": 3,
       "undocumentLines": [
-        8,
-        9,
-        12
+        8
       ]
     },
     "src/Input/Input.js": {
       "expectCount": 38,
-      "actualCount": 10,
+      "actualCount": 36,
       "undocumentLines": [
         7,
-        8,
-        9,
-        10,
-        11,
-        13,
-        32,
-        33,
-        34,
-        36,
-        61,
-        62,
-        64,
-        65,
-        66,
-        68,
-        69,
-        70,
-        93,
-        102,
-        111,
-        117,
-        125,
-        138,
-        149,
-        254,
-        278,
-        284
+        395
       ]
     },
     "src/Input/Keys.js": {
       "expectCount": 1,
-      "actualCount": 0,
-      "undocumentLines": [
-        2
-      ]
+      "actualCount": 1,
+      "undocumentLines": []
     },
     "src/MapData/MapData.js": {
       "expectCount": 6,
-      "actualCount": 4,
+      "actualCount": 5,
       "undocumentLines": [
-        7,
-        8
+        7
       ]
     },
     "src/MapData/TileMap.js": {
       "expectCount": 9,
-      "actualCount": 4,
+      "actualCount": 8,
       "undocumentLines": [
-        6,
-        7,
-        8,
-        9,
-        10
+        6
       ]
     },
     "src/Screen/Screen.js": {
       "expectCount": 49,
-      "actualCount": 23,
+      "actualCount": 48,
       "undocumentLines": [
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        27,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        36,
-        89,
-        111
+        10
       ]
     },
     "src/TileData/TileData.js": {
       "expectCount": 8,
-      "actualCount": 4,
+      "actualCount": 7,
       "undocumentLines": [
-        6,
-        7,
-        8,
-        9
+        6
       ]
     }
   }

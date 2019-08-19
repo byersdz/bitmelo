@@ -8,31 +8,115 @@ import standardPalette from './standardPalette';
  */
 class Screen {
   constructor() {
+    /**
+     * The id of the container div to make the Screen a child of
+     */
     this.conainerId = 'bitmelo-container';
+    /**
+     * The dom object the Screen will be a child of.
+     */
     this.container = null;
+    /**
+     * How many pixels wide is the screen?
+     */
     this.width = 320;
+    /**
+     * How many pixels tall is the screen?
+     */
     this.height = 180;
+    /**
+     * The scale of the pixels in the screen.
+     */
     this.scale = 3;
+    /**
+     * Maximum scale of the screen.
+     */
     this.maxScale = -1;
+    /**
+     * Minimum scale of the screen.
+     */
     this.minScale = 1;
+    /**
+     * The scale mode of the screen.
+     * Screen.SCALE_CONSTANT: 1,
+     * Screen.SCALE_FIT_WINDOW: 2
+     */
     this.scaleMode = Screen.SCALE_CONSTANT;
+
+    /**
+     * How many horizontal pixels to ignore when using a dynamic scale.
+     */
     this.horizontalScaleCushion = 0;
+
+    /**
+     * How many vertical pixels to ignore when using a dynamic scale.
+     */
     this.verticalScaleCushion = 0;
+
+    /**
+     * When using dynamic scaling, should we rescale when the window is resized?
+     */
     this.rescaleOnWindowResize = true;
+
+    /**
+     * Should the cursor be hidden when placed over the screen?
+     */
     this.hideCursor = false;
+
+    /**
+     * Reference to an instance of TileData used by the screen.
+     */
     this.tileData = null;
+
+    /**
+     * Reference to an instance of MapData used by the screen.
+     */
     this.mapData = null;
+
+    /**
+     * Reference to an instance of FontData used by the screen.
+     */
     this.fontData = null;
 
+    /**
+     * Callback that is called whenever the scale is changed.
+     * Used by the Engine to change values in the Input class.
+     */
     this.onScaleChange = null;
 
+    /**
+     * The DOM canvas used by this screen.
+     */
     this.canvas = null;
+
+    /**
+     * The canvas context used by this screen.
+     */
     this._context = null;
+
+    /**
+     * The image data of the context.
+     */
     this._imageData = null;
+
+    /**
+     * The pixel data drawn to using Screen methods such as setPixel or drawLine
+     */
     this._screenData = null;
+
+    /**
+     * The palette data given by the user
+     */
     this._palette = null;
+
+    /**
+     * Typed Array of paletted data generated from _palette and used by the Screen.
+     */
     this._generatedPalette = null;
 
+    /**
+     * Does this computer use little endian formatting?
+     */
     this._isLittleEndian = true;
   }
 
@@ -86,6 +170,9 @@ class Screen {
     this._buildPalette();
   }
 
+  /**
+   * Sets the scale of the Screen.
+   */
   _setScale() {
     if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {
       const maxWidth = window.innerWidth - this.horizontalScaleCushion;
@@ -108,6 +195,9 @@ class Screen {
     }
   }
 
+  /**
+   * Sets css styling on the container dom object.
+   */
   _setCanvasStyle() {
     let containerStyle = '';
     containerStyle += `width: ${ this.width * this.scale }px;`;
@@ -137,12 +227,12 @@ class Screen {
    *
    * @example
    * const palette = [
-   *  [0, 0, 0], // black, the 0 index is transparent
-   *  [0, 0, 0], // black
-   *  [255, 255, 255], // white
-   *  [255, 0, 0], // red
-   *  [0, 255, 0], // green
-   *  [0, 0, 255] // blue
+   *  '000000', // black, the 0 index is transparent
+   *  '000000', // black
+   *  'ffffff', // white
+   *  'ff0000', // red
+   *  '00ff00', // green
+   *  '0000ff' // blue
    * ];
    *
    * screen.setPalette( palette );

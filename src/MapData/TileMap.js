@@ -4,9 +4,22 @@
  */
 class TileMap {
   constructor( data ) {
+    /**
+     * The name of the Tile Map
+     */
     this.name = '';
+    /**
+     * The number of columns in the Tile Map
+     */
     this.width = 0;
+    /**
+     * The number of rows in the Tile Map
+     */
     this.height = 0;
+
+    /**
+     * Array of layer data
+     */
     this.layers = [];
 
     if ( data ) {

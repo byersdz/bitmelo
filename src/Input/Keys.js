@@ -1,4 +1,8 @@
 
+/**
+ * Object mapping KeyCodes to key numbers.
+ * Keys.codesToKeyCodes maps key numbers to KeyCodes.
+ */
 const Keys = {};
 
 Keys.BACKSPACE = 8;

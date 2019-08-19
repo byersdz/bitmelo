@@ -52,8 +52,21 @@
  */
 class TileData {
   constructor() {
+    /**
+     * The size of each tile in pixels.
+     * Used for both width and height.
+     */
     this.tileSize = 16;
+    /**
+     * Array of tileset data.
+     * All tiledata is added to this.data when init is called.
+     * More tilesets can not be added after this.
+     */
     this.tilesets = [];
+    /**
+     * All of the tile data in a single Uint8ClampedArray.
+     * This is whats used by Screen to draw tiles.
+     */
     this.data = null;
   }
 
@@ -94,11 +107,15 @@ class TileData {
       }
       firstGid += currentTileset.width * currentTileset.height;
       startPosition += currentTileset.width * currentTileset.height * this.tileSize * this.tileSize;
+
+      // data is not longer needed in the current tileset as it has been added to this.data.
+      delete currentTileset.data;
     }
   }
 
   /**
-   * Add a tileset
+   * Add a tileset.
+   * All tilesets must be added before init is called.
    * @param {Object} tileset - the tileset data
    */
   addTileset( tileset ) {

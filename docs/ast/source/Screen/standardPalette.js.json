@@ -92,10 +92,10 @@
                 }
               },
               "extra": {
-                "rawValue": "000000",
-                "raw": "'000000'"
+                "rawValue": "0b0711",
+                "raw": "'0b0711'"
               },
-              "value": "000000"
+              "value": "0b0711"
             },
             {
               "type": "StringLiteral",
@@ -112,10 +112,10 @@
                 }
               },
               "extra": {
-                "rawValue": "ffffff",
-                "raw": "'ffffff'"
+                "rawValue": "eaf2de",
+                "raw": "'eaf2de'"
               },
-              "value": "ffffff"
+              "value": "eaf2de"
             },
             {
               "type": "StringLiteral",
@@ -132,10 +132,10 @@
                 }
               },
               "extra": {
-                "rawValue": "888888",
-                "raw": "'888888'"
+                "rawValue": "766e76",
+                "raw": "'766e76'"
               },
-              "value": "888888"
+              "value": "766e76"
             },
             {
               "type": "StringLiteral",
@@ -152,10 +152,10 @@
                 }
               },
               "extra": {
-                "rawValue": "793115",
-                "raw": "'793115'"
+                "rawValue": "561f6e",
+                "raw": "'561f6e'"
               },
-              "value": "793115"
+              "value": "561f6e"
             },
             {
               "type": "StringLiteral",
@@ -172,10 +172,10 @@
                 }
               },
               "extra": {
-                "rawValue": "c71212",
-                "raw": "'c71212'"
+                "rawValue": "7d4f31",
+                "raw": "'7d4f31'"
               },
-              "value": "c71212"
+              "value": "7d4f31"
             },
             {
               "type": "StringLiteral",
@@ -192,10 +192,10 @@
                 }
               },
               "extra": {
-                "rawValue": "fb4c1d",
-                "raw": "'fb4c1d'"
+                "rawValue": "e98c49",
+                "raw": "'e98c49'"
               },
-              "value": "fb4c1d"
+              "value": "e98c49"
             },
             {
               "type": "StringLiteral",
@@ -212,10 +212,10 @@
                 }
               },
               "extra": {
-                "rawValue": "e55b8b",
-                "raw": "'e55b8b'"
+                "rawValue": "fbc0a0",
+                "raw": "'fbc0a0'"
               },
-              "value": "e55b8b"
+              "value": "fbc0a0"
             },
             {
               "type": "StringLiteral",
@@ -232,10 +232,10 @@
                 }
               },
               "extra": {
-                "rawValue": "d49f6c",
-                "raw": "'d49f6c'"
+                "rawValue": "f681b2",
+                "raw": "'f681b2'"
               },
-              "value": "d49f6c"
+              "value": "f681b2"
             },
             {
               "type": "StringLiteral",
@@ -252,10 +252,10 @@
                 }
               },
               "extra": {
-                "rawValue": "e9e52b",
-                "raw": "'e9e52b'"
+                "rawValue": "d83232",
+                "raw": "'d83232'"
               },
-              "value": "e9e52b"
+              "value": "d83232"
             },
             {
               "type": "StringLiteral",
@@ -272,10 +272,10 @@
                 }
               },
               "extra": {
-                "rawValue": "f2f0b1",
-                "raw": "'f2f0b1'"
+                "rawValue": "e3e962",
+                "raw": "'e3e962'"
               },
-              "value": "f2f0b1"
+              "value": "e3e962"
             },
             {
               "type": "StringLiteral",
@@ -292,10 +292,10 @@
                 }
               },
               "extra": {
-                "rawValue": "27ee2b",
-                "raw": "'27ee2b'"
+                "rawValue": "65cf57",
+                "raw": "'65cf57'"
               },
-              "value": "27ee2b"
+              "value": "65cf57"
             },
             {
               "type": "StringLiteral",
@@ -312,10 +312,10 @@
                 }
               },
               "extra": {
-                "rawValue": "17a438",
-                "raw": "'17a438'"
+                "rawValue": "2ba957",
+                "raw": "'2ba957'"
               },
-              "value": "17a438"
+              "value": "2ba957"
             },
             {
               "type": "StringLiteral",
@@ -332,10 +332,10 @@
                 }
               },
               "extra": {
-                "rawValue": "16bde9",
-                "raw": "'16bde9'"
+                "rawValue": "187575",
+                "raw": "'187575'"
               },
-              "value": "16bde9"
+              "value": "187575"
             },
             {
               "type": "StringLiteral",
@@ -352,10 +352,10 @@
                 }
               },
               "extra": {
-                "rawValue": "1638e9",
-                "raw": "'1638e9'"
+                "rawValue": "1e2cB0",
+                "raw": "'1e2cB0'"
               },
-              "value": "1638e9"
+              "value": "1e2cB0"
             },
             {
               "type": "StringLiteral",
@@ -372,10 +372,10 @@
                 }
               },
               "extra": {
-                "rawValue": "2620a0",
-                "raw": "'2620a0'"
+                "rawValue": "2379e5",
+                "raw": "'2379e5'"
               },
-              "value": "2620a0"
+              "value": "2379e5"
             },
             {
               "type": "StringLiteral",
@@ -392,10 +392,10 @@
                 }
               },
               "extra": {
-                "rawValue": "5b1ba4",
-                "raw": "'5b1ba4'"
+                "rawValue": "95cae5",
+                "raw": "'95cae5'"
               },
-              "value": "5b1ba4"
+              "value": "95cae5"
             }
           ],
           "leadingComments": [],
@@ -555,7 +555,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "000000",
+      "value": "0b0711",
       "start": 32,
       "end": 40,
       "loc": {
@@ -608,7 +608,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "ffffff",
+      "value": "eaf2de",
       "start": 44,
       "end": 52,
       "loc": {
@@ -661,7 +661,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "888888",
+      "value": "766e76",
       "start": 56,
       "end": 64,
       "loc": {
@@ -714,7 +714,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "793115",
+      "value": "561f6e",
       "start": 68,
       "end": 76,
       "loc": {
@@ -767,7 +767,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "c71212",
+      "value": "7d4f31",
       "start": 80,
       "end": 88,
       "loc": {
@@ -820,7 +820,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "fb4c1d",
+      "value": "e98c49",
       "start": 92,
       "end": 100,
       "loc": {
@@ -873,7 +873,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "e55b8b",
+      "value": "fbc0a0",
       "start": 104,
       "end": 112,
       "loc": {
@@ -926,7 +926,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "d49f6c",
+      "value": "f681b2",
       "start": 116,
       "end": 124,
       "loc": {
@@ -979,7 +979,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "e9e52b",
+      "value": "d83232",
       "start": 128,
       "end": 136,
       "loc": {
@@ -1032,7 +1032,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "f2f0b1",
+      "value": "e3e962",
       "start": 140,
       "end": 148,
       "loc": {
@@ -1085,7 +1085,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "27ee2b",
+      "value": "65cf57",
       "start": 152,
       "end": 160,
       "loc": {
@@ -1138,7 +1138,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "17a438",
+      "value": "2ba957",
       "start": 164,
       "end": 172,
       "loc": {
@@ -1191,7 +1191,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "16bde9",
+      "value": "187575",
       "start": 176,
       "end": 184,
       "loc": {
@@ -1244,7 +1244,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "1638e9",
+      "value": "1e2cB0",
       "start": 188,
       "end": 196,
       "loc": {
@@ -1297,7 +1297,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "2620a0",
+      "value": "2379e5",
       "start": 200,
       "end": 208,
       "loc": {
@@ -1350,7 +1350,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "5b1ba4",
+      "value": "95cae5",
       "start": 212,
       "end": 220,
       "loc": {

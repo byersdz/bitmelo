@@ -5,6 +5,9 @@ import TileMap from './TileMap';
  */
 class MapData {
   constructor() {
+    /**
+     * Array of TileMap objects
+     */
     this.tileMaps = [];
   }
 

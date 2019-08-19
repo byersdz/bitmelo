@@ -5,11 +5,44 @@ import Keys from './Keys';
  */
 class Input {
   constructor() {
+    /**
+     * Reference to the canvas used for mouse input.
+     * Automatically added by the Engine.
+     */
     this.canvas = null;
+
+    /**
+     * The scale of the canvas, aka the pixel size.
+     * Added automatically by the Engine
+     */
     this.canvasScale = 1;
+
+    /**
+     * The width of the game screen.
+     * Not affected by this.canvasScale.
+     * Added automatically by the Engine.
+     */
     this.screenWidth = 1;
+
+    /**
+     * The height of the game screen.
+     * Not affected by this.canvasScale.
+     * Added automatically by the Engine.
+     */
     this.screenHeight = 1;
 
+    /**
+     * Object containing input state of the mouse.
+     * mouse.isOffScreen,
+     * mouse.position.x,
+     * mouse.position.y,
+     * mouse.left.pressed,
+     * mouse.left.down,
+     * mouse.left.up,
+     * mouse.right.pressed,
+     * mouse.right.down,
+     * mouse.right.up
+     */
     this.mouse = {};
     this.mouse.isOffScreen = true;
     this.mouse.position = {
@@ -29,10 +62,24 @@ class Input {
       up: false,
     };
 
+    /**
+     * Caches keyboard key states.
+     */
     this._keysRaw = new Uint8ClampedArray( 256 );
+
+    /**
+     * Keyboard states for the current frame
+     */
     this._currentKeys = new Uint8ClampedArray( 256 );
+
+    /**
+     * Keyboard states for the last frame
+     */
     this._lastKeys = new Uint8ClampedArray( 256 );
 
+    /**
+     * Maps standard game buttons to keyboard keys.
+     */
     this._buttonsToKeys = new Uint8ClampedArray( 32 );
 
     // default button mappings
@@ -58,15 +105,44 @@ class Input {
     this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;
     this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;
 
+    /**
+     * Standard game button states for the current frame.
+     */
     this._currentButtons = new Uint8ClampedArray( 32 );
+
+    /**
+     * Standard game button states for the last frame.
+     */
     this._lastButtons = new Uint8ClampedArray( 32 );
 
+    /**
+     * Is the left mouse button down this frame?
+     */
     this._currentMouseLeft = false;
+    /**
+     * Was the left mouse button down last frame?
+     */
     this._lastMouseLeft = false;
+
+    /**
+     * Force the left mouse button state to be down this frame.
+     * Used for the edge case in which a mouse button is clicked up and down all in the span of one frame.
+     */
     this._forceMouseLeftDown = false;
 
+    /**
+     * Is the right mouse button down this frame?
+     */
     this._currentMouseRight = false;
+
+    /**
+     * Was the right mouse button down last frame?
+     */
     this._lastMouseRight = false;
+    /**
+     * Force the right mouse button state to be down this frame.
+     * Used for the edge case in which a mouse button is clicked up and down all in the span of one frame.
+     */
     this._forceMouseRightDown = false;
   }
 
@@ -90,6 +166,10 @@ class Input {
     }
   }
 
+  /**
+   * handle window keydown events
+   * @param {*} e
+   */
   _keyDown( e ) {
     if ( e.code ) {
       this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;
@@ -99,6 +179,10 @@ class Input {
     }
   }
 
+  /**
+   * handle window keyup events
+   * @param {*} e
+   */
   _keyUp( e ) {
     if ( e.code ) {
       this._keysRaw[Keys.codesToKeyCodes[e.code]] = 0;
@@ -108,12 +192,19 @@ class Input {
     }
   }
 
+  /**
+   * Handle pointerenter event
+   */
   _pointerEnter() {
     this.mouse.isOffScreen = false;
     this._currentMouseLeft = false;
     this._currentMouseRight = false;
   }
 
+  /**
+   * Handle pointermove event
+   * @param {*} e
+   */
   _pointerMove( e ) {
     const canvasRect = this.canvas.getBoundingClientRect();
     this.mouse.position = {
@@ -122,6 +213,10 @@ class Input {
     };
   }
 
+  /**
+   * Handle pointerdown event
+   * @param {*} e
+   */
   _pointerDown( e ) {
     if ( e.button === 0 ) {
       // left button
@@ -135,6 +230,10 @@ class Input {
     }
   }
 
+  /**
+   * handle pointerup event
+   * @param {*} e
+   */
   _pointerUp( e ) {
     if ( e.button === 0 ) {
       // left button
@@ -146,6 +245,9 @@ class Input {
     }
   }
 
+  /**
+   * handle pointerleave event
+   */
   _pointerLeave() {
     this.mouse.isOffScreen = true;
   }
@@ -163,6 +265,7 @@ class Input {
 
   /**
    * Update the input, should be done first thing in the game loop.
+   * Called automatically by the Engine.
    */
   pollInput() {
     for ( let i = 0; i < 256; i += 1 ) {
@@ -228,7 +331,7 @@ class Input {
   }
 
   /**
-   * return true if the button is currently held down
+   * return true if the standard game button is currently held down
    * @param {number} buttonCode
    */
   getButtonPressed( buttonCode ) {
@@ -236,7 +339,7 @@ class Input {
   }
 
   /**
-   * return true if the button was pressed down this frame
+   * return true if the standard game button was pressed down this frame
    * @param {number} buttonCode
    */
   getButtonDown( buttonCode ) {
@@ -244,13 +347,16 @@ class Input {
   }
 
   /**
-   * return true if the button was released this frame
+   * return true if the standard game button was released this frame
    * @param {number} buttonCode
    */
   getButtonUp( buttonCode ) {
     return this.getKeyUp( this._buttonsToKeys[buttonCode] );
   }
 
+  /**
+   * update standard game button states.
+   */
   _updateButtons() {
     this._updateButton( 'left', Input.GAME_LEFT );
     this._updateButton( 'right', Input.GAME_RIGHT );
@@ -275,6 +381,11 @@ class Input {
     this._updateButton( 'menuBack', Input.MENU_BACK );
   }
 
+  /**
+   * Update the state for a standard game button.
+   * @param {*} name
+   * @param {*} index
+   */
   _updateButton( name, index ) {
     const key = this._buttonsToKeys[index];
     const pressed = this.getKeyPressed( key );
