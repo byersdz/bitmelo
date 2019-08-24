@@ -762,8 +762,8 @@ class Screen {
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
-    let maxX = x + width;
-    let maxY = y + height;
+    let maxX = x + width - 1;
+    let maxY = y + height - 1;
 
     if ( maxX >= tileMap.width || width < 0 ) {
       maxX = tileMap.width - 1;
@@ -772,11 +772,18 @@ class Screen {
       maxY = tileMap.height - 1;
     }
 
+    const offsetX = x * tileSize;
+    const offsetY = y * tileSize;
+
     for ( let currentY = y; currentY <= maxY; currentY += 1 ) {
       for ( let currentX = x; currentX <= maxX; currentX += 1 ) {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
-          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+          this.drawTile(
+            gid,
+            screenX + currentX * tileSize - offsetX,
+            screenY + currentY * tileSize - offsetY,
+          );
         }
       }
     }
