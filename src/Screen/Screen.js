@@ -714,8 +714,9 @@ class Screen {
    * @param {number} gid - the gid of the tile
    * @param {*} x - the x position on the screen
    * @param {*} y - the y position on the screen
+   * @param {*} flip - should we flip the tile? 0: no, 1: x, 2: y, 3: xy
    */
-  drawTile( gid, x, y ) {
+  drawTile( gid, x, y, flip = 0 ) {
     if ( !gid ) {
       return;
     }
@@ -738,10 +739,29 @@ class Screen {
       return;
     }
 
+    const flipX = flip === 1 || flip === 3;
+    const flipY = flip === 2 || flip === 3;
+
+    let xIndex = 0;
+    let yIndex = 0;
+
     const basePosition = ( gid - 1 ) * tileSize * tileSize;
     for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
       for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
-        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];
+        if ( flipX ) {
+          xIndex = tileSize - tileX - 1;
+        }
+        else {
+          xIndex = tileX;
+        }
+
+        if ( flipY ) {
+          yIndex = tileSize - tileY - 1;
+        }
+        else {
+          yIndex = tileY;
+        }
+        const paletteId = this.tileData.data[basePosition + yIndex * tileSize + xIndex];
         this.setPixel( x + tileX, y + tileY, paletteId );
       }
     }
