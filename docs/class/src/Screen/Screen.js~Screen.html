@@ -1112,7 +1112,7 @@ The origin (0, 0) position of the screen is on the bottom left</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/Screen/Screen.js~Screen.html#instance-method-drawTile">drawTile</a></span></span><span class="code" data-ice="signature">(gid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, x: <span>*</span>, y: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/Screen/Screen.js~Screen.html#instance-method-drawTile">drawTile</a></span></span><span class="code" data-ice="signature">(gid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, x: <span>*</span>, y: <span>*</span>, flip: <span>*</span>)</span>
         </p>
       </div>
       <div>
@@ -2659,7 +2659,7 @@ Screen.SCALE_FIT_WINDOW: 2</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber815">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber842">source</a></span></span>
     </span>
   </h3>
 
@@ -3008,7 +3008,7 @@ Screen.SCALE_FIT_WINDOW: 2</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber761">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber781">source</a></span></span>
     </span>
   </h3>
 
@@ -3296,7 +3296,7 @@ Screen.SCALE_FIT_WINDOW: 2</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber835">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber862">source</a></span></span>
     </span>
   </h3>
 
@@ -3340,7 +3340,7 @@ Screen.SCALE_FIT_WINDOW: 2</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber795">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber822">source</a></span></span>
     </span>
   </h3>
 
@@ -3433,11 +3433,11 @@ Newlines are not supported, this will draw just a single line</p>
     
     
     
-    <span class="code" data-ice="name">drawTile</span><span class="code" data-ice="signature">(gid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, x: <span>*</span>, y: <span>*</span>)</span>
+    <span class="code" data-ice="name">drawTile</span><span class="code" data-ice="signature">(gid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, x: <span>*</span>, y: <span>*</span>, flip: <span>*</span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber718">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Screen/Screen.js.html#lineNumber719">source</a></span></span>
     </span>
   </h3>
 
@@ -3476,6 +3476,13 @@ Newlines are not supported, this will draw just a single line</p>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the y position on the screen</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">flip</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>should we flip the tile? 0: no, 1: x, 2: y, 3: xy</p>
 </td>
     </tr>
 </tbody>
