@@ -6,8 +6,8 @@ module.exports = merge( common, {
   mode: 'development',
   output: {
     path: path.resolve(__dirname, '../lib'),
-    filename: 'minnow.js',
-    library: 'minnow',
+    filename: `bitmelo.${ process.env.npm_package_version }.js`,
+    library: 'bitmelo',
     libraryTarget: 'umd'
   }
 });

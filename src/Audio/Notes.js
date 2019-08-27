@@ -1,4 +1,7 @@
 
+/**
+ * Object mapping Node identifiers to numbers. AKA Notes.C4 = 48
+ */
 const Notes = {};
 
 Notes.C0 = 0;

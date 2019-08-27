@@ -26,6 +26,6 @@ module.exports = {
     }]
   },
   "globals": {
-    "minnow": "readonly"
+    "bitmelo": "readonly"
   }
 }

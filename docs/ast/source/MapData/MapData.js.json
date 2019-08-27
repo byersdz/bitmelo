@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 1194,
+  "end": 1242,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 45,
+      "line": 48,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 1194,
+    "end": 1242,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 45,
+        "line": 48,
         "column": 0
       }
     },
@@ -118,14 +118,14 @@
       {
         "type": "Identifier",
         "start": 77,
-        "end": 1168,
+        "end": 1216,
         "loc": {
           "start": {
             "line": 6,
             "column": 0
           },
           "end": {
-            "line": 42,
+            "line": 45,
             "column": 1
           }
         },
@@ -151,14 +151,14 @@
         "body": {
           "type": "ClassBody",
           "start": 91,
-          "end": 1168,
+          "end": 1216,
           "loc": {
             "start": {
               "line": 6,
               "column": 14
             },
             "end": {
-              "line": 42,
+              "line": 45,
               "column": 1
             }
           },
@@ -166,14 +166,14 @@
             {
               "type": "ClassMethod",
               "start": 95,
-              "end": 138,
+              "end": 186,
               "loc": {
                 "start": {
                   "line": 7,
                   "column": 2
                 },
                 "end": {
-                  "line": 9,
+                  "line": 12,
                   "column": 3
                 }
               },
@@ -205,112 +205,133 @@
               "body": {
                 "type": "BlockStatement",
                 "start": 109,
-                "end": 138,
+                "end": 186,
                 "loc": {
                   "start": {
                     "line": 7,
                     "column": 16
                   },
                   "end": {
-                    "line": 9,
+                    "line": 12,
                     "column": 3
                   }
                 },
                 "body": [
                   {
                     "type": "ExpressionStatement",
-                    "start": 115,
-                    "end": 134,
+                    "start": 163,
+                    "end": 182,
                     "loc": {
                       "start": {
-                        "line": 8,
+                        "line": 11,
                         "column": 4
                       },
                       "end": {
-                        "line": 8,
+                        "line": 11,
                         "column": 23
                       }
                     },
                     "expression": {
                       "type": "AssignmentExpression",
-                      "start": 115,
-                      "end": 133,
+                      "start": 163,
+                      "end": 181,
                       "loc": {
                         "start": {
-                          "line": 8,
+                          "line": 11,
                           "column": 4
                         },
                         "end": {
-                          "line": 8,
+                          "line": 11,
                           "column": 22
                         }
                       },
                       "operator": "=",
                       "left": {
                         "type": "MemberExpression",
-                        "start": 115,
-                        "end": 128,
+                        "start": 163,
+                        "end": 176,
                         "loc": {
                           "start": {
-                            "line": 8,
+                            "line": 11,
                             "column": 4
                           },
                           "end": {
-                            "line": 8,
+                            "line": 11,
                             "column": 17
                           }
                         },
                         "object": {
                           "type": "ThisExpression",
-                          "start": 115,
-                          "end": 119,
+                          "start": 163,
+                          "end": 167,
                           "loc": {
                             "start": {
-                              "line": 8,
+                              "line": 11,
                               "column": 4
                             },
                             "end": {
-                              "line": 8,
+                              "line": 11,
                               "column": 8
                             }
-                          }
+                          },
+                          "leadingComments": null
                         },
                         "property": {
                           "type": "Identifier",
-                          "start": 120,
-                          "end": 128,
+                          "start": 168,
+                          "end": 176,
                           "loc": {
                             "start": {
-                              "line": 8,
+                              "line": 11,
                               "column": 9
                             },
                             "end": {
-                              "line": 8,
+                              "line": 11,
                               "column": 17
                             },
                             "identifierName": "tileMaps"
                           },
                           "name": "tileMaps"
                         },
-                        "computed": false
+                        "computed": false,
+                        "leadingComments": null
                       },
                       "right": {
                         "type": "ArrayExpression",
-                        "start": 131,
-                        "end": 133,
+                        "start": 179,
+                        "end": 181,
                         "loc": {
                           "start": {
-                            "line": 8,
+                            "line": 11,
                             "column": 20
                           },
                           "end": {
-                            "line": 8,
+                            "line": 11,
                             "column": 22
                           }
                         },
                         "elements": []
+                      },
+                      "leadingComments": null
+                    },
+                    "leadingComments": [
+                      {
+                        "type": "CommentBlock",
+                        "value": "*\n     * Array of TileMap objects\n     ",
+                        "start": 115,
+                        "end": 158,
+                        "loc": {
+                          "start": {
+                            "line": 8,
+                            "column": 4
+                          },
+                          "end": {
+                            "line": 10,
+                            "column": 7
+                          }
+                        }
                       }
-                    }
+                    ]
                   }
                 ],
                 "directives": [],
@@ -320,15 +341,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-                  "start": 142,
-                  "end": 238,
+                  "start": 190,
+                  "end": 286,
                   "loc": {
                     "start": {
-                      "line": 11,
+                      "line": 14,
                       "column": 2
                     },
                     "end": {
-                      "line": 14,
+                      "line": 17,
                       "column": 5
                     }
                   }
@@ -337,15 +358,15 @@
             },
             {
               "type": "ClassMethod",
-              "start": 241,
-              "end": 355,
+              "start": 289,
+              "end": 403,
               "loc": {
                 "start": {
-                  "line": 15,
+                  "line": 18,
                   "column": 2
                 },
                 "end": {
-                  "line": 18,
+                  "line": 21,
                   "column": 3
                 }
               },
@@ -353,15 +374,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 241,
-                "end": 251,
+                "start": 289,
+                "end": 299,
                 "loc": {
                   "start": {
-                    "line": 15,
+                    "line": 18,
                     "column": 2
                   },
                   "end": {
-                    "line": 15,
+                    "line": 18,
                     "column": 12
                   },
                   "identifierName": "addTileMap"
@@ -377,15 +398,15 @@
               "params": [
                 {
                   "type": "Identifier",
-                  "start": 253,
-                  "end": 260,
+                  "start": 301,
+                  "end": 308,
                   "loc": {
                     "start": {
-                      "line": 15,
+                      "line": 18,
                       "column": 14
                     },
                     "end": {
-                      "line": 15,
+                      "line": 18,
                       "column": 21
                     },
                     "identifierName": "tileMap"
@@ -395,101 +416,101 @@
               ],
               "body": {
                 "type": "BlockStatement",
-                "start": 263,
-                "end": 355,
+                "start": 311,
+                "end": 403,
                 "loc": {
                   "start": {
-                    "line": 15,
+                    "line": 18,
                     "column": 24
                   },
                   "end": {
-                    "line": 18,
+                    "line": 21,
                     "column": 3
                   }
                 },
                 "body": [
                   {
                     "type": "ExpressionStatement",
-                    "start": 269,
-                    "end": 314,
+                    "start": 317,
+                    "end": 362,
                     "loc": {
                       "start": {
-                        "line": 16,
+                        "line": 19,
                         "column": 4
                       },
                       "end": {
-                        "line": 16,
+                        "line": 19,
                         "column": 49
                       }
                     },
                     "expression": {
                       "type": "CallExpression",
-                      "start": 269,
-                      "end": 313,
+                      "start": 317,
+                      "end": 361,
                       "loc": {
                         "start": {
-                          "line": 16,
+                          "line": 19,
                           "column": 4
                         },
                         "end": {
-                          "line": 16,
+                          "line": 19,
                           "column": 48
                         }
                       },
                       "callee": {
                         "type": "MemberExpression",
-                        "start": 269,
-                        "end": 287,
+                        "start": 317,
+                        "end": 335,
                         "loc": {
                           "start": {
-                            "line": 16,
+                            "line": 19,
                             "column": 4
                           },
                           "end": {
-                            "line": 16,
+                            "line": 19,
                             "column": 22
                           }
                         },
                         "object": {
                           "type": "MemberExpression",
-                          "start": 269,
-                          "end": 282,
+                          "start": 317,
+                          "end": 330,
                           "loc": {
                             "start": {
-                              "line": 16,
+                              "line": 19,
                               "column": 4
                             },
                             "end": {
-                              "line": 16,
+                              "line": 19,
                               "column": 17
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 269,
-                            "end": 273,
+                            "start": 317,
+                            "end": 321,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 4
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 8
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 274,
-                            "end": 282,
+                            "start": 322,
+                            "end": 330,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 9
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 17
                               },
                               "identifierName": "tileMaps"
@@ -500,15 +521,15 @@
                         },
                         "property": {
                           "type": "Identifier",
-                          "start": 283,
-                          "end": 287,
+                          "start": 331,
+                          "end": 335,
                           "loc": {
                             "start": {
-                              "line": 16,
+                              "line": 19,
                               "column": 18
                             },
                             "end": {
-                              "line": 16,
+                              "line": 19,
                               "column": 22
                             },
                             "identifierName": "push"
@@ -520,29 +541,29 @@
                       "arguments": [
                         {
                           "type": "NewExpression",
-                          "start": 289,
-                          "end": 311,
+                          "start": 337,
+                          "end": 359,
                           "loc": {
                             "start": {
-                              "line": 16,
+                              "line": 19,
                               "column": 24
                             },
                             "end": {
-                              "line": 16,
+                              "line": 19,
                               "column": 46
                             }
                           },
                           "callee": {
                             "type": "Identifier",
-                            "start": 293,
-                            "end": 300,
+                            "start": 341,
+                            "end": 348,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 28
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 35
                               },
                               "identifierName": "TileMap"
@@ -552,15 +573,15 @@
                           "arguments": [
                             {
                               "type": "Identifier",
-                              "start": 302,
-                              "end": 309,
+                              "start": 350,
+                              "end": 357,
                               "loc": {
                                 "start": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 37
                                 },
                                 "end": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 44
                                 },
                                 "identifierName": "tileMap"
@@ -574,86 +595,86 @@
                   },
                   {
                     "type": "ReturnStatement",
-                    "start": 319,
-                    "end": 351,
+                    "start": 367,
+                    "end": 399,
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 20,
                         "column": 4
                       },
                       "end": {
-                        "line": 17,
+                        "line": 20,
                         "column": 36
                       }
                     },
                     "argument": {
                       "type": "BinaryExpression",
-                      "start": 326,
-                      "end": 350,
+                      "start": 374,
+                      "end": 398,
                       "loc": {
                         "start": {
-                          "line": 17,
+                          "line": 20,
                           "column": 11
                         },
                         "end": {
-                          "line": 17,
+                          "line": 20,
                           "column": 35
                         }
                       },
                       "left": {
                         "type": "MemberExpression",
-                        "start": 326,
-                        "end": 346,
+                        "start": 374,
+                        "end": 394,
                         "loc": {
                           "start": {
-                            "line": 17,
+                            "line": 20,
                             "column": 11
                           },
                           "end": {
-                            "line": 17,
+                            "line": 20,
                             "column": 31
                           }
                         },
                         "object": {
                           "type": "MemberExpression",
-                          "start": 326,
-                          "end": 339,
+                          "start": 374,
+                          "end": 387,
                           "loc": {
                             "start": {
-                              "line": 17,
+                              "line": 20,
                               "column": 11
                             },
                             "end": {
-                              "line": 17,
+                              "line": 20,
                               "column": 24
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 326,
-                            "end": 330,
+                            "start": 374,
+                            "end": 378,
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 11
                               },
                               "end": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 15
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 331,
-                            "end": 339,
+                            "start": 379,
+                            "end": 387,
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 16
                               },
                               "end": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 24
                               },
                               "identifierName": "tileMaps"
@@ -664,15 +685,15 @@
                         },
                         "property": {
                           "type": "Identifier",
-                          "start": 340,
-                          "end": 346,
+                          "start": 388,
+                          "end": 394,
                           "loc": {
                             "start": {
-                              "line": 17,
+                              "line": 20,
                               "column": 25
                             },
                             "end": {
-                              "line": 17,
+                              "line": 20,
                               "column": 31
                             },
                             "identifierName": "length"
@@ -684,15 +705,15 @@
                       "operator": "-",
                       "right": {
                         "type": "NumericLiteral",
-                        "start": 349,
-                        "end": 350,
+                        "start": 397,
+                        "end": 398,
                         "loc": {
                           "start": {
-                            "line": 17,
+                            "line": 20,
                             "column": 34
                           },
                           "end": {
-                            "line": 17,
+                            "line": 20,
                             "column": 35
                           }
                         },
@@ -712,15 +733,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-                  "start": 142,
-                  "end": 238,
+                  "start": 190,
+                  "end": 286,
                   "loc": {
                     "start": {
-                      "line": 11,
+                      "line": 14,
                       "column": 2
                     },
                     "end": {
-                      "line": 14,
+                      "line": 17,
                       "column": 5
                     }
                   }
@@ -730,15 +751,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-                  "start": 359,
-                  "end": 649,
+                  "start": 407,
+                  "end": 697,
                   "loc": {
                     "start": {
-                      "line": 20,
+                      "line": 23,
                       "column": 2
                     },
                     "end": {
-                      "line": 26,
+                      "line": 29,
                       "column": 5
                     }
                   }
@@ -747,15 +768,15 @@
             },
             {
               "type": "ClassMethod",
-              "start": 652,
-              "end": 755,
+              "start": 700,
+              "end": 803,
               "loc": {
                 "start": {
-                  "line": 27,
+                  "line": 30,
                   "column": 2
                 },
                 "end": {
-                  "line": 29,
+                  "line": 32,
                   "column": 3
                 }
               },
@@ -763,15 +784,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 652,
-                "end": 659,
+                "start": 700,
+                "end": 707,
                 "loc": {
                   "start": {
-                    "line": 27,
+                    "line": 30,
                     "column": 2
                   },
                   "end": {
-                    "line": 27,
+                    "line": 30,
                     "column": 9
                   },
                   "identifierName": "getTile"
@@ -787,15 +808,15 @@
               "params": [
                 {
                   "type": "Identifier",
-                  "start": 661,
-                  "end": 662,
+                  "start": 709,
+                  "end": 710,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 11
                     },
                     "end": {
-                      "line": 27,
+                      "line": 30,
                       "column": 12
                     },
                     "identifierName": "x"
@@ -804,15 +825,15 @@
                 },
                 {
                   "type": "Identifier",
-                  "start": 664,
-                  "end": 665,
+                  "start": 712,
+                  "end": 713,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 14
                     },
                     "end": {
-                      "line": 27,
+                      "line": 30,
                       "column": 15
                     },
                     "identifierName": "y"
@@ -821,29 +842,29 @@
                 },
                 {
                   "type": "AssignmentPattern",
-                  "start": 667,
-                  "end": 678,
+                  "start": 715,
+                  "end": 726,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 17
                     },
                     "end": {
-                      "line": 27,
+                      "line": 30,
                       "column": 28
                     }
                   },
                   "left": {
                     "type": "Identifier",
-                    "start": 667,
-                    "end": 674,
+                    "start": 715,
+                    "end": 722,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 17
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 24
                       },
                       "identifierName": "tileMap"
@@ -852,15 +873,15 @@
                   },
                   "right": {
                     "type": "NumericLiteral",
-                    "start": 677,
-                    "end": 678,
+                    "start": 725,
+                    "end": 726,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 27
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 28
                       }
                     },
@@ -873,29 +894,29 @@
                 },
                 {
                   "type": "AssignmentPattern",
-                  "start": 680,
-                  "end": 689,
+                  "start": 728,
+                  "end": 737,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 30
                     },
                     "end": {
-                      "line": 27,
+                      "line": 30,
                       "column": 39
                     }
                   },
                   "left": {
                     "type": "Identifier",
-                    "start": 680,
-                    "end": 685,
+                    "start": 728,
+                    "end": 733,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 30
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 35
                       },
                       "identifierName": "layer"
@@ -904,15 +925,15 @@
                   },
                   "right": {
                     "type": "NumericLiteral",
-                    "start": 688,
-                    "end": 689,
+                    "start": 736,
+                    "end": 737,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 38
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 39
                       }
                     },
@@ -926,115 +947,115 @@
               ],
               "body": {
                 "type": "BlockStatement",
-                "start": 692,
-                "end": 755,
+                "start": 740,
+                "end": 803,
                 "loc": {
                   "start": {
-                    "line": 27,
+                    "line": 30,
                     "column": 42
                   },
                   "end": {
-                    "line": 29,
+                    "line": 32,
                     "column": 3
                   }
                 },
                 "body": [
                   {
                     "type": "ReturnStatement",
-                    "start": 698,
-                    "end": 751,
+                    "start": 746,
+                    "end": 799,
                     "loc": {
                       "start": {
-                        "line": 28,
+                        "line": 31,
                         "column": 4
                       },
                       "end": {
-                        "line": 28,
+                        "line": 31,
                         "column": 57
                       }
                     },
                     "argument": {
                       "type": "CallExpression",
-                      "start": 705,
-                      "end": 750,
+                      "start": 753,
+                      "end": 798,
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 31,
                           "column": 11
                         },
                         "end": {
-                          "line": 28,
+                          "line": 31,
                           "column": 56
                         }
                       },
                       "callee": {
                         "type": "MemberExpression",
-                        "start": 705,
-                        "end": 735,
+                        "start": 753,
+                        "end": 783,
                         "loc": {
                           "start": {
-                            "line": 28,
+                            "line": 31,
                             "column": 11
                           },
                           "end": {
-                            "line": 28,
+                            "line": 31,
                             "column": 41
                           }
                         },
                         "object": {
                           "type": "MemberExpression",
-                          "start": 705,
-                          "end": 727,
+                          "start": 753,
+                          "end": 775,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 11
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 33
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 705,
-                            "end": 718,
+                            "start": 753,
+                            "end": 766,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 11
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 24
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 705,
-                              "end": 709,
+                              "start": 753,
+                              "end": 757,
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 11
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 15
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 710,
-                              "end": 718,
+                              "start": 758,
+                              "end": 766,
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 16
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 24
                                 },
                                 "identifierName": "tileMaps"
@@ -1045,15 +1066,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 719,
-                            "end": 726,
+                            "start": 767,
+                            "end": 774,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 25
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 32
                               },
                               "identifierName": "tileMap"
@@ -1064,15 +1085,15 @@
                         },
                         "property": {
                           "type": "Identifier",
-                          "start": 728,
-                          "end": 735,
+                          "start": 776,
+                          "end": 783,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 34
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 41
                             },
                             "identifierName": "getTile"
@@ -1084,15 +1105,15 @@
                       "arguments": [
                         {
                           "type": "Identifier",
-                          "start": 737,
-                          "end": 738,
+                          "start": 785,
+                          "end": 786,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 43
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 44
                             },
                             "identifierName": "x"
@@ -1101,15 +1122,15 @@
                         },
                         {
                           "type": "Identifier",
-                          "start": 740,
-                          "end": 741,
+                          "start": 788,
+                          "end": 789,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 46
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 47
                             },
                             "identifierName": "y"
@@ -1118,15 +1139,15 @@
                         },
                         {
                           "type": "Identifier",
-                          "start": 743,
-                          "end": 748,
+                          "start": 791,
+                          "end": 796,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 49
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 54
                             },
                             "identifierName": "layer"
@@ -1144,15 +1165,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-                  "start": 359,
-                  "end": 649,
+                  "start": 407,
+                  "end": 697,
                   "loc": {
                     "start": {
-                      "line": 20,
+                      "line": 23,
                       "column": 2
                     },
                     "end": {
-                      "line": 26,
+                      "line": 29,
                       "column": 5
                     }
                   }
@@ -1162,15 +1183,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-                  "start": 759,
-                  "end": 1057,
+                  "start": 807,
+                  "end": 1105,
                   "loc": {
                     "start": {
-                      "line": 31,
+                      "line": 34,
                       "column": 2
                     },
                     "end": {
-                      "line": 38,
+                      "line": 41,
                       "column": 5
                     }
                   }
@@ -1179,15 +1200,15 @@
             },
             {
               "type": "ClassMethod",
-              "start": 1060,
-              "end": 1166,
+              "start": 1108,
+              "end": 1214,
               "loc": {
                 "start": {
-                  "line": 39,
+                  "line": 42,
                   "column": 2
                 },
                 "end": {
-                  "line": 41,
+                  "line": 44,
                   "column": 3
                 }
               },
@@ -1195,15 +1216,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1060,
-                "end": 1067,
+                "start": 1108,
+                "end": 1115,
                 "loc": {
                   "start": {
-                    "line": 39,
+                    "line": 42,
                     "column": 2
                   },
                   "end": {
-                    "line": 39,
+                    "line": 42,
                     "column": 9
                   },
                   "identifierName": "setTile"
@@ -1219,15 +1240,15 @@
               "params": [
                 {
                   "type": "Identifier",
-                  "start": 1069,
-                  "end": 1072,
+                  "start": 1117,
+                  "end": 1120,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 11
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 14
                     },
                     "identifierName": "gid"
@@ -1236,15 +1257,15 @@
                 },
                 {
                   "type": "Identifier",
-                  "start": 1074,
-                  "end": 1075,
+                  "start": 1122,
+                  "end": 1123,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 16
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 17
                     },
                     "identifierName": "x"
@@ -1253,15 +1274,15 @@
                 },
                 {
                   "type": "Identifier",
-                  "start": 1077,
-                  "end": 1078,
+                  "start": 1125,
+                  "end": 1126,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 19
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 20
                     },
                     "identifierName": "y"
@@ -1270,29 +1291,29 @@
                 },
                 {
                   "type": "AssignmentPattern",
-                  "start": 1080,
-                  "end": 1091,
+                  "start": 1128,
+                  "end": 1139,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 22
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 33
                     }
                   },
                   "left": {
                     "type": "Identifier",
-                    "start": 1080,
-                    "end": 1087,
+                    "start": 1128,
+                    "end": 1135,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 22
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 29
                       },
                       "identifierName": "tileMap"
@@ -1301,15 +1322,15 @@
                   },
                   "right": {
                     "type": "NumericLiteral",
-                    "start": 1090,
-                    "end": 1091,
+                    "start": 1138,
+                    "end": 1139,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 32
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 33
                       }
                     },
@@ -1322,29 +1343,29 @@
                 },
                 {
                   "type": "AssignmentPattern",
-                  "start": 1093,
-                  "end": 1102,
+                  "start": 1141,
+                  "end": 1150,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 35
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 44
                     }
                   },
                   "left": {
                     "type": "Identifier",
-                    "start": 1093,
-                    "end": 1098,
+                    "start": 1141,
+                    "end": 1146,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 35
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 40
                       },
                       "identifierName": "layer"
@@ -1353,15 +1374,15 @@
                   },
                   "right": {
                     "type": "NumericLiteral",
-                    "start": 1101,
-                    "end": 1102,
+                    "start": 1149,
+                    "end": 1150,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 43
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 44
                       }
                     },
@@ -1375,115 +1396,115 @@
               ],
               "body": {
                 "type": "BlockStatement",
-                "start": 1105,
-                "end": 1166,
+                "start": 1153,
+                "end": 1214,
                 "loc": {
                   "start": {
-                    "line": 39,
+                    "line": 42,
                     "column": 47
                   },
                   "end": {
-                    "line": 41,
+                    "line": 44,
                     "column": 3
                   }
                 },
                 "body": [
                   {
                     "type": "ExpressionStatement",
-                    "start": 1111,
-                    "end": 1162,
+                    "start": 1159,
+                    "end": 1210,
                     "loc": {
                       "start": {
-                        "line": 40,
+                        "line": 43,
                         "column": 4
                       },
                       "end": {
-                        "line": 40,
+                        "line": 43,
                         "column": 55
                       }
                     },
                     "expression": {
                       "type": "CallExpression",
-                      "start": 1111,
-                      "end": 1161,
+                      "start": 1159,
+                      "end": 1209,
                       "loc": {
                         "start": {
-                          "line": 40,
+                          "line": 43,
                           "column": 4
                         },
                         "end": {
-                          "line": 40,
+                          "line": 43,
                           "column": 54
                         }
                       },
                       "callee": {
                         "type": "MemberExpression",
-                        "start": 1111,
-                        "end": 1141,
+                        "start": 1159,
+                        "end": 1189,
                         "loc": {
                           "start": {
-                            "line": 40,
+                            "line": 43,
                             "column": 4
                           },
                           "end": {
-                            "line": 40,
+                            "line": 43,
                             "column": 34
                           }
                         },
                         "object": {
                           "type": "MemberExpression",
-                          "start": 1111,
-                          "end": 1133,
+                          "start": 1159,
+                          "end": 1181,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 4
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 26
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 1111,
-                            "end": 1124,
+                            "start": 1159,
+                            "end": 1172,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 4
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 17
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 1111,
-                              "end": 1115,
+                              "start": 1159,
+                              "end": 1163,
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 4
                                 },
                                 "end": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 8
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 1116,
-                              "end": 1124,
+                              "start": 1164,
+                              "end": 1172,
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 9
                                 },
                                 "end": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 17
                                 },
                                 "identifierName": "tileMaps"
@@ -1494,15 +1515,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 1125,
-                            "end": 1132,
+                            "start": 1173,
+                            "end": 1180,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 18
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 25
                               },
                               "identifierName": "tileMap"
@@ -1513,15 +1534,15 @@
                         },
                         "property": {
                           "type": "Identifier",
-                          "start": 1134,
-                          "end": 1141,
+                          "start": 1182,
+                          "end": 1189,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 27
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 34
                             },
                             "identifierName": "setTile"
@@ -1533,15 +1554,15 @@
                       "arguments": [
                         {
                           "type": "Identifier",
-                          "start": 1143,
-                          "end": 1146,
+                          "start": 1191,
+                          "end": 1194,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 36
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 39
                             },
                             "identifierName": "gid"
@@ -1550,15 +1571,15 @@
                         },
                         {
                           "type": "Identifier",
-                          "start": 1148,
-                          "end": 1149,
+                          "start": 1196,
+                          "end": 1197,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 41
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 42
                             },
                             "identifierName": "x"
@@ -1567,15 +1588,15 @@
                         },
                         {
                           "type": "Identifier",
-                          "start": 1151,
-                          "end": 1152,
+                          "start": 1199,
+                          "end": 1200,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 44
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 45
                             },
                             "identifierName": "y"
@@ -1584,15 +1605,15 @@
                         },
                         {
                           "type": "Identifier",
-                          "start": 1154,
-                          "end": 1159,
+                          "start": 1202,
+                          "end": 1207,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 47
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 52
                             },
                             "identifierName": "layer"
@@ -1609,15 +1630,15 @@
                 {
                   "type": "CommentBlock",
                   "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-                  "start": 759,
-                  "end": 1057,
+                  "start": 807,
+                  "end": 1105,
                   "loc": {
                     "start": {
-                      "line": 31,
+                      "line": 34,
                       "column": 2
                     },
                     "end": {
-                      "line": 38,
+                      "line": 41,
                       "column": 5
                     }
                   }
@@ -1632,29 +1653,29 @@
       },
       {
         "type": "Identifier",
-        "start": 1170,
-        "end": 1193,
+        "start": 1218,
+        "end": 1241,
         "loc": {
           "start": {
-            "line": 44,
+            "line": 47,
             "column": 0
           },
           "end": {
-            "line": 44,
+            "line": 47,
             "column": 23
           }
         },
         "declaration": {
           "type": "Identifier",
-          "start": 1185,
-          "end": 1192,
+          "start": 1233,
+          "end": 1240,
           "loc": {
             "start": {
-              "line": 44,
+              "line": 47,
               "column": 15
             },
             "end": {
-              "line": 44,
+              "line": 47,
               "column": 22
             },
             "identifierName": "MapData"
@@ -1667,29 +1688,29 @@
       },
       {
         "type": "ExportDefaultDeclaration",
-        "start": 1170,
-        "end": 1193,
+        "start": 1218,
+        "end": 1241,
         "loc": {
           "start": {
-            "line": 44,
+            "line": 47,
             "column": 0
           },
           "end": {
-            "line": 44,
+            "line": 47,
             "column": 23
           }
         },
         "declaration": {
           "type": "ClassDeclaration",
           "start": 77,
-          "end": 1168,
+          "end": 1216,
           "loc": {
             "start": {
               "line": 6,
               "column": 0
             },
             "end": {
-              "line": 42,
+              "line": 45,
               "column": 1
             }
           },
@@ -1715,14 +1736,14 @@
           "body": {
             "type": "ClassBody",
             "start": 91,
-            "end": 1168,
+            "end": 1216,
             "loc": {
               "start": {
                 "line": 6,
                 "column": 14
               },
               "end": {
-                "line": 42,
+                "line": 45,
                 "column": 1
               }
             },
@@ -1730,14 +1751,14 @@
               {
                 "type": "ClassMethod",
                 "start": 95,
-                "end": 138,
+                "end": 186,
                 "loc": {
                   "start": {
                     "line": 7,
                     "column": 2
                   },
                   "end": {
-                    "line": 9,
+                    "line": 12,
                     "column": 3
                   }
                 },
@@ -1769,112 +1790,133 @@
                 "body": {
                   "type": "BlockStatement",
                   "start": 109,
-                  "end": 138,
+                  "end": 186,
                   "loc": {
                     "start": {
                       "line": 7,
                       "column": 16
                     },
                     "end": {
-                      "line": 9,
+                      "line": 12,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 115,
-                      "end": 134,
+                      "start": 163,
+                      "end": 182,
                       "loc": {
                         "start": {
-                          "line": 8,
+                          "line": 11,
                           "column": 4
                         },
                         "end": {
-                          "line": 8,
+                          "line": 11,
                           "column": 23
                         }
                       },
                       "expression": {
                         "type": "AssignmentExpression",
-                        "start": 115,
-                        "end": 133,
+                        "start": 163,
+                        "end": 181,
                         "loc": {
                           "start": {
-                            "line": 8,
+                            "line": 11,
                             "column": 4
                           },
                           "end": {
-                            "line": 8,
+                            "line": 11,
                             "column": 22
                           }
                         },
                         "operator": "=",
                         "left": {
                           "type": "MemberExpression",
-                          "start": 115,
-                          "end": 128,
+                          "start": 163,
+                          "end": 176,
                           "loc": {
                             "start": {
-                              "line": 8,
+                              "line": 11,
                               "column": 4
                             },
                             "end": {
-                              "line": 8,
+                              "line": 11,
                               "column": 17
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 115,
-                            "end": 119,
+                            "start": 163,
+                            "end": 167,
                             "loc": {
                               "start": {
-                                "line": 8,
+                                "line": 11,
                                 "column": 4
                               },
                               "end": {
-                                "line": 8,
+                                "line": 11,
                                 "column": 8
                               }
-                            }
+                            },
+                            "leadingComments": null
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 120,
-                            "end": 128,
+                            "start": 168,
+                            "end": 176,
                             "loc": {
                               "start": {
-                                "line": 8,
+                                "line": 11,
                                 "column": 9
                               },
                               "end": {
-                                "line": 8,
+                                "line": 11,
                                 "column": 17
                               },
                               "identifierName": "tileMaps"
                             },
                             "name": "tileMaps"
                           },
-                          "computed": false
+                          "computed": false,
+                          "leadingComments": null
                         },
                         "right": {
                           "type": "ArrayExpression",
-                          "start": 131,
-                          "end": 133,
+                          "start": 179,
+                          "end": 181,
                           "loc": {
                             "start": {
-                              "line": 8,
+                              "line": 11,
                               "column": 20
                             },
                             "end": {
-                              "line": 8,
+                              "line": 11,
                               "column": 22
                             }
                           },
                           "elements": []
+                        },
+                        "leadingComments": null
+                      },
+                      "leadingComments": [
+                        {
+                          "type": "CommentBlock",
+                          "value": "*\n     * Array of TileMap objects\n     ",
+                          "start": 115,
+                          "end": 158,
+                          "loc": {
+                            "start": {
+                              "line": 8,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 7
+                            }
+                          }
                         }
-                      }
+                      ]
                     }
                   ],
                   "directives": [],
@@ -1884,15 +1926,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-                    "start": 142,
-                    "end": 238,
+                    "start": 190,
+                    "end": 286,
                     "loc": {
                       "start": {
-                        "line": 11,
+                        "line": 14,
                         "column": 2
                       },
                       "end": {
-                        "line": 14,
+                        "line": 17,
                         "column": 5
                       }
                     }
@@ -1901,15 +1943,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 241,
-                "end": 355,
+                "start": 289,
+                "end": 403,
                 "loc": {
                   "start": {
-                    "line": 15,
+                    "line": 18,
                     "column": 2
                   },
                   "end": {
-                    "line": 18,
+                    "line": 21,
                     "column": 3
                   }
                 },
@@ -1917,15 +1959,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 241,
-                  "end": 251,
+                  "start": 289,
+                  "end": 299,
                   "loc": {
                     "start": {
-                      "line": 15,
+                      "line": 18,
                       "column": 2
                     },
                     "end": {
-                      "line": 15,
+                      "line": 18,
                       "column": 12
                     },
                     "identifierName": "addTileMap"
@@ -1941,15 +1983,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 253,
-                    "end": 260,
+                    "start": 301,
+                    "end": 308,
                     "loc": {
                       "start": {
-                        "line": 15,
+                        "line": 18,
                         "column": 14
                       },
                       "end": {
-                        "line": 15,
+                        "line": 18,
                         "column": 21
                       },
                       "identifierName": "tileMap"
@@ -1959,101 +2001,101 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 263,
-                  "end": 355,
+                  "start": 311,
+                  "end": 403,
                   "loc": {
                     "start": {
-                      "line": 15,
+                      "line": 18,
                       "column": 24
                     },
                     "end": {
-                      "line": 18,
+                      "line": 21,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 269,
-                      "end": 314,
+                      "start": 317,
+                      "end": 362,
                       "loc": {
                         "start": {
-                          "line": 16,
+                          "line": 19,
                           "column": 4
                         },
                         "end": {
-                          "line": 16,
+                          "line": 19,
                           "column": 49
                         }
                       },
                       "expression": {
                         "type": "CallExpression",
-                        "start": 269,
-                        "end": 313,
+                        "start": 317,
+                        "end": 361,
                         "loc": {
                           "start": {
-                            "line": 16,
+                            "line": 19,
                             "column": 4
                           },
                           "end": {
-                            "line": 16,
+                            "line": 19,
                             "column": 48
                           }
                         },
                         "callee": {
                           "type": "MemberExpression",
-                          "start": 269,
-                          "end": 287,
+                          "start": 317,
+                          "end": 335,
                           "loc": {
                             "start": {
-                              "line": 16,
+                              "line": 19,
                               "column": 4
                             },
                             "end": {
-                              "line": 16,
+                              "line": 19,
                               "column": 22
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 269,
-                            "end": 282,
+                            "start": 317,
+                            "end": 330,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 4
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 17
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 269,
-                              "end": 273,
+                              "start": 317,
+                              "end": 321,
                               "loc": {
                                 "start": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 4
                                 },
                                 "end": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 8
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 274,
-                              "end": 282,
+                              "start": 322,
+                              "end": 330,
                               "loc": {
                                 "start": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 9
                                 },
                                 "end": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 17
                                 },
                                 "identifierName": "tileMaps"
@@ -2064,15 +2106,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 283,
-                            "end": 287,
+                            "start": 331,
+                            "end": 335,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 18
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 22
                               },
                               "identifierName": "push"
@@ -2084,29 +2126,29 @@
                         "arguments": [
                           {
                             "type": "NewExpression",
-                            "start": 289,
-                            "end": 311,
+                            "start": 337,
+                            "end": 359,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 24
                               },
                               "end": {
-                                "line": 16,
+                                "line": 19,
                                 "column": 46
                               }
                             },
                             "callee": {
                               "type": "Identifier",
-                              "start": 293,
-                              "end": 300,
+                              "start": 341,
+                              "end": 348,
                               "loc": {
                                 "start": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 28
                                 },
                                 "end": {
-                                  "line": 16,
+                                  "line": 19,
                                   "column": 35
                                 },
                                 "identifierName": "TileMap"
@@ -2116,15 +2158,15 @@
                             "arguments": [
                               {
                                 "type": "Identifier",
-                                "start": 302,
-                                "end": 309,
+                                "start": 350,
+                                "end": 357,
                                 "loc": {
                                   "start": {
-                                    "line": 16,
+                                    "line": 19,
                                     "column": 37
                                   },
                                   "end": {
-                                    "line": 16,
+                                    "line": 19,
                                     "column": 44
                                   },
                                   "identifierName": "tileMap"
@@ -2138,86 +2180,86 @@
                     },
                     {
                       "type": "ReturnStatement",
-                      "start": 319,
-                      "end": 351,
+                      "start": 367,
+                      "end": 399,
                       "loc": {
                         "start": {
-                          "line": 17,
+                          "line": 20,
                           "column": 4
                         },
                         "end": {
-                          "line": 17,
+                          "line": 20,
                           "column": 36
                         }
                       },
                       "argument": {
                         "type": "BinaryExpression",
-                        "start": 326,
-                        "end": 350,
+                        "start": 374,
+                        "end": 398,
                         "loc": {
                           "start": {
-                            "line": 17,
+                            "line": 20,
                             "column": 11
                           },
                           "end": {
-                            "line": 17,
+                            "line": 20,
                             "column": 35
                           }
                         },
                         "left": {
                           "type": "MemberExpression",
-                          "start": 326,
-                          "end": 346,
+                          "start": 374,
+                          "end": 394,
                           "loc": {
                             "start": {
-                              "line": 17,
+                              "line": 20,
                               "column": 11
                             },
                             "end": {
-                              "line": 17,
+                              "line": 20,
                               "column": 31
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 326,
-                            "end": 339,
+                            "start": 374,
+                            "end": 387,
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 11
                               },
                               "end": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 24
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 326,
-                              "end": 330,
+                              "start": 374,
+                              "end": 378,
                               "loc": {
                                 "start": {
-                                  "line": 17,
+                                  "line": 20,
                                   "column": 11
                                 },
                                 "end": {
-                                  "line": 17,
+                                  "line": 20,
                                   "column": 15
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 331,
-                              "end": 339,
+                              "start": 379,
+                              "end": 387,
                               "loc": {
                                 "start": {
-                                  "line": 17,
+                                  "line": 20,
                                   "column": 16
                                 },
                                 "end": {
-                                  "line": 17,
+                                  "line": 20,
                                   "column": 24
                                 },
                                 "identifierName": "tileMaps"
@@ -2228,15 +2270,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 340,
-                            "end": 346,
+                            "start": 388,
+                            "end": 394,
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 25
                               },
                               "end": {
-                                "line": 17,
+                                "line": 20,
                                 "column": 31
                               },
                               "identifierName": "length"
@@ -2248,15 +2290,15 @@
                         "operator": "-",
                         "right": {
                           "type": "NumericLiteral",
-                          "start": 349,
-                          "end": 350,
+                          "start": 397,
+                          "end": 398,
                           "loc": {
                             "start": {
-                              "line": 17,
+                              "line": 20,
                               "column": 34
                             },
                             "end": {
-                              "line": 17,
+                              "line": 20,
                               "column": 35
                             }
                           },
@@ -2276,15 +2318,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-                    "start": 142,
-                    "end": 238,
+                    "start": 190,
+                    "end": 286,
                     "loc": {
                       "start": {
-                        "line": 11,
+                        "line": 14,
                         "column": 2
                       },
                       "end": {
-                        "line": 14,
+                        "line": 17,
                         "column": 5
                       }
                     }
@@ -2294,15 +2336,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-                    "start": 359,
-                    "end": 649,
+                    "start": 407,
+                    "end": 697,
                     "loc": {
                       "start": {
-                        "line": 20,
+                        "line": 23,
                         "column": 2
                       },
                       "end": {
-                        "line": 26,
+                        "line": 29,
                         "column": 5
                       }
                     }
@@ -2311,15 +2353,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 652,
-                "end": 755,
+                "start": 700,
+                "end": 803,
                 "loc": {
                   "start": {
-                    "line": 27,
+                    "line": 30,
                     "column": 2
                   },
                   "end": {
-                    "line": 29,
+                    "line": 32,
                     "column": 3
                   }
                 },
@@ -2327,15 +2369,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 652,
-                  "end": 659,
+                  "start": 700,
+                  "end": 707,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 2
                     },
                     "end": {
-                      "line": 27,
+                      "line": 30,
                       "column": 9
                     },
                     "identifierName": "getTile"
@@ -2351,15 +2393,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 661,
-                    "end": 662,
+                    "start": 709,
+                    "end": 710,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 11
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 12
                       },
                       "identifierName": "x"
@@ -2368,15 +2410,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 664,
-                    "end": 665,
+                    "start": 712,
+                    "end": 713,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 14
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 15
                       },
                       "identifierName": "y"
@@ -2385,29 +2427,29 @@
                   },
                   {
                     "type": "AssignmentPattern",
-                    "start": 667,
-                    "end": 678,
+                    "start": 715,
+                    "end": 726,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 17
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 28
                       }
                     },
                     "left": {
                       "type": "Identifier",
-                      "start": 667,
-                      "end": 674,
+                      "start": 715,
+                      "end": 722,
                       "loc": {
                         "start": {
-                          "line": 27,
+                          "line": 30,
                           "column": 17
                         },
                         "end": {
-                          "line": 27,
+                          "line": 30,
                           "column": 24
                         },
                         "identifierName": "tileMap"
@@ -2416,15 +2458,15 @@
                     },
                     "right": {
                       "type": "NumericLiteral",
-                      "start": 677,
-                      "end": 678,
+                      "start": 725,
+                      "end": 726,
                       "loc": {
                         "start": {
-                          "line": 27,
+                          "line": 30,
                           "column": 27
                         },
                         "end": {
-                          "line": 27,
+                          "line": 30,
                           "column": 28
                         }
                       },
@@ -2437,29 +2479,29 @@
                   },
                   {
                     "type": "AssignmentPattern",
-                    "start": 680,
-                    "end": 689,
+                    "start": 728,
+                    "end": 737,
                     "loc": {
                       "start": {
-                        "line": 27,
+                        "line": 30,
                         "column": 30
                       },
                       "end": {
-                        "line": 27,
+                        "line": 30,
                         "column": 39
                       }
                     },
                     "left": {
                       "type": "Identifier",
-                      "start": 680,
-                      "end": 685,
+                      "start": 728,
+                      "end": 733,
                       "loc": {
                         "start": {
-                          "line": 27,
+                          "line": 30,
                           "column": 30
                         },
                         "end": {
-                          "line": 27,
+                          "line": 30,
                           "column": 35
                         },
                         "identifierName": "layer"
@@ -2468,15 +2510,15 @@
                     },
                     "right": {
                       "type": "NumericLiteral",
-                      "start": 688,
-                      "end": 689,
+                      "start": 736,
+                      "end": 737,
                       "loc": {
                         "start": {
-                          "line": 27,
+                          "line": 30,
                           "column": 38
                         },
                         "end": {
-                          "line": 27,
+                          "line": 30,
                           "column": 39
                         }
                       },
@@ -2490,115 +2532,115 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 692,
-                  "end": 755,
+                  "start": 740,
+                  "end": 803,
                   "loc": {
                     "start": {
-                      "line": 27,
+                      "line": 30,
                       "column": 42
                     },
                     "end": {
-                      "line": 29,
+                      "line": 32,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ReturnStatement",
-                      "start": 698,
-                      "end": 751,
+                      "start": 746,
+                      "end": 799,
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 31,
                           "column": 4
                         },
                         "end": {
-                          "line": 28,
+                          "line": 31,
                           "column": 57
                         }
                       },
                       "argument": {
                         "type": "CallExpression",
-                        "start": 705,
-                        "end": 750,
+                        "start": 753,
+                        "end": 798,
                         "loc": {
                           "start": {
-                            "line": 28,
+                            "line": 31,
                             "column": 11
                           },
                           "end": {
-                            "line": 28,
+                            "line": 31,
                             "column": 56
                           }
                         },
                         "callee": {
                           "type": "MemberExpression",
-                          "start": 705,
-                          "end": 735,
+                          "start": 753,
+                          "end": 783,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 31,
                               "column": 11
                             },
                             "end": {
-                              "line": 28,
+                              "line": 31,
                               "column": 41
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 705,
-                            "end": 727,
+                            "start": 753,
+                            "end": 775,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 11
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 33
                               }
                             },
                             "object": {
                               "type": "MemberExpression",
-                              "start": 705,
-                              "end": 718,
+                              "start": 753,
+                              "end": 766,
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 11
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 24
                                 }
                               },
                               "object": {
                                 "type": "ThisExpression",
-                                "start": 705,
-                                "end": 709,
+                                "start": 753,
+                                "end": 757,
                                 "loc": {
                                   "start": {
-                                    "line": 28,
+                                    "line": 31,
                                     "column": 11
                                   },
                                   "end": {
-                                    "line": 28,
+                                    "line": 31,
                                     "column": 15
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "start": 710,
-                                "end": 718,
+                                "start": 758,
+                                "end": 766,
                                 "loc": {
                                   "start": {
-                                    "line": 28,
+                                    "line": 31,
                                     "column": 16
                                   },
                                   "end": {
-                                    "line": 28,
+                                    "line": 31,
                                     "column": 24
                                   },
                                   "identifierName": "tileMaps"
@@ -2609,15 +2651,15 @@
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 719,
-                              "end": 726,
+                              "start": 767,
+                              "end": 774,
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 25
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 31,
                                   "column": 32
                                 },
                                 "identifierName": "tileMap"
@@ -2628,15 +2670,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 728,
-                            "end": 735,
+                            "start": 776,
+                            "end": 783,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 34
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 41
                               },
                               "identifierName": "getTile"
@@ -2648,15 +2690,15 @@
                         "arguments": [
                           {
                             "type": "Identifier",
-                            "start": 737,
-                            "end": 738,
+                            "start": 785,
+                            "end": 786,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 43
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 44
                               },
                               "identifierName": "x"
@@ -2665,15 +2707,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 740,
-                            "end": 741,
+                            "start": 788,
+                            "end": 789,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 46
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 47
                               },
                               "identifierName": "y"
@@ -2682,15 +2724,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 743,
-                            "end": 748,
+                            "start": 791,
+                            "end": 796,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 49
                               },
                               "end": {
-                                "line": 28,
+                                "line": 31,
                                 "column": 54
                               },
                               "identifierName": "layer"
@@ -2708,15 +2750,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-                    "start": 359,
-                    "end": 649,
+                    "start": 407,
+                    "end": 697,
                     "loc": {
                       "start": {
-                        "line": 20,
+                        "line": 23,
                         "column": 2
                       },
                       "end": {
-                        "line": 26,
+                        "line": 29,
                         "column": 5
                       }
                     }
@@ -2726,15 +2768,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-                    "start": 759,
-                    "end": 1057,
+                    "start": 807,
+                    "end": 1105,
                     "loc": {
                       "start": {
-                        "line": 31,
+                        "line": 34,
                         "column": 2
                       },
                       "end": {
-                        "line": 38,
+                        "line": 41,
                         "column": 5
                       }
                     }
@@ -2743,15 +2785,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 1060,
-                "end": 1166,
+                "start": 1108,
+                "end": 1214,
                 "loc": {
                   "start": {
-                    "line": 39,
+                    "line": 42,
                     "column": 2
                   },
                   "end": {
-                    "line": 41,
+                    "line": 44,
                     "column": 3
                   }
                 },
@@ -2759,15 +2801,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 1060,
-                  "end": 1067,
+                  "start": 1108,
+                  "end": 1115,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 2
                     },
                     "end": {
-                      "line": 39,
+                      "line": 42,
                       "column": 9
                     },
                     "identifierName": "setTile"
@@ -2783,15 +2825,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 1069,
-                    "end": 1072,
+                    "start": 1117,
+                    "end": 1120,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 11
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 14
                       },
                       "identifierName": "gid"
@@ -2800,15 +2842,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 1074,
-                    "end": 1075,
+                    "start": 1122,
+                    "end": 1123,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 16
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 17
                       },
                       "identifierName": "x"
@@ -2817,15 +2859,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 1077,
-                    "end": 1078,
+                    "start": 1125,
+                    "end": 1126,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 19
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 20
                       },
                       "identifierName": "y"
@@ -2834,29 +2876,29 @@
                   },
                   {
                     "type": "AssignmentPattern",
-                    "start": 1080,
-                    "end": 1091,
+                    "start": 1128,
+                    "end": 1139,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 22
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 33
                       }
                     },
                     "left": {
                       "type": "Identifier",
-                      "start": 1080,
-                      "end": 1087,
+                      "start": 1128,
+                      "end": 1135,
                       "loc": {
                         "start": {
-                          "line": 39,
+                          "line": 42,
                           "column": 22
                         },
                         "end": {
-                          "line": 39,
+                          "line": 42,
                           "column": 29
                         },
                         "identifierName": "tileMap"
@@ -2865,15 +2907,15 @@
                     },
                     "right": {
                       "type": "NumericLiteral",
-                      "start": 1090,
-                      "end": 1091,
+                      "start": 1138,
+                      "end": 1139,
                       "loc": {
                         "start": {
-                          "line": 39,
+                          "line": 42,
                           "column": 32
                         },
                         "end": {
-                          "line": 39,
+                          "line": 42,
                           "column": 33
                         }
                       },
@@ -2886,29 +2928,29 @@
                   },
                   {
                     "type": "AssignmentPattern",
-                    "start": 1093,
-                    "end": 1102,
+                    "start": 1141,
+                    "end": 1150,
                     "loc": {
                       "start": {
-                        "line": 39,
+                        "line": 42,
                         "column": 35
                       },
                       "end": {
-                        "line": 39,
+                        "line": 42,
                         "column": 44
                       }
                     },
                     "left": {
                       "type": "Identifier",
-                      "start": 1093,
-                      "end": 1098,
+                      "start": 1141,
+                      "end": 1146,
                       "loc": {
                         "start": {
-                          "line": 39,
+                          "line": 42,
                           "column": 35
                         },
                         "end": {
-                          "line": 39,
+                          "line": 42,
                           "column": 40
                         },
                         "identifierName": "layer"
@@ -2917,15 +2959,15 @@
                     },
                     "right": {
                       "type": "NumericLiteral",
-                      "start": 1101,
-                      "end": 1102,
+                      "start": 1149,
+                      "end": 1150,
                       "loc": {
                         "start": {
-                          "line": 39,
+                          "line": 42,
                           "column": 43
                         },
                         "end": {
-                          "line": 39,
+                          "line": 42,
                           "column": 44
                         }
                       },
@@ -2939,115 +2981,115 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 1105,
-                  "end": 1166,
+                  "start": 1153,
+                  "end": 1214,
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 42,
                       "column": 47
                     },
                     "end": {
-                      "line": 41,
+                      "line": 44,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 1111,
-                      "end": 1162,
+                      "start": 1159,
+                      "end": 1210,
                       "loc": {
                         "start": {
-                          "line": 40,
+                          "line": 43,
                           "column": 4
                         },
                         "end": {
-                          "line": 40,
+                          "line": 43,
                           "column": 55
                         }
                       },
                       "expression": {
                         "type": "CallExpression",
-                        "start": 1111,
-                        "end": 1161,
+                        "start": 1159,
+                        "end": 1209,
                         "loc": {
                           "start": {
-                            "line": 40,
+                            "line": 43,
                             "column": 4
                           },
                           "end": {
-                            "line": 40,
+                            "line": 43,
                             "column": 54
                           }
                         },
                         "callee": {
                           "type": "MemberExpression",
-                          "start": 1111,
-                          "end": 1141,
+                          "start": 1159,
+                          "end": 1189,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 43,
                               "column": 4
                             },
                             "end": {
-                              "line": 40,
+                              "line": 43,
                               "column": 34
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 1111,
-                            "end": 1133,
+                            "start": 1159,
+                            "end": 1181,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 4
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 26
                               }
                             },
                             "object": {
                               "type": "MemberExpression",
-                              "start": 1111,
-                              "end": 1124,
+                              "start": 1159,
+                              "end": 1172,
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 4
                                 },
                                 "end": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 17
                                 }
                               },
                               "object": {
                                 "type": "ThisExpression",
-                                "start": 1111,
-                                "end": 1115,
+                                "start": 1159,
+                                "end": 1163,
                                 "loc": {
                                   "start": {
-                                    "line": 40,
+                                    "line": 43,
                                     "column": 4
                                   },
                                   "end": {
-                                    "line": 40,
+                                    "line": 43,
                                     "column": 8
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "start": 1116,
-                                "end": 1124,
+                                "start": 1164,
+                                "end": 1172,
                                 "loc": {
                                   "start": {
-                                    "line": 40,
+                                    "line": 43,
                                     "column": 9
                                   },
                                   "end": {
-                                    "line": 40,
+                                    "line": 43,
                                     "column": 17
                                   },
                                   "identifierName": "tileMaps"
@@ -3058,15 +3100,15 @@
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 1125,
-                              "end": 1132,
+                              "start": 1173,
+                              "end": 1180,
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 18
                                 },
                                 "end": {
-                                  "line": 40,
+                                  "line": 43,
                                   "column": 25
                                 },
                                 "identifierName": "tileMap"
@@ -3077,15 +3119,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 1134,
-                            "end": 1141,
+                            "start": 1182,
+                            "end": 1189,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 27
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 34
                               },
                               "identifierName": "setTile"
@@ -3097,15 +3139,15 @@
                         "arguments": [
                           {
                             "type": "Identifier",
-                            "start": 1143,
-                            "end": 1146,
+                            "start": 1191,
+                            "end": 1194,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 36
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 39
                               },
                               "identifierName": "gid"
@@ -3114,15 +3156,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 1148,
-                            "end": 1149,
+                            "start": 1196,
+                            "end": 1197,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 41
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 42
                               },
                               "identifierName": "x"
@@ -3131,15 +3173,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 1151,
-                            "end": 1152,
+                            "start": 1199,
+                            "end": 1200,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 44
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 45
                               },
                               "identifierName": "y"
@@ -3148,15 +3190,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 1154,
-                            "end": 1159,
+                            "start": 1202,
+                            "end": 1207,
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 47
                               },
                               "end": {
-                                "line": 40,
+                                "line": 43,
                                 "column": 52
                               },
                               "identifierName": "layer"
@@ -3173,15 +3215,15 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-                    "start": 759,
-                    "end": 1057,
+                    "start": 807,
+                    "end": 1105,
                     "loc": {
                       "start": {
-                        "line": 31,
+                        "line": 34,
                         "column": 2
                       },
                       "end": {
-                        "line": 38,
+                        "line": 41,
                         "column": 5
                       }
                     }
@@ -3235,16 +3277,32 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-      "start": 142,
-      "end": 238,
+      "value": "*\n     * Array of TileMap objects\n     ",
+      "start": 115,
+      "end": 158,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 8,
+          "column": 4
+        },
+        "end": {
+          "line": 10,
+          "column": 7
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
+      "start": 190,
+      "end": 286,
+      "loc": {
+        "start": {
+          "line": 14,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 17,
           "column": 5
         }
       }
@@ -3252,15 +3310,15 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-      "start": 359,
-      "end": 649,
+      "start": 407,
+      "end": 697,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 23,
           "column": 2
         },
         "end": {
-          "line": 26,
+          "line": 29,
           "column": 5
         }
       }
@@ -3268,15 +3326,15 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-      "start": 759,
-      "end": 1057,
+      "start": 807,
+      "end": 1105,
       "loc": {
         "start": {
-          "line": 31,
+          "line": 34,
           "column": 2
         },
         "end": {
-          "line": 38,
+          "line": 41,
           "column": 5
         }
       }
@@ -3613,6 +3671,22 @@
       }
     },
     {
+      "type": "CommentBlock",
+      "value": "*\n     * Array of TileMap objects\n     ",
+      "start": 115,
+      "end": 158,
+      "loc": {
+        "start": {
+          "line": 8,
+          "column": 4
+        },
+        "end": {
+          "line": 10,
+          "column": 7
+        }
+      }
+    },
+    {
       "type": {
         "label": "this",
         "keyword": "this",
@@ -3627,15 +3701,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 115,
-      "end": 119,
+      "start": 163,
+      "end": 167,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 4
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 8
         }
       }
@@ -3653,15 +3727,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 119,
-      "end": 120,
+      "start": 167,
+      "end": 168,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 8
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 9
         }
       }
@@ -3679,15 +3753,15 @@
         "binop": null
       },
       "value": "tileMaps",
-      "start": 120,
-      "end": 128,
+      "start": 168,
+      "end": 176,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 9
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 17
         }
       }
@@ -3706,15 +3780,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 129,
-      "end": 130,
+      "start": 177,
+      "end": 178,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 18
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 19
         }
       }
@@ -3732,15 +3806,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 131,
-      "end": 132,
+      "start": 179,
+      "end": 180,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 20
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 21
         }
       }
@@ -3758,15 +3832,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 132,
-      "end": 133,
+      "start": 180,
+      "end": 181,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 21
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 22
         }
       }
@@ -3784,15 +3858,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 133,
-      "end": 134,
+      "start": 181,
+      "end": 182,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 11,
           "column": 22
         },
         "end": {
-          "line": 8,
+          "line": 11,
           "column": 23
         }
       }
@@ -3809,15 +3883,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 137,
-      "end": 138,
+      "start": 185,
+      "end": 186,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 12,
           "column": 2
         },
         "end": {
-          "line": 9,
+          "line": 12,
           "column": 3
         }
       }
@@ -3825,15 +3899,15 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Add a tilemap from a data object\n   * @param {Object} tileMap - The tile map data\n   ",
-      "start": 142,
-      "end": 238,
+      "start": 190,
+      "end": 286,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 14,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 17,
           "column": 5
         }
       }
@@ -3851,15 +3925,15 @@
         "binop": null
       },
       "value": "addTileMap",
-      "start": 241,
-      "end": 251,
+      "start": 289,
+      "end": 299,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 2
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 12
         }
       }
@@ -3876,15 +3950,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 251,
-      "end": 252,
+      "start": 299,
+      "end": 300,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 12
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 13
         }
       }
@@ -3902,15 +3976,15 @@
         "binop": null
       },
       "value": "tileMap",
-      "start": 253,
-      "end": 260,
+      "start": 301,
+      "end": 308,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 14
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 21
         }
       }
@@ -3927,15 +4001,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 261,
-      "end": 262,
+      "start": 309,
+      "end": 310,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 22
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 23
         }
       }
@@ -3952,15 +4026,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 263,
-      "end": 264,
+      "start": 311,
+      "end": 312,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 24
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 25
         }
       }
@@ -3980,15 +4054,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 269,
-      "end": 273,
+      "start": 317,
+      "end": 321,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 4
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 8
         }
       }
@@ -4006,15 +4080,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 273,
-      "end": 274,
+      "start": 321,
+      "end": 322,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 8
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 9
         }
       }
@@ -4032,330 +4106,16 @@
         "binop": null
       },
       "value": "tileMaps",
-      "start": 274,
-      "end": 282,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 9
-        },
-        "end": {
-          "line": 16,
-          "column": 17
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ".",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "start": 282,
-      "end": 283,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 17
-        },
-        "end": {
-          "line": 16,
-          "column": 18
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "push",
-      "start": 283,
-      "end": 287,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 18
-        },
-        "end": {
-          "line": 16,
-          "column": 22
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "(",
-        "beforeExpr": true,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 287,
-      "end": 288,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 22
-        },
-        "end": {
-          "line": 16,
-          "column": 23
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "new",
-        "keyword": "new",
-        "beforeExpr": true,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "new",
-      "start": 289,
-      "end": 292,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 24
-        },
-        "end": {
-          "line": 16,
-          "column": 27
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "TileMap",
-      "start": 293,
-      "end": 300,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 28
-        },
-        "end": {
-          "line": 16,
-          "column": 35
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "(",
-        "beforeExpr": true,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 300,
-      "end": 301,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 35
-        },
-        "end": {
-          "line": 16,
-          "column": 36
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "tileMap",
-      "start": 302,
-      "end": 309,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 37
-        },
-        "end": {
-          "line": 16,
-          "column": 44
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ")",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 310,
-      "end": 311,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 45
-        },
-        "end": {
-          "line": 16,
-          "column": 46
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ")",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 312,
-      "end": 313,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 47
-        },
-        "end": {
-          "line": 16,
-          "column": 48
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ";",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "start": 313,
-      "end": 314,
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 48
-        },
-        "end": {
-          "line": 16,
-          "column": 49
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "return",
-        "keyword": "return",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "return",
-      "start": 319,
-      "end": 325,
-      "loc": {
-        "start": {
-          "line": 17,
-          "column": 4
-        },
-        "end": {
-          "line": 17,
-          "column": 10
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "this",
-        "keyword": "this",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "this",
-      "start": 326,
+      "start": 322,
       "end": 330,
       "loc": {
         "start": {
-          "line": 17,
-          "column": 11
+          "line": 19,
+          "column": 9
         },
         "end": {
-          "line": 17,
-          "column": 15
+          "line": 19,
+          "column": 17
         }
       }
     },
@@ -4376,11 +4136,325 @@
       "end": 331,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
+          "column": 17
+        },
+        "end": {
+          "line": 19,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "push",
+      "start": 331,
+      "end": 335,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 18
+        },
+        "end": {
+          "line": 19,
+          "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 335,
+      "end": 336,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 22
+        },
+        "end": {
+          "line": 19,
+          "column": 23
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "new",
+        "keyword": "new",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "new",
+      "start": 337,
+      "end": 340,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 24
+        },
+        "end": {
+          "line": 19,
+          "column": 27
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "TileMap",
+      "start": 341,
+      "end": 348,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 28
+        },
+        "end": {
+          "line": 19,
+          "column": 35
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 348,
+      "end": 349,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 35
+        },
+        "end": {
+          "line": 19,
+          "column": 36
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "tileMap",
+      "start": 350,
+      "end": 357,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 37
+        },
+        "end": {
+          "line": 19,
+          "column": 44
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 358,
+      "end": 359,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 45
+        },
+        "end": {
+          "line": 19,
+          "column": 46
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 360,
+      "end": 361,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 47
+        },
+        "end": {
+          "line": 19,
+          "column": 48
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ";",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 361,
+      "end": 362,
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 48
+        },
+        "end": {
+          "line": 19,
+          "column": 49
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "return",
+        "keyword": "return",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "return",
+      "start": 367,
+      "end": 373,
+      "loc": {
+        "start": {
+          "line": 20,
+          "column": 4
+        },
+        "end": {
+          "line": 20,
+          "column": 10
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "this",
+        "keyword": "this",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "this",
+      "start": 374,
+      "end": 378,
+      "loc": {
+        "start": {
+          "line": 20,
+          "column": 11
+        },
+        "end": {
+          "line": 20,
+          "column": 15
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ".",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 378,
+      "end": 379,
+      "loc": {
+        "start": {
+          "line": 20,
           "column": 15
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 16
         }
       }
@@ -4398,15 +4472,15 @@
         "binop": null
       },
       "value": "tileMaps",
-      "start": 331,
-      "end": 339,
+      "start": 379,
+      "end": 387,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 16
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 24
         }
       }
@@ -4424,15 +4498,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 339,
-      "end": 340,
+      "start": 387,
+      "end": 388,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 24
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 25
         }
       }
@@ -4450,15 +4524,15 @@
         "binop": null
       },
       "value": "length",
-      "start": 340,
-      "end": 346,
+      "start": 388,
+      "end": 394,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 25
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 31
         }
       }
@@ -4477,15 +4551,15 @@
         "updateContext": null
       },
       "value": "-",
-      "start": 347,
-      "end": 348,
+      "start": 395,
+      "end": 396,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 32
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 33
         }
       }
@@ -4504,15 +4578,15 @@
         "updateContext": null
       },
       "value": 1,
-      "start": 349,
-      "end": 350,
+      "start": 397,
+      "end": 398,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 34
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 35
         }
       }
@@ -4530,15 +4604,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 350,
-      "end": 351,
+      "start": 398,
+      "end": 399,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 35
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 36
         }
       }
@@ -4555,15 +4629,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 354,
-      "end": 355,
+      "start": 402,
+      "end": 403,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 21,
           "column": 2
         },
         "end": {
-          "line": 18,
+          "line": 21,
           "column": 3
         }
       }
@@ -4571,15 +4645,15 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Get the tile GID at a given position\n   * @param {number} x - The x position\n   * @param {number} y - The y position\n   * @param {number} tileMap - The index of the tile map you are checking\n   * @param {number} layer - The index of the layer on the tile map you are checking\n   ",
-      "start": 359,
-      "end": 649,
+      "start": 407,
+      "end": 697,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 23,
           "column": 2
         },
         "end": {
-          "line": 26,
+          "line": 29,
           "column": 5
         }
       }
@@ -4597,15 +4671,15 @@
         "binop": null
       },
       "value": "getTile",
-      "start": 652,
-      "end": 659,
+      "start": 700,
+      "end": 707,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 2
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 9
         }
       }
@@ -4622,15 +4696,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 659,
-      "end": 660,
+      "start": 707,
+      "end": 708,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 9
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 10
         }
       }
@@ -4648,15 +4722,15 @@
         "binop": null
       },
       "value": "x",
-      "start": 661,
-      "end": 662,
+      "start": 709,
+      "end": 710,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 11
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 12
         }
       }
@@ -4674,15 +4748,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 662,
-      "end": 663,
+      "start": 710,
+      "end": 711,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 12
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 13
         }
       }
@@ -4700,15 +4774,15 @@
         "binop": null
       },
       "value": "y",
-      "start": 664,
-      "end": 665,
+      "start": 712,
+      "end": 713,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 14
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 15
         }
       }
@@ -4726,15 +4800,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 665,
-      "end": 666,
+      "start": 713,
+      "end": 714,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 15
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 16
         }
       }
@@ -4752,15 +4826,15 @@
         "binop": null
       },
       "value": "tileMap",
-      "start": 667,
-      "end": 674,
+      "start": 715,
+      "end": 722,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 17
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 24
         }
       }
@@ -4779,15 +4853,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 675,
-      "end": 676,
+      "start": 723,
+      "end": 724,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 25
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 26
         }
       }
@@ -4806,15 +4880,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 677,
-      "end": 678,
+      "start": 725,
+      "end": 726,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 27
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 28
         }
       }
@@ -4832,15 +4906,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 678,
-      "end": 679,
+      "start": 726,
+      "end": 727,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 28
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 29
         }
       }
@@ -4858,15 +4932,15 @@
         "binop": null
       },
       "value": "layer",
-      "start": 680,
-      "end": 685,
+      "start": 728,
+      "end": 733,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 30
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 35
         }
       }
@@ -4885,15 +4959,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 686,
-      "end": 687,
+      "start": 734,
+      "end": 735,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 36
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 37
         }
       }
@@ -4912,15 +4986,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 688,
-      "end": 689,
+      "start": 736,
+      "end": 737,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 38
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 39
         }
       }
@@ -4937,15 +5011,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 690,
-      "end": 691,
+      "start": 738,
+      "end": 739,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 40
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 41
         }
       }
@@ -4962,15 +5036,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 692,
-      "end": 693,
+      "start": 740,
+      "end": 741,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 30,
           "column": 42
         },
         "end": {
-          "line": 27,
+          "line": 30,
           "column": 43
         }
       }
@@ -4990,15 +5064,15 @@
         "updateContext": null
       },
       "value": "return",
-      "start": 698,
-      "end": 704,
+      "start": 746,
+      "end": 752,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 4
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 10
         }
       }
@@ -5018,15 +5092,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 705,
-      "end": 709,
+      "start": 753,
+      "end": 757,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 11
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 15
         }
       }
@@ -5044,15 +5118,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 709,
-      "end": 710,
+      "start": 757,
+      "end": 758,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 15
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 16
         }
       }
@@ -5070,15 +5144,15 @@
         "binop": null
       },
       "value": "tileMaps",
-      "start": 710,
-      "end": 718,
+      "start": 758,
+      "end": 766,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 16
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 24
         }
       }
@@ -5096,15 +5170,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 718,
-      "end": 719,
+      "start": 766,
+      "end": 767,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 24
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 25
         }
       }
@@ -5122,15 +5196,15 @@
         "binop": null
       },
       "value": "tileMap",
-      "start": 719,
-      "end": 726,
+      "start": 767,
+      "end": 774,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 25
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 32
         }
       }
@@ -5148,15 +5222,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 726,
-      "end": 727,
+      "start": 774,
+      "end": 775,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 32
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 33
         }
       }
@@ -5174,15 +5248,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 727,
-      "end": 728,
+      "start": 775,
+      "end": 776,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 33
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 34
         }
       }
@@ -5200,15 +5274,15 @@
         "binop": null
       },
       "value": "getTile",
-      "start": 728,
-      "end": 735,
+      "start": 776,
+      "end": 783,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 34
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 41
         }
       }
@@ -5225,15 +5299,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 735,
-      "end": 736,
+      "start": 783,
+      "end": 784,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 41
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 42
         }
       }
@@ -5251,15 +5325,15 @@
         "binop": null
       },
       "value": "x",
-      "start": 737,
-      "end": 738,
+      "start": 785,
+      "end": 786,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 43
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 44
         }
       }
@@ -5277,15 +5351,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 738,
-      "end": 739,
+      "start": 786,
+      "end": 787,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 44
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 45
         }
       }
@@ -5303,15 +5377,15 @@
         "binop": null
       },
       "value": "y",
-      "start": 740,
-      "end": 741,
+      "start": 788,
+      "end": 789,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 46
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 47
         }
       }
@@ -5329,15 +5403,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 741,
-      "end": 742,
+      "start": 789,
+      "end": 790,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 47
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 48
         }
       }
@@ -5355,15 +5429,15 @@
         "binop": null
       },
       "value": "layer",
-      "start": 743,
-      "end": 748,
+      "start": 791,
+      "end": 796,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 49
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 54
         }
       }
@@ -5380,15 +5454,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 749,
-      "end": 750,
+      "start": 797,
+      "end": 798,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 55
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 56
         }
       }
@@ -5406,15 +5480,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 750,
-      "end": 751,
+      "start": 798,
+      "end": 799,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 31,
           "column": 56
         },
         "end": {
-          "line": 28,
+          "line": 31,
           "column": 57
         }
       }
@@ -5431,15 +5505,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 754,
-      "end": 755,
+      "start": 802,
+      "end": 803,
       "loc": {
         "start": {
-          "line": 29,
+          "line": 32,
           "column": 2
         },
         "end": {
-          "line": 29,
+          "line": 32,
           "column": 3
         }
       }
@@ -5447,15 +5521,15 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Set the tile GID at a given position\n   * @param {*} gid - The gid\n   * @param {*} x - The x position\n   * @param {*} y - The y position\n   * @param {*} tileMap - The index of the tile map you are setting\n   * @param {*} layer - The index of the layer on the tile map you are setting\n   ",
-      "start": 759,
-      "end": 1057,
+      "start": 807,
+      "end": 1105,
       "loc": {
         "start": {
-          "line": 31,
+          "line": 34,
           "column": 2
         },
         "end": {
-          "line": 38,
+          "line": 41,
           "column": 5
         }
       }
@@ -5473,15 +5547,15 @@
         "binop": null
       },
       "value": "setTile",
-      "start": 1060,
-      "end": 1067,
+      "start": 1108,
+      "end": 1115,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 2
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 9
         }
       }
@@ -5498,15 +5572,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1067,
-      "end": 1068,
+      "start": 1115,
+      "end": 1116,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 9
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 10
         }
       }
@@ -5524,15 +5598,15 @@
         "binop": null
       },
       "value": "gid",
-      "start": 1069,
-      "end": 1072,
+      "start": 1117,
+      "end": 1120,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 11
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 14
         }
       }
@@ -5550,15 +5624,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1072,
-      "end": 1073,
+      "start": 1120,
+      "end": 1121,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 14
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 15
         }
       }
@@ -5576,15 +5650,15 @@
         "binop": null
       },
       "value": "x",
-      "start": 1074,
-      "end": 1075,
+      "start": 1122,
+      "end": 1123,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 16
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 17
         }
       }
@@ -5602,15 +5676,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1075,
-      "end": 1076,
+      "start": 1123,
+      "end": 1124,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 17
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 18
         }
       }
@@ -5628,15 +5702,15 @@
         "binop": null
       },
       "value": "y",
-      "start": 1077,
-      "end": 1078,
+      "start": 1125,
+      "end": 1126,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 19
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 20
         }
       }
@@ -5654,15 +5728,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1078,
-      "end": 1079,
+      "start": 1126,
+      "end": 1127,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 20
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 21
         }
       }
@@ -5680,15 +5754,15 @@
         "binop": null
       },
       "value": "tileMap",
-      "start": 1080,
-      "end": 1087,
+      "start": 1128,
+      "end": 1135,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 22
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 29
         }
       }
@@ -5707,15 +5781,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 1088,
-      "end": 1089,
+      "start": 1136,
+      "end": 1137,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 30
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 31
         }
       }
@@ -5734,15 +5808,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 1090,
-      "end": 1091,
+      "start": 1138,
+      "end": 1139,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 32
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 33
         }
       }
@@ -5760,15 +5834,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1091,
-      "end": 1092,
+      "start": 1139,
+      "end": 1140,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 33
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 34
         }
       }
@@ -5786,15 +5860,15 @@
         "binop": null
       },
       "value": "layer",
-      "start": 1093,
-      "end": 1098,
+      "start": 1141,
+      "end": 1146,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 35
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 40
         }
       }
@@ -5813,15 +5887,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 1099,
-      "end": 1100,
+      "start": 1147,
+      "end": 1148,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 41
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 42
         }
       }
@@ -5840,15 +5914,15 @@
         "updateContext": null
       },
       "value": 0,
-      "start": 1101,
-      "end": 1102,
+      "start": 1149,
+      "end": 1150,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 43
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 44
         }
       }
@@ -5865,15 +5939,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1103,
-      "end": 1104,
+      "start": 1151,
+      "end": 1152,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 45
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 46
         }
       }
@@ -5890,15 +5964,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1105,
-      "end": 1106,
+      "start": 1153,
+      "end": 1154,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 42,
           "column": 47
         },
         "end": {
-          "line": 39,
+          "line": 42,
           "column": 48
         }
       }
@@ -5918,15 +5992,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 1111,
-      "end": 1115,
+      "start": 1159,
+      "end": 1163,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 4
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 8
         }
       }
@@ -5944,15 +6018,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1115,
-      "end": 1116,
+      "start": 1163,
+      "end": 1164,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 8
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 9
         }
       }
@@ -5970,15 +6044,15 @@
         "binop": null
       },
       "value": "tileMaps",
-      "start": 1116,
-      "end": 1124,
+      "start": 1164,
+      "end": 1172,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 9
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 17
         }
       }
@@ -5996,15 +6070,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1124,
-      "end": 1125,
+      "start": 1172,
+      "end": 1173,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 17
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 18
         }
       }
@@ -6022,15 +6096,15 @@
         "binop": null
       },
       "value": "tileMap",
-      "start": 1125,
-      "end": 1132,
+      "start": 1173,
+      "end": 1180,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 18
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 25
         }
       }
@@ -6048,15 +6122,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1132,
-      "end": 1133,
+      "start": 1180,
+      "end": 1181,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 25
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 26
         }
       }
@@ -6074,15 +6148,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1133,
-      "end": 1134,
+      "start": 1181,
+      "end": 1182,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 26
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 27
         }
       }
@@ -6100,15 +6174,15 @@
         "binop": null
       },
       "value": "setTile",
-      "start": 1134,
-      "end": 1141,
+      "start": 1182,
+      "end": 1189,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 27
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 34
         }
       }
@@ -6125,15 +6199,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1141,
-      "end": 1142,
+      "start": 1189,
+      "end": 1190,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 34
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 35
         }
       }
@@ -6151,15 +6225,15 @@
         "binop": null
       },
       "value": "gid",
-      "start": 1143,
-      "end": 1146,
+      "start": 1191,
+      "end": 1194,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 36
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 39
         }
       }
@@ -6177,15 +6251,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1146,
-      "end": 1147,
+      "start": 1194,
+      "end": 1195,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 39
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 40
         }
       }
@@ -6203,15 +6277,15 @@
         "binop": null
       },
       "value": "x",
-      "start": 1148,
-      "end": 1149,
+      "start": 1196,
+      "end": 1197,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 41
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 42
         }
       }
@@ -6229,15 +6303,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1149,
-      "end": 1150,
+      "start": 1197,
+      "end": 1198,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 42
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 43
         }
       }
@@ -6255,15 +6329,15 @@
         "binop": null
       },
       "value": "y",
-      "start": 1151,
-      "end": 1152,
+      "start": 1199,
+      "end": 1200,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 44
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 45
         }
       }
@@ -6281,15 +6355,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1152,
-      "end": 1153,
+      "start": 1200,
+      "end": 1201,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 45
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 46
         }
       }
@@ -6307,15 +6381,15 @@
         "binop": null
       },
       "value": "layer",
-      "start": 1154,
-      "end": 1159,
+      "start": 1202,
+      "end": 1207,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 47
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 52
         }
       }
@@ -6332,15 +6406,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1160,
-      "end": 1161,
+      "start": 1208,
+      "end": 1209,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 53
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 54
         }
       }
@@ -6358,15 +6432,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1161,
-      "end": 1162,
+      "start": 1209,
+      "end": 1210,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 43,
           "column": 54
         },
         "end": {
-          "line": 40,
+          "line": 43,
           "column": 55
         }
       }
@@ -6383,15 +6457,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1165,
-      "end": 1166,
+      "start": 1213,
+      "end": 1214,
       "loc": {
         "start": {
-          "line": 41,
+          "line": 44,
           "column": 2
         },
         "end": {
-          "line": 41,
+          "line": 44,
           "column": 3
         }
       }
@@ -6408,15 +6482,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1167,
-      "end": 1168,
+      "start": 1215,
+      "end": 1216,
       "loc": {
         "start": {
-          "line": 42,
+          "line": 45,
           "column": 0
         },
         "end": {
-          "line": 42,
+          "line": 45,
           "column": 1
         }
       }
@@ -6436,15 +6510,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 1170,
-      "end": 1176,
+      "start": 1218,
+      "end": 1224,
       "loc": {
         "start": {
-          "line": 44,
+          "line": 47,
           "column": 0
         },
         "end": {
-          "line": 44,
+          "line": 47,
           "column": 6
         }
       }
@@ -6464,15 +6538,15 @@
         "updateContext": null
       },
       "value": "default",
-      "start": 1177,
-      "end": 1184,
+      "start": 1225,
+      "end": 1232,
       "loc": {
         "start": {
-          "line": 44,
+          "line": 47,
           "column": 7
         },
         "end": {
-          "line": 44,
+          "line": 47,
           "column": 14
         }
       }
@@ -6490,15 +6564,15 @@
         "binop": null
       },
       "value": "MapData",
-      "start": 1185,
-      "end": 1192,
+      "start": 1233,
+      "end": 1240,
       "loc": {
         "start": {
-          "line": 44,
+          "line": 47,
           "column": 15
         },
         "end": {
-          "line": 44,
+          "line": 47,
           "column": 22
         }
       }
@@ -6516,15 +6590,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1192,
-      "end": 1193,
+      "start": 1240,
+      "end": 1241,
       "loc": {
         "start": {
-          "line": 44,
+          "line": 47,
           "column": 22
         },
         "end": {
-          "line": 44,
+          "line": 47,
           "column": 23
         }
       }
@@ -6542,15 +6616,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1194,
-      "end": 1194,
+      "start": 1242,
+      "end": 1242,
       "loc": {
         "start": {
-          "line": 45,
+          "line": 48,
           "column": 0
         },
         "end": {
-          "line": 45,
+          "line": 48,
           "column": 0
         }
       }

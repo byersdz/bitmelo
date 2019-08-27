@@ -1,6 +1,5 @@
 
-export const SCALE_CONSTANT = 1;
-export const SCALE_FIT_WINDOW = 2;
+import standardPalette from './standardPalette';
 
 /**
  * Represents a game screen for low resolution games.
@@ -9,31 +8,115 @@ export const SCALE_FIT_WINDOW = 2;
  */
 class Screen {
   constructor() {
-    this.conainerId = 'minnow-container';
+    /**
+     * The id of the container div to make the Screen a child of
+     */
+    this.conainerId = 'bitmelo-container';
+    /**
+     * The dom object the Screen will be a child of.
+     */
     this.container = null;
+    /**
+     * How many pixels wide is the screen?
+     */
     this.width = 320;
+    /**
+     * How many pixels tall is the screen?
+     */
     this.height = 180;
+    /**
+     * The scale of the pixels in the screen.
+     */
     this.scale = 3;
+    /**
+     * Maximum scale of the screen.
+     */
     this.maxScale = -1;
+    /**
+     * Minimum scale of the screen.
+     */
     this.minScale = 1;
-    this.scaleMode = SCALE_CONSTANT;
+    /**
+     * The scale mode of the screen.
+     * Screen.SCALE_CONSTANT: 1,
+     * Screen.SCALE_FIT_WINDOW: 2
+     */
+    this.scaleMode = Screen.SCALE_CONSTANT;
+
+    /**
+     * How many horizontal pixels to ignore when using a dynamic scale.
+     */
     this.horizontalScaleCushion = 0;
+
+    /**
+     * How many vertical pixels to ignore when using a dynamic scale.
+     */
     this.verticalScaleCushion = 0;
+
+    /**
+     * When using dynamic scaling, should we rescale when the window is resized?
+     */
     this.rescaleOnWindowResize = true;
+
+    /**
+     * Should the cursor be hidden when placed over the screen?
+     */
     this.hideCursor = false;
+
+    /**
+     * Reference to an instance of TileData used by the screen.
+     */
     this.tileData = null;
+
+    /**
+     * Reference to an instance of MapData used by the screen.
+     */
     this.mapData = null;
+
+    /**
+     * Reference to an instance of FontData used by the screen.
+     */
     this.fontData = null;
 
+    /**
+     * Callback that is called whenever the scale is changed.
+     * Used by the Engine to change values in the Input class.
+     */
     this.onScaleChange = null;
 
+    /**
+     * The DOM canvas used by this screen.
+     */
     this.canvas = null;
+
+    /**
+     * The canvas context used by this screen.
+     */
     this._context = null;
+
+    /**
+     * The image data of the context.
+     */
     this._imageData = null;
+
+    /**
+     * The pixel data drawn to using Screen methods such as setPixel or drawLine
+     */
     this._screenData = null;
+
+    /**
+     * The palette data given by the user
+     */
     this._palette = null;
+
+    /**
+     * Typed Array of paletted data generated from _palette and used by the Screen.
+     */
     this._generatedPalette = null;
 
+    /**
+     * Does this computer use little endian formatting?
+     */
     this._isLittleEndian = true;
   }
 
@@ -50,7 +133,7 @@ class Screen {
 
     this._setScale();
 
-    if ( this.rescaleOnWindowResize && this.scaleMode !== SCALE_CONSTANT ) {
+    if ( this.rescaleOnWindowResize && this.scaleMode !== Screen.SCALE_CONSTANT ) {
       window.onresize = () => {
         this._setScale();
         this._setCanvasStyle();
@@ -81,22 +164,17 @@ class Screen {
     }
 
     if ( !this._palette ) {
-      // set the default palette
-      this._palette = [
-        [0x00, 0x00, 0x00],
-        [0x00, 0x00, 0x00],
-        [0xff, 0xff, 0xff],
-        [0xff, 0x00, 0x00],
-        [0x00, 0xff, 0x00],
-        [0x00, 0x00, 0xff],
-      ];
+      this._palette = standardPalette;
     }
 
     this._buildPalette();
   }
 
+  /**
+   * Sets the scale of the Screen.
+   */
   _setScale() {
-    if ( this.scaleMode === SCALE_FIT_WINDOW ) {
+    if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {
       const maxWidth = window.innerWidth - this.horizontalScaleCushion;
       const maxHeight = window.innerHeight - this.verticalScaleCushion;
 
@@ -117,6 +195,9 @@ class Screen {
     }
   }
 
+  /**
+   * Sets css styling on the container dom object.
+   */
   _setCanvasStyle() {
     let containerStyle = '';
     containerStyle += `width: ${ this.width * this.scale }px;`;
@@ -146,12 +227,12 @@ class Screen {
    *
    * @example
    * const palette = [
-   *  [0, 0, 0], // black, the 0 index is transparent
-   *  [0, 0, 0], // black
-   *  [255, 255, 255], // white
-   *  [255, 0, 0], // red
-   *  [0, 255, 0], // green
-   *  [0, 0, 255] // blue
+   *  '000000', // black, the 0 index is transparent
+   *  '000000', // black
+   *  'ffffff', // white
+   *  'ff0000', // red
+   *  '00ff00', // green
+   *  '0000ff' // blue
    * ];
    *
    * screen.setPalette( palette );
@@ -185,21 +266,47 @@ class Screen {
     if ( this._isLittleEndian ) {
       for ( let i = 0; i < this._palette.length; i += 1 ) {
         currentColor = this._palette[i];
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        if ( typeof currentColor === 'string' ) {
+          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );
+          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );
+          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );
+        }
+        else {
+          r = currentColor[0];
+          g = currentColor[1];
+          b = currentColor[2];
+        }
         this._generatedPalette[i] = (
           ( 255 << 24 ) // a
-          | ( currentColor[2] << 16 ) // b
-          | ( currentColor[1] << 8 ) // g
-          | currentColor[0] // r
+          | ( b << 16 ) // b
+          | ( g << 8 ) // g
+          | r // r
         );
       }
     }
     else {
       for ( let i = 0; i < this._palette.length; i += 1 ) {
         currentColor = this._palette[i];
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        if ( typeof currentColor === 'string' ) {
+          r = Number.parseInt( currentColor.slice( 0, 2 ), 16 );
+          g = Number.parseInt( currentColor.slice( 2, 4 ), 16 );
+          b = Number.parseInt( currentColor.slice( 4, 6 ), 16 );
+        }
+        else {
+          r = currentColor[0];
+          g = currentColor[1];
+          b = currentColor[2];
+        }
         this._generatedPalette[i] = (
-          ( currentColor[0] << 24 ) // r
-          | ( currentColor[1] << 16 ) // g
-          | ( currentColor[2] << 8 ) // b
+          ( r << 24 ) // r
+          | ( g << 16 ) // g
+          | ( b << 8 ) // b
           | 255 // a
         );
       }
@@ -607,8 +714,9 @@ class Screen {
    * @param {number} gid - the gid of the tile
    * @param {*} x - the x position on the screen
    * @param {*} y - the y position on the screen
+   * @param {*} flip - should we flip the tile? 0: no, 1: x, 2: y, 3: xy
    */
-  drawTile( gid, x, y ) {
+  drawTile( gid, x, y, flip = 0 ) {
     if ( !gid ) {
       return;
     }
@@ -631,10 +739,29 @@ class Screen {
       return;
     }
 
+    const flipX = flip === 1 || flip === 3;
+    const flipY = flip === 2 || flip === 3;
+
+    let xIndex = 0;
+    let yIndex = 0;
+
     const basePosition = ( gid - 1 ) * tileSize * tileSize;
     for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
       for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
-        const paletteId = this.tileData.data[basePosition + tileY * tileSize + tileX];
+        if ( flipX ) {
+          xIndex = tileSize - tileX - 1;
+        }
+        else {
+          xIndex = tileX;
+        }
+
+        if ( flipY ) {
+          yIndex = tileSize - tileY - 1;
+        }
+        else {
+          yIndex = tileY;
+        }
+        const paletteId = this.tileData.data[basePosition + yIndex * tileSize + xIndex];
         this.setPixel( x + tileX, y + tileY, paletteId );
       }
     }
@@ -644,32 +771,39 @@ class Screen {
    * Draw a TileMap layer to the screen
    * @param {number} x - origin x position on the TileMap
    * @param {number} y - origin y position on the TileMap
-   * @param {number} width - how many tiles wide to draw
-   * @param {number} height - how many tiles high to draw
+   * @param {number} width - how many tiles wide to draw, -1 is the width of the Tile Map
+   * @param {number} height - how many tiles high to draw, -1 is the height of the Tile Map
    * @param {number} screenX - origin x position on the screen
    * @param {number} screenY - origin y position on the screen
    * @param {number} map - the index of the tilemap to draw
    * @param {number} layer - the index of the layer to draw
    */
-  drawMap( x, y, width, height, screenX, screenY, map = 0, layer = 0 ) {
+  drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0 ) {
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
-    let maxX = x + width;
-    let maxY = y + height;
+    let maxX = x + width - 1;
+    let maxY = y + height - 1;
 
-    if ( maxX >= tileMap.width ) {
+    if ( maxX >= tileMap.width || width < 0 ) {
       maxX = tileMap.width - 1;
     }
-    if ( maxY >= tileMap.height ) {
+    if ( maxY >= tileMap.height || height < 0 ) {
       maxY = tileMap.height - 1;
     }
+
+    const offsetX = x * tileSize;
+    const offsetY = y * tileSize;
 
     for ( let currentY = y; currentY <= maxY; currentY += 1 ) {
       for ( let currentX = x; currentX <= maxX; currentX += 1 ) {
         const gid = layerData[currentY * tileMap.width + currentX];
         if ( gid ) {
-          this.drawTile( gid, screenX + currentX * tileSize, screenY + currentY * tileSize );
+          this.drawTile(
+            gid,
+            screenX + currentX * tileSize - offsetX,
+            screenY + currentY * tileSize - offsetY,
+          );
         }
       }
     }
@@ -743,5 +877,8 @@ class Screen {
     this._context.putImageData( this._imageData, 0, 0 );
   }
 }
+
+Screen.SCALE_CONSTANT = 1;
+Screen.SCALE_FIT_WINDOW = 2;
 
 export default Screen;
