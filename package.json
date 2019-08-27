@@ -1,7 +1,7 @@
 {
   "name": "bitmelo",
-  "version": "0.3.12",
-  "description": "A game engine for low resolution games.",
+  "version": "1.0.0",
+  "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
