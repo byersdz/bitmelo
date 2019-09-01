@@ -153,6 +153,14 @@ class Input {
     window.addEventListener( 'keydown', this._keyDown.bind( this ), false );
     window.addEventListener( 'keyup', this._keyUp.bind( this ), false );
 
+    window.onfocus = () => {
+      this.clearInput();
+    };
+
+    window.onblur = () => {
+      this.clearInput();
+    };
+
     if ( this.canvas ) {
       this.canvas.oncontextmenu = ( e ) => {
         e.preventDefault();
@@ -171,6 +179,14 @@ class Input {
    * @param {*} e
    */
   _keyDown( e ) {
+    // stop losing focus with certain keys
+    if (
+      e.which === 9 // tab
+      || e.which === 18 // alt
+    ) {
+      e.preventDefault();
+    }
+
     if ( e.code ) {
       this._keysRaw[Keys.codesToKeyCodes[e.code]] = 1;
     }

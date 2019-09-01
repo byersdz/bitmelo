@@ -169,6 +169,9 @@ engine.onUpdate = () => {
   }
   engine.screen.drawText( 'The quick, \u20acbrown! Fox jumps over the lazy. Dog.', 0, 100, 2, 1, 0 );
   engine.screen.drawChar( 'B'.charCodeAt( 0 ), 0, 0, 3 );
+
+  // console.log( engine.realTimeSinceInit );
+  // console.log( engine.realTimeSinceGameStart );
 };
 
 engine.begin();

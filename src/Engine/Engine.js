@@ -82,17 +82,31 @@ class Engine {
      */
     this.audio = new Audio();
 
+    /**
+     * The number of seconds since init was called
+     */
+    this.realTimeSinceInit = 0;
+
+    /**
+     * The number of seconds since the game was started
+     */
+    this.realTimeSinceGameStart = 0;
+
     this.fontData.addFont( standardFont );
     this.fontData.addFont( smallFont );
 
     this._hasBegun = false;
     this._update = this._update.bind( this );
+    this._initTime = 0;
+    this._gameStartTime = 0;
   }
 
   /**
    * Begin running the engine. This will perform initial setup, call the onInit function, and begin the game loop
    */
   begin() {
+    const date = new Date();
+    this._initTime = date.getTime();
     if ( this.onInit ) {
       this.onInit();
     }
@@ -137,6 +151,7 @@ class Engine {
       } );
     }
     else {
+      this._gameStartTime = date.getTime();
       this._hasBegun = true;
       this.audio.init();
       requestAnimationFrame( this._update );
@@ -147,10 +162,21 @@ class Engine {
    * Game loop
    */
   _update() {
+    const date = new Date();
+    const msSinceInit = date.getTime() - this._initTime;
+    this.realTimeSinceInit = msSinceInit / 1000;
+
     this.input.pollInput();
+
+    // the first game frame after transition
+    if ( this.clickToBegin && this.startTransitionFrames === 0 ) {
+      this._gameStartTime = date.getTime();
+      this.startTransitionFrames -= 1;
+    }
 
     if ( this.clickToBegin && this.startTransitionFrames > 0 ) {
       this.startTransitionFrames -= 1;
+
       if ( this.onUpdateStartTransition ) {
         this.clearInput();
         this.onUpdateStartTransition();
@@ -160,6 +186,7 @@ class Engine {
       }
     }
     else if ( this.onUpdate ) {
+      this.realTimeSinceGameStart = ( date.getTime() - this._gameStartTime ) / 1000;
       this.onUpdate();
       this.audio.update();
     }
