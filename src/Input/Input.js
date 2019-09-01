@@ -152,6 +152,8 @@ class Input {
   init() {
     window.addEventListener( 'keydown', this._keyDown.bind( this ), false );
     window.addEventListener( 'keyup', this._keyUp.bind( this ), false );
+    window.addEventListener( 'focus', this._focus.bind( this ), false );
+    window.addEventListener( 'blur', this._blur.bind( this ), false );
 
     if ( this.canvas ) {
       this.canvas.oncontextmenu = ( e ) => {
@@ -164,6 +166,14 @@ class Input {
       this.canvas.addEventListener( 'pointerup', this._pointerUp.bind( this ), false );
       this.canvas.addEventListener( 'pointerleave', this._pointerLeave.bind( this ), false );
     }
+  }
+
+  _focus( e ) {
+    console.log( e );
+  }
+
+  _blur( e ) {
+    console.log( e );
   }
 
   /**
