@@ -20,6 +20,12 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: ['eslint-loader']
+      },
+      {
+        test: /\.txt$/i,
+        use: [
+          'raw-loader'
+        ]
       }
     ]
   }

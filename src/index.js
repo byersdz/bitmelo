@@ -1,21 +1,6 @@
 
-export { default as Audio } from './Audio/Audio';
-export { default as Frequencies } from './Audio/Frequencies';
-export { default as Notes } from './Audio/Notes';
-export { default as Sound } from './Audio/Sound';
+// import libText from '../lib/bitmelo.min.txt';
 
-export { default as Font } from './FontData/Font';
-export { default as FontData } from './FontData/FontData';
+export * from './libIndex';
 
-export { default as Input } from './Input/Input';
-export { default as Keys } from './Input/Keys';
-
-export { default as MapData } from './MapData/MapData';
-export { default as TileMap } from './MapData/TileMap';
-
-export { default as Engine } from './Engine/Engine';
-
-export { default as Screen } from './Screen/Screen';
-export { default as standardPalette } from './Screen/standardPalette';
-
-export { default as TileData } from './TileData/TileData';
+export { default as libText } from '../lib/bitmelo.min.txt';

@@ -1,3 +1,10 @@
+import { Engine, libText } from '../../src/index';
+import { Screen } from '../../lib/bitmelo.1.1.1.min';
+
+console.log( Screen );
+console.log( Engine );
+console.log( libText );
+/*
 import { Engine } from '../../src/index';
 import Screen from '../../src/Screen/Screen';
 import Notes from '../../src/Audio/Notes';
@@ -175,3 +182,4 @@ engine.onUpdate = () => {
 };
 
 engine.begin();
+*/
