@@ -102,7 +102,7 @@ class ConvertProject {
         tileSize,
       );
       tileset.width = currentProjectTileset.width;
-      tileset.height = currentProjectTileset.width;
+      tileset.height = currentProjectTileset.height;
       tileset.format = 'array';
       tileset.name = 'test';
       tileset.tileSize = tileSize;
