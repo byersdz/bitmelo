@@ -1,5 +1,5 @@
 import { ConvertProject, Engine } from '../../src/index';
-import testProject from '../data/tilebug.project.json';
+import testProject from '../data/WelcomeDemo.project.json';
 import './style.css';
 
 const { project } = testProject;
@@ -23,14 +23,17 @@ for ( let i = 0; i < convertedTilemaps.length; i += 1 ) {
 let hasDrawn = false;
 engine.onUpdate = () => {
   if ( !hasDrawn ) {
-    engine.screen.drawMap(
+    engine.screen.drawTile(
+      28,
       0,
       0,
-      -1,
-      -1,
+    );
+    engine.screen.drawTile(
+      1,
+      16,
       0,
       0,
-      0,
+      270,
     );
     hasDrawn = true;
   }
