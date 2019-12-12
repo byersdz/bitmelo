@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "clean-builds": "node utils/cleanlib.js",
@@ -27,6 +28,8 @@
   },
   "homepage": "https://github.com/byersdz/bitmelo#readme",
   "devDependencies": {
+    "babel-jest": "^24.9.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "css-loader": "^2.1.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
@@ -41,6 +44,9 @@
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
+  },
+  "babel": {
+    "plugins": ["transform-es2015-modules-commonjs"]
   },
   "jest": {
     "moduleNameMapper": {
