@@ -4,6 +4,7 @@ import TileData from '../TileData/TileData';
 import MapData from '../MapData/MapData';
 import FontData from '../FontData/FontData';
 import Audio from '../Audio/Audio';
+import ConvertProject from '../ConvertProject/ConvertProject';
 
 import standardFont from '../FontData/standard.font.json';
 import smallFont from '../FontData/small.font.json';
@@ -99,6 +100,51 @@ class Engine {
     this._update = this._update.bind( this );
     this._initTime = 0;
     this._gameStartTime = 0;
+  }
+
+  /**
+   * Add project data from the Bitmelo Editor to the engine
+   */
+  addProjectData( projectData ) {
+    const { project } = projectData;
+    const { sounds } = projectData.sound;
+    const { tilesets } = projectData.tileset;
+    const { tilemaps } = projectData.tilemap;
+
+    // engine settings
+    this.clickToBegin = project.misc.clickToBegin;
+    this.startTransitionFrames = project.misc.startTransitionFrames;
+
+    // screen settings
+    this.screen.width = project.screen.width;
+    this.screen.height = project.screen.height;
+    this.screen.scaleMode = project.screen.scaleMode;
+    this.screen.scale = project.screen.scale;
+    this.screen.minScale = project.screen.minScale;
+    this.screen.maxScale = project.screen.maxScale;
+    this.screen.horizontalScaleCushion = project.screen.horizontalScaleCushion;
+    this.screen.verticalScaleCushion = project.screen.verticalScaleCushion;
+    this.screen.rescaleOnWindowResize = project.screen.rescaleOnWindowResize;
+    this.screen.hideCursor = project.misc.hideCursor;
+    this.screen.setPalette( projectData.palette.colors );
+
+    // tilesets
+    this.tileData.tileSize = project.tileSize;
+    const convertedTilesets = ConvertProject.convertProjectTilesets( tilesets, project.tileSize );
+    for ( let i = 0; i < convertedTilesets.length; i += 1 ) {
+      this.tileData.addTileset( convertedTilesets[i] );
+    }
+
+    // tilemaps
+    const convertedTilemaps = ConvertProject.convertProjectTilemaps( tilemaps );
+    for ( let i = 0; i < convertedTilemaps.length; i += 1 ) {
+      this.mapData.addTileMap( convertedTilemaps[i] );
+    }
+
+    // sounds
+    for ( let i = 0; i < sounds.length; i += 1 ) {
+      this.audio.addSound( sounds[i] );
+    }
   }
 
   /**
