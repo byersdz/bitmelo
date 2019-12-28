@@ -6,6 +6,8 @@ export { default as Sound } from './Audio/Sound';
 
 export { default as ConvertProject } from './ConvertProject/ConvertProject';
 
+export { default as ConvertData } from './ConvertData/ConvertData';
+
 export { default as Font } from './FontData/Font';
 export { default as FontData } from './FontData/FontData';
 
