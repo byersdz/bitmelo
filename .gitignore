@@ -80,4 +80,5 @@ typings/
 .dynamodb/
 
 docs/
-demo/dist/
+demo/dist/bundle.js
+demo/dist/bundle.js.map

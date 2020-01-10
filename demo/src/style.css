@@ -6,7 +6,6 @@
 
 #bitmelo-container canvas {
   padding: 0;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
   display: block;
 }

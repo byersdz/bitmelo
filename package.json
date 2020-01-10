@@ -1,15 +1,21 @@
 {
   "name": "bitmelo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
+    "clean-builds": "node utils/cleanlib.js",
     "build": "webpack --config config/webpack.config.lib.js",
     "build-min": "webpack --config config/webpack.config.lib.min.js",
+    "build-txt": "webpack --config config/webpack.config.lib.txt.js",
+    "rename-txt": "node utils/renameTxtLib.js",
+    "build-all": "npm run clean-builds && npm run build-txt && npm run rename-txt && npm run build && npm run build-min",
     "build-docs": "esdoc",
     "demo-start": "webpack-dev-server --open --config demo/config/webpack.demo.dev.js",
-    "demo-build": "webpack --config demo/config/webpack.demo.prod.js"
+    "demo-build": "webpack --config demo/config/webpack.demo.prod.js",
+    "prepublishOnly": "npm run build-all"
   },
   "repository": {
     "type": "git",
@@ -23,6 +29,8 @@
   },
   "homepage": "https://github.com/byersdz/bitmelo#readme",
   "devDependencies": {
+    "babel-jest": "^24.9.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "css-loader": "^2.1.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
@@ -32,14 +40,23 @@
     "eslint-plugin-import": "^2.16.0",
     "jest": "^24.1.0",
     "style-loader": "^0.23.1",
+    "wait-on": "^3.3.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
   },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ]
+  },
   "jest": {
     "moduleNameMapper": {
       "^SRC(.*)$": "<rootDir>/src$1"
     }
+  },
+  "dependencies": {
+    "raw-loader": "^3.1.0"
   }
 }

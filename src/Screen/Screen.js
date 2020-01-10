@@ -712,11 +712,12 @@ class Screen {
   /**
    * Draw a tile
    * @param {number} gid - the gid of the tile
-   * @param {*} x - the x position on the screen
-   * @param {*} y - the y position on the screen
-   * @param {*} flip - should we flip the tile? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} x - the x position on the screen
+   * @param {number} y - the y position on the screen
+   * @param {number} flip - should we flip the tile? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} rotate - The number of degrees to rotate. Only 90 degree increments are supported.
    */
-  drawTile( gid, x, y, flip = 0 ) {
+  drawTile( gid, x, y, flip = 0, rotate = 0 ) {
     if ( !gid ) {
       return;
     }
@@ -745,6 +746,18 @@ class Screen {
     let xIndex = 0;
     let yIndex = 0;
 
+    // only rotate in 90 degree increments
+    let rotValue = 0;
+    if ( rotate === 90 || rotate === -270 ) {
+      rotValue = 1;
+    }
+    else if ( rotate === 180 || rotate === -180 ) {
+      rotValue = 2;
+    }
+    else if ( rotate === 270 || rotate === -90 ) {
+      rotValue = 3;
+    }
+
     const basePosition = ( gid - 1 ) * tileSize * tileSize;
     for ( let tileY = 0; tileY < tileSize; tileY += 1 ) {
       for ( let tileX = 0; tileX < tileSize; tileX += 1 ) {
@@ -761,8 +774,24 @@ class Screen {
         else {
           yIndex = tileY;
         }
+
         const paletteId = this.tileData.data[basePosition + yIndex * tileSize + xIndex];
-        this.setPixel( x + tileX, y + tileY, paletteId );
+
+        if ( rotValue === 3 ) {
+          // 270
+          this.setPixel( x + tileSize - tileY - 1, y + tileX, paletteId );
+        }
+        else if ( rotValue === 2 ) {
+          // 180
+          this.setPixel( x + tileSize - tileX - 1, y + tileSize - tileY - 1, paletteId );
+        }
+        else if ( rotValue === 1 ) {
+          // 90
+          this.setPixel( x + tileY, y + tileSize - tileX - 1, paletteId );
+        }
+        else {
+          this.setPixel( x + tileX, y + tileY, paletteId );
+        }
       }
     }
   }

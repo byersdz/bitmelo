@@ -1,177 +1,219 @@
-import { Engine } from '../../src/index';
-import Screen from '../../src/Screen/Screen';
-import Notes from '../../src/Audio/Notes';
-import tileset from '../data/test.tileset.json';
-import tileset2 from '../data/test2.tileset.json';
-import './style.css';
-import Sound from '../../src/Audio/Sound';
+/* eslint-disable */
 
-const position = {
-  x: 0,
-  y: 0,
-};
+import { Engine, Notes } from '../../src/index';
+import testProject from '../data/WelcomeDemo.project.json';
+import './style.css';
 
 const engine = new Engine();
 
+engine.addProjectData( testProject );
+
+// Globals
+let inp = null; // input
+let scr = null; // screen
+let aud = null; // audio
+
+const player = {
+	x: 90,
+	y: 30,
+	speed: 0.5,
+	isWalking: false,
+	flip: 0,
+	framesSinceWalkStart: 0
+}
+
+const mushrooms = [
+	{
+		x: 36,
+		y: 30,
+		wasGrabbed: false
+	},
+	{
+		x: 130,
+		y: 70,
+		wasGrabbed: false
+	}
+];
+
+let numberOfGrabbedMushrooms = 0;
+
+let randomColor = 1;
+
+// initialization
 engine.onInit = () => {
-  engine.screen.hideCursor = true;
-  engine.screen.scale = 4;
-  engine.screen.scaleMode = Screen.SCALE_FIT_WINDOW;
-  engine.tileData.addTileset( tileset );
-  engine.tileData.addTileset( tileset2 );
+	inp = engine.input;
+	scr = engine.screen;
+	aud = engine.audio;
 
-  const testSound = {
-    volumeTics: [
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-    ],
-    pitchTics: [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      8,
-      8,
-      0,
-    ],
-    arpTics: [
-      0,
-      0,
-      0,
-      0,
-      0,
-      8,
-      8,
-      8,
-      8,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      8,
-      8,
-      8,
-      8,
-      0,
-      0,
-      8,
-      8,
-      0,
-      0,
-    ],
-    wave: 0,
-    useVolumeLoop: false,
-    volumeLoopStart: 0,
-    volumeLoopEnd: 31,
-    usePitchLoop: true,
-    pitchLoopStart: 28,
-    pitchLoopEnd: 31,
-    useArpLoop: false,
-    arpLoopStart: 28,
-    arpLoopEnd: 31,
-    pitchScale: 400,
-    releaseLength: 10,
-    releaseMode: Sound.RELEASE_EXPO,
-  };
-  engine.audio.addSound( testSound );
+	updateColors();
 };
 
+
+// update loop
 engine.onUpdate = () => {
-  if ( engine.input.left.pressed ) {
-    position.x -= 1;
-  }
-  if ( engine.input.right.pressed ) {
-    position.x += 1;
-  }
-  if ( engine.input.up.pressed ) {
-    position.y += 1;
-  }
-  if ( engine.input.down.pressed ) {
-    position.y -= 1;
-  }
+  scr.clear( 1 );
 
-  if ( engine.input.mouse.left.down ) {
-    engine.audio.playSound( 0, Notes.C4, -1, 1, 0 );
-  }
-  else if ( engine.input.mouse.left.up ) {
-    engine.audio.stopAllInfiniteSounds();
-  }
+	scr.drawMap(
+	  0,      // originX on map
+	  0,      // originY on map
+	  -1,     // width
+	  -1,     // height
+	  0,      // screenX
+	  0,      // screenY
+	  0       // tilemap index
+	);
 
-  engine.screen.clear( 5 );
-  engine.screen.drawLine( position.x, position.y, 100, 100, 4 );
-  const color = engine.input.mouse.left.pressed ? 3 : 4;
-  if ( !engine.input.mouse.isOffScreen ) {
-    engine.screen.setPixel( engine.input.mouse.position.x, engine.input.mouse.position.y, color );
-  }
-  engine.screen.drawText( 'The quick, \u20acbrown! Fox jumps over the lazy. Dog.', 0, 100, 2, 1, 0 );
-  engine.screen.drawChar( 'B'.charCodeAt( 0 ), 0, 0, 3 );
+	drawMushrooms();
 
-  // console.log( engine.realTimeSinceInit );
-  // console.log( engine.realTimeSinceGameStart );
+	updatePlayer();
+
+	let textMainColor = 2;
+	if ( numberOfGrabbedMushrooms > 0 ) {
+		textMainColor = randomColor;
+	}
+
+	let textPositionOffset = 0;
+	if ( numberOfGrabbedMushrooms > 1 ) {
+		textPositionOffset = Math.sin( engine.realTimeSinceGameStart * 10 ) * 8;
+	}
+
+	scr.drawText(
+		'Welcome to Bitmelo!',
+		50,
+		90 + Math.floor( textPositionOffset ),
+		textMainColor,
+		1,
+		0
+	);
 };
+
+function drawMushrooms() {
+	mushrooms.forEach( mushroom => {
+		if ( !mushroom.wasGrabbed ) {
+			scr.drawTile(
+				61,
+				mushroom.x - 8, // center on the position
+				mushroom.y - 8, // center on the position
+				0
+			);
+		}
+	} );
+}
+
+function updatePlayer() {
+	let newX = player.x;
+	let newY = player.y;
+
+	let isWalking = false;
+	if ( inp.left.pressed ) {
+		newX -= player.speed;
+		isWalking = true;
+		player.flip = 1;
+	}
+	else if ( inp.right.pressed ) {
+		newX += player.speed;
+		isWalking = true;
+		player.flip = 0;
+	}
+
+	if ( inp.down.pressed ) {
+		newY -= player.speed;
+		isWalking = true;
+	}
+	else if ( inp.up.pressed ) {
+		newY += player.speed;
+		isWalking = true;
+	}
+
+	if ( isWalking ) {
+		player.framesSinceWalkStart += 1;
+	}
+
+	// play or stop audio
+	if ( isWalking && !player.isWalking ) {
+		// started walking
+		player.framesSinceWalkStart = 0;
+
+		let note = Notes.C4;
+		if ( numberOfGrabbedMushrooms > 1 ) {
+			note = Notes.C2;
+		}
+		else if ( numberOfGrabbedMushrooms > 0 ) {
+			note = Notes.C3;
+		}
+
+		aud.playInfiniteSound(
+			0,
+			note,
+			0.5,
+			2
+		);
+	}
+	else if ( !isWalking && player.isWalking ) {
+		// stopped walking
+		aud.stopInfiniteSound( 0 );
+	}
+
+	player.isWalking = isWalking;
+
+	// make sure we are not colliding with the fence
+	if (
+		newX >= 16
+		&& newX < scr.width - 16
+		&& newY >= 24
+		&& newY < scr.height - 16
+	) {
+		player.x = newX;
+		player.y = newY;
+	}
+
+	// check mushroom collisions
+	for ( let i = 0; i < mushrooms.length; i += 1 ) {
+		const mushroom = mushrooms[i];
+		if ( !mushroom.wasGrabbed ) {
+			const deltaX = Math.abs( player.x - mushroom.x );
+			const deltaY= Math.abs( player.y - mushroom.y );
+			const distance = Math.sqrt( deltaX * deltaX + deltaY * deltaY );
+
+			// player has grabbed a mushroom
+			if ( distance <= 12 ) {
+				mushroom.wasGrabbed = true;
+				numberOfGrabbedMushrooms += 1;
+
+				aud.playSound(
+					1,
+					Notes.E3,
+					48,
+					0.25,
+					1
+				);
+			}
+		}
+	}
+
+	// draw the player
+	let frameGID = 1;
+	if ( player.isWalking ) {
+		if ( player.framesSinceWalkStart % 16 < 8 ) {
+			frameGID = 2;
+		}
+		else {
+			frameGID = 3;
+		}
+	}
+
+	scr.drawTile(
+		frameGID,
+		Math.floor( player.x ) - 8, // center the tile on the position
+		Math.floor( player.y ) - 8, // center the tile on the position
+		player.flip
+	);
+}
+
+function updateColors() {
+	randomColor = Math.floor( Math.random() * 16 ) + 1;
+	setTimeout( updateColors, 100 );
+}
+
 
 engine.begin();
