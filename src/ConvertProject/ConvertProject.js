@@ -59,7 +59,7 @@ class ConvertProject {
             // run and compressed string
             const runArray = ConvertData.compressedStringToArray( currentLayer.data );
             dataArray = ConvertProject.convertToTilesetArray(
-              ConvertData.compressedStringToArray( runArray ),
+              ConvertData.runToArray( runArray ),
               currentProjectTileset.width * tileSize,
               currentProjectTileset.height * tileSize,
               tileSize,

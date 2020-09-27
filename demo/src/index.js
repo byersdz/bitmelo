@@ -1,7 +1,8 @@
 /* eslint-disable */
 
 import { Engine, Notes } from '../../src/index';
-import testProject from '../data/WelcomeDemo.project.json';
+// import testProject from '../data/WelcomeDemo.project.json';
+import testProject from '../data/WelcomeTransfer.json';
 import './style.css';
 
 const engine = new Engine();

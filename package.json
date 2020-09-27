@@ -1,9 +1,8 @@
 {
   "name": "bitmelo",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
-  "type": "module",
   "scripts": {
     "test": "jest",
     "clean-builds": "node utils/cleanlib.js",

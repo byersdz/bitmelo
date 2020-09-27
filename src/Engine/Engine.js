@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import Screen from '../Screen/Screen';
 import Input from '../Input/Input';
 import TileData from '../TileData/TileData';
@@ -106,10 +107,31 @@ class Engine {
    * Add project data from the Bitmelo Editor to the engine
    */
   addProjectData( projectData ) {
-    const { project } = projectData;
-    const { sounds } = projectData.sound;
-    const { tilesets } = projectData.tileset;
-    const { tilemaps } = projectData.tilemap;
+    let format = 'project';
+    if ( projectData.format ) {
+      format = projectData.format;
+    }
+
+    let project = null;
+    let sounds = null;
+    let tilesets = null;
+    let tilemaps = null;
+    let palette = null;
+
+    if ( format === 'transfer' ) {
+      project = projectData.project;
+      sounds = projectData.sounds;
+      tilesets = projectData.tilesets;
+      tilemaps = projectData.tilemaps;
+      palette = projectData.palette;
+    }
+    else {
+      project = projectData.project;
+      sounds = projectData.sound.sounds;
+      tilesets = projectData.tileset.tilesets;
+      tilemaps = projectData.tilemap.tilemaps;
+      palette = projectData.palette;
+    }
 
     // engine settings
     this.clickToBegin = project.misc.clickToBegin;
@@ -126,7 +148,7 @@ class Engine {
     this.screen.verticalScaleCushion = project.screen.verticalScaleCushion;
     this.screen.rescaleOnWindowResize = project.screen.rescaleOnWindowResize;
     this.screen.hideCursor = project.misc.hideCursor;
-    this.screen.setPalette( projectData.palette.colors );
+    this.screen.setPalette( palette.colors );
 
     // tilesets
     this.tileData.tileSize = project.tileSize;
