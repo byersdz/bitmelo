@@ -3,7 +3,6 @@
   "version": "1.2.3",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
-  "type": "module",
   "scripts": {
     "test": "jest",
     "clean-builds": "node utils/cleanlib.js",
