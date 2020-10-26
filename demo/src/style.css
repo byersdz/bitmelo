@@ -1,11 +1,23 @@
-
-#bitmelo-container {
-  margin: 0 auto;
-  padding: 0;
+html, body {
+  height: 100%;
 }
 
-#bitmelo-container canvas {
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#play-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-width: 0;
+  margin: 0;
   padding: 0;
-  margin: auto;
-  display: block;
 }
