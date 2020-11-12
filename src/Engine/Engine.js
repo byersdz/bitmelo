@@ -101,6 +101,19 @@ class Engine {
     this._update = this._update.bind( this );
     this._initTime = 0;
     this._gameStartTime = 0;
+    this._frameStartTime = new Date().getTime();
+
+    /**
+     * Whether we have detected a condition that should stop the games execution.
+     * Likely from an infinite loop.
+     */
+    this._didCrash = false;
+
+    /**
+     * How many milliseconds an update frame can run until the game crashes.
+     * This is to stop an infinite loop from locking up the browser forever.
+     */
+    this._msToFrameCrash = 5000;
   }
 
   /**
@@ -195,6 +208,14 @@ class Engine {
     this.screen.mapData = this.mapData;
     this.screen.fontData = this.fontData;
 
+    if ( this._didCrash ) {
+      this.screen.clear( 1 );
+      this.screen.drawText( 'Game Crashed', 10, 10, 2, 1, 0 );
+      this.screen._setCanvasStyle();
+      this.screen.drawScreen();
+      return;
+    }
+
     if ( this.clickToBegin ) {
       if ( this.onDrawStartScreen ) {
         this.onDrawStartScreen();
@@ -224,6 +245,7 @@ class Engine {
       this.audio.init();
       requestAnimationFrame( this._update );
     }
+    this._didCrash = false;
   }
 
   /**
@@ -231,6 +253,7 @@ class Engine {
    */
   _update() {
     const date = new Date();
+    this._frameStartTime = date.getTime();
     const msSinceInit = date.getTime() - this._initTime;
     this.realTimeSinceInit = msSinceInit / 1000;
 
@@ -260,7 +283,35 @@ class Engine {
     }
 
     this.screen.drawScreen();
-    requestAnimationFrame( this._update );
+
+    if ( this._didCrash ) {
+      this.screen.clear( 1 );
+      this.screen.drawText( 'Game Crashed', 10, 10, 2, 1, 0 );
+      this.screen.drawScreen();
+    }
+    else {
+      requestAnimationFrame( this._update );
+    }
+  }
+
+  /**
+   * Should we break out of a loop?
+   * This is used by instrumented code in case a frame is taking long enough that
+   * the game should crash instead of locking up the browser.
+   */
+  shouldBreak() {
+    if ( this._didCrash ) {
+      return true;
+    }
+
+    const currentTime = new Date().getTime();
+    const msSinceFrameStart = currentTime - this._frameStartTime;
+    if ( msSinceFrameStart > this._msToFrameCrash ) {
+      this._didCrash = true;
+      return true;
+    }
+
+    return false;
   }
 }
 
