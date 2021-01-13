@@ -179,10 +179,17 @@ class Input {
    * @param {*} e
    */
   _keyDown( e ) {
-    // stop losing focus with certain keys
+    // prevent default to stop page interactions with certain keys
     if (
       e.which === 9 // tab
+      || e.which === 13 // enter
       || e.which === 18 // alt
+      || e.which === 32 // space
+      || e.which === 37 // left arrow
+      || e.which === 38 // up arrow
+      || e.which === 39 // right arrow
+      || e.which === 40 // down arrow
+
     ) {
       e.preventDefault();
     }
