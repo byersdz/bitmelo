@@ -21,12 +21,22 @@ class Audio {
      * Time in second we should look ahead during update to add audio events to the context.
      */
     this.lookAheadTime = 0.05; // in seconds
+
+    /**
+     * This mode runs the engine without drawing to a canvas or playing audio.
+     * This is useful to use the engine to generate image data.
+     */
+    this.dataOnlyMode = false;
   }
 
   /**
    * Initialize the audio context. Called automatically by the Engine.
    */
   init() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.context = new AudioContext();
   }
@@ -35,6 +45,10 @@ class Audio {
    * Update audio events. Called automatically by the Engine in the update loop.
    */
   update() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     let sound = null;
     for ( let i = 0; i < this.sounds.length; i += 1 ) {
       sound = this.sounds[i];
@@ -92,6 +106,10 @@ class Audio {
    * @param {*} speed
    */
   playSound( soundIndex, note, duration = 32, volume = 1, speed = 0 ) {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     if ( soundIndex >= this.sounds.length || soundIndex < 0 ) {
       console.error( 'Invalid sound index' );
       return;
@@ -183,6 +201,10 @@ class Audio {
    * @param {*} speed
    */
   playInfiniteSound( soundIndex, note, volume, speed ) {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     const sound = this.sounds[soundIndex];
     if ( sound.isPlayingInfiniteSound ) {
       this.stopInfiniteSound( soundIndex );

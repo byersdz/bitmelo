@@ -1,6 +1,6 @@
 {
   "name": "bitmelo",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
   "scripts": {

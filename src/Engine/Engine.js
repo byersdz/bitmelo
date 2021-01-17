@@ -94,6 +94,12 @@ class Engine {
      */
     this.realTimeSinceGameStart = 0;
 
+    /**
+     * This mode runs the engine without drawing to a canvas or playing audio.
+     * This is useful to use the engine to generate image data.
+     */
+    this.dataOnlyMode = false;
+
     this.fontData.addFont( standardFont );
     this.fontData.addFont( smallFont );
 
@@ -102,6 +108,7 @@ class Engine {
     this._initTime = 0;
     this._gameStartTime = 0;
     this._frameStartTime = new Date().getTime();
+    this._paused = false;
 
     /**
      * Whether we have detected a condition that should stop the games execution.
@@ -192,12 +199,14 @@ class Engine {
       this.onInit();
     }
 
+    this.screen.dataOnlyMode = this.dataOnlyMode;
     this.screen.conainerId = this.containerId;
     this.screen.init();
     this.screen.onScaleChange = ( scale ) => {
       this.input.canvasScale = scale;
     };
 
+    this.input.dataOnlyMode = this.dataOnlyMode;
     this.input.canvas = this.screen.canvas;
     this.input.canvasScale = this.screen.scale;
     this.input.screenWidth = this.screen.width;
@@ -207,6 +216,7 @@ class Engine {
     this.screen.tileData = this.tileData;
     this.screen.mapData = this.mapData;
     this.screen.fontData = this.fontData;
+    this.audio.dataOnlyMode = this.dataOnlyMode;
 
     if ( this._didCrash ) {
       this.screen.clear( 1 );
@@ -216,7 +226,7 @@ class Engine {
       return;
     }
 
-    if ( this.clickToBegin ) {
+    if ( this.clickToBegin && !this.dataOnlyMode ) {
       if ( this.onDrawStartScreen ) {
         this.onDrawStartScreen();
       }
@@ -248,10 +258,44 @@ class Engine {
     this._didCrash = false;
   }
 
+  pause() {
+    this._paused = true;
+  }
+
+  unpause() {
+    this._paused = false;
+    requestAnimationFrame( this._update );
+  }
+
+  isPaused() {
+    return this._paused;
+  }
+
   /**
    * Game loop
    */
   _update() {
+    if ( this._paused ) {
+      return;
+    }
+
+    this.advanceFrame();
+
+    if ( this._didCrash ) {
+      this.screen.clear( 1 );
+      this.screen.drawText( 'Game Crashed', 10, 10, 2, 1, 0 );
+      this.screen.drawScreen();
+    }
+    else {
+      requestAnimationFrame( this._update );
+    }
+  }
+
+  advanceFrame() {
+    if ( this._didCrash ) {
+      return;
+    }
+
     const date = new Date();
     this._frameStartTime = date.getTime();
     const msSinceInit = date.getTime() - this._initTime;
@@ -283,15 +327,6 @@ class Engine {
     }
 
     this.screen.drawScreen();
-
-    if ( this._didCrash ) {
-      this.screen.clear( 1 );
-      this.screen.drawText( 'Game Crashed', 10, 10, 2, 1, 0 );
-      this.screen.drawScreen();
-    }
-    else {
-      requestAnimationFrame( this._update );
-    }
   }
 
   /**
