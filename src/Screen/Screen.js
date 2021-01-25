@@ -873,6 +873,96 @@ class Screen {
   }
 
   /**
+   * Draw a section of a tile map
+   * @param {number} gid - the gid of bottom left tile in the section
+   * @param {number} width - the width in tiles of the section
+   * @param {number} height - the height in tiles of the section
+   * @param {number} screenX - the x position on the screen
+   * @param {number} screenY - the y position on the screen
+   * @param {number} flip - should we flip the tiles? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} rotate - The number of degrees to rotate. Only 90 degree increments are supported.
+   */
+  drawTileSection( gid, width, height, screenX, screenY, flip = 0, rotate = 0 ) {
+    const tileSectionData = this.tileData.getTileSectionData( gid, width, height );
+    if ( tileSectionData ) {
+      this.drawArray(
+        tileSectionData.data,
+        tileSectionData.width,
+        tileSectionData.height,
+        screenX,
+        screenY,
+        flip,
+        rotate,
+      );
+    }
+  }
+
+  /**
+   * Draw an array
+   * @param {array} arrayData - array of palette data
+   * @param {number} arrayWidth - the width of the array data
+   * @param {number} arrayHeight - the height of the array data
+   * @param {number} screenX - the x position on the screen
+   * @param {number} screenY - the y position on the screen
+   * @param {number} flip - should we flip the tiles? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} rotate - The number of degrees to rotate. Only 90 degree increments are supported.
+   */
+  drawArray( arrayData, arrayWidth, arrayHeight, screenX, screenY, flip = 0, rotate = 0 ) {
+    const flipX = flip === 1 || flip === 3;
+    const flipY = flip === 2 || flip === 3;
+
+    let rotValue = 0;
+    if ( rotate === 90 || rotate === -270 ) {
+      rotValue = 1;
+    }
+    else if ( rotate === 180 || rotate === -180 ) {
+      rotValue = 2;
+    }
+    else if ( rotate === 270 || rotate === -90 ) {
+      rotValue = 3;
+    }
+
+    let xIndex = 0;
+    let yIndex = 0;
+
+    for ( let y = 0; y < arrayHeight; y += 1 ) {
+      for ( let x = 0; x < arrayWidth; x += 1 ) {
+        if ( flipX ) {
+          xIndex = arrayWidth - x - 1;
+        }
+        else {
+          xIndex = x;
+        }
+
+        if ( flipY ) {
+          yIndex = arrayHeight - y - 1;
+        }
+        else {
+          yIndex = y;
+        }
+
+        const paletteId = arrayData[yIndex * arrayWidth + xIndex];
+
+        if ( rotValue === 3 ) {
+          // 270
+          this.setPixel( screenX + arrayHeight - y - 1, screenY + x, paletteId );
+        }
+        else if ( rotValue === 2 ) {
+          // 180
+          this.setPixel( screenX + arrayWidth - x - 1, screenY + arrayHeight - y - 1, paletteId );
+        }
+        else if ( rotValue === 1 ) {
+          // 90
+          this.setPixel( screenX + y, screenY + arrayWidth - x - 1, paletteId );
+        }
+        else {
+          this.setPixel( screenX + x, screenY + y, paletteId );
+        }
+      }
+    }
+  }
+
+  /**
    * Draw a TileMap layer to the screen
    * @param {number} x - origin x position on the TileMap
    * @param {number} y - origin y position on the TileMap

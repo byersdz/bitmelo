@@ -91,6 +91,80 @@ class TileData {
     }
     return y * width + x + firstGid;
   }
+
+  /**
+   * Get the tileset info for a given gid
+   * @param {number} gid - the gid of the tile
+   */
+  getTilesetInfoForGid( gid ) {
+    if ( !this.tilesets || this.tilesets.length === 0 || !gid ) {
+      return null;
+    }
+
+    let tilesetIndex = 0;
+    for ( let i = 0; i < this.tilesets.length; i += 1 ) {
+      const tileset = this.tilesets[i];
+      if ( tileset.firstGid <= gid ) {
+        tilesetIndex = i;
+      }
+      else {
+        break;
+      }
+    }
+
+    return {
+      firstGid: this.tilesets[tilesetIndex].firstGid,
+      width: this.tilesets[tilesetIndex].width,
+      height: this.tilesets[tilesetIndex].height,
+      index: tilesetIndex,
+    };
+  }
+
+  /**
+   * Get the array data for a tile section
+   * @param {number} gid - the gid of the bottom left tile
+   * @param {number} tileWidth - the width in tiles of the tile section
+   * @param {number} tileHeight - the height in tiles of the tile section
+   */
+  getTileSectionData( gid, tileWidth = 1, tileHeight = 1 ) {
+    const tilesetInfo = this.getTilesetInfoForGid( gid );
+
+    if ( !tilesetInfo ) {
+      return null;
+    }
+
+    const { tileSize } = this;
+
+    const localGid = gid - tilesetInfo.firstGid;
+    const localY = Math.floor( localGid / tilesetInfo.width );
+    const localX = localGid - localY * tilesetInfo.width;
+
+    const data = new Uint8ClampedArray( tileWidth * tileHeight * tileSize * tileSize );
+    const width = tileWidth * tileSize;
+    const height = tileHeight * tileSize;
+
+    for ( let tileY = 0; tileY < tileHeight; tileY += 1 ) {
+      for ( let tileX = 0; tileX < tileWidth; tileX += 1 ) {
+        if ( tileX + localX >= tilesetInfo.width || tileY + localY >= tilesetInfo.height ) {
+          // tile is outside of tileset
+          break;
+        }
+
+        const tileGid = localGid + tileY * tilesetInfo.width + tileX + tilesetInfo.firstGid;
+        const basePosition = ( tileGid - 1 ) * tileSize * tileSize;
+        for ( let y = 0; y < tileSize; y += 1 ) {
+          for ( let x = 0; x < tileSize; x += 1 ) {
+            const paletteId = this.data[basePosition + y * tileSize + x];
+            const targetX = tileX * tileSize + x;
+            const targetY = tileY * tileSize + y;
+            data[targetY * width + targetX] = paletteId;
+          }
+        }
+      }
+    }
+
+    return { data, width, height };
+  }
 }
 
 export default TileData;
