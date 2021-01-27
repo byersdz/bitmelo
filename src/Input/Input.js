@@ -139,17 +139,28 @@ class Input {
      * Was the right mouse button down last frame?
      */
     this._lastMouseRight = false;
+
     /**
      * Force the right mouse button state to be down this frame.
      * Used for the edge case in which a mouse button is clicked up and down all in the span of one frame.
      */
     this._forceMouseRightDown = false;
+
+    /**
+     * This mode runs the engine without drawing to a canvas or playing audio.
+     * This is useful to use the engine to generate image data.
+     */
+    this.dataOnlyMode = false;
   }
 
   /**
    * Do initial setup. Add event listeners.
    */
   init() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     window.addEventListener( 'keydown', this._keyDown.bind( this ), false );
     window.addEventListener( 'keyup', this._keyUp.bind( this ), false );
 

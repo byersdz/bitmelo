@@ -90,6 +90,12 @@ class Screen {
     this.canvas = null;
 
     /**
+     * This mode runs the engine without drawing to a canvas or playing audio.
+     * This is useful to use the engine to generate image data.
+     */
+    this.dataOnlyMode = false;
+
+    /**
      * The canvas context used by this screen.
      */
     this._context = null;
@@ -124,6 +130,14 @@ class Screen {
    * Do initial setup such as creating the canvas and building the palette
    */
   init() {
+    if ( this.dataOnlyMode ) {
+      this._screenData = new Uint8ClampedArray( this.width * this.height );
+      if ( !this._palette ) {
+        this._palette = standardPalette;
+      }
+      return;
+    }
+
     this.container = document.getElementById( this.conainerId );
 
     this.canvas = document.createElement( 'canvas' );
@@ -174,6 +188,10 @@ class Screen {
    * Sets the scale of the Screen.
    */
   _setScale() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {
       const maxWidth = window.innerWidth - this.horizontalScaleCushion;
       const maxHeight = window.innerHeight - this.verticalScaleCushion;
@@ -199,6 +217,10 @@ class Screen {
    * Sets css styling on the container dom object.
    */
   _setCanvasStyle() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     let containerStyle = '';
     containerStyle += `width: ${ this.width * this.scale }px;`;
     containerStyle += `height: ${ this.height * this.scale }px;`;
@@ -324,6 +346,10 @@ class Screen {
     if ( !paletteId ) {
       return;
     }
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
     if ( x < 0 || x >= this.width || y < 0 || y >= this.height ) {
       return;
     }
@@ -349,6 +375,10 @@ class Screen {
    * @param {*} y - y position
    */
   getPixel( x, y ) {
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
     return this._screenData[y * this.width + x];
   }
 
@@ -374,6 +404,15 @@ class Screen {
    * @param {*} paletteId - palette index to be drawn
    */
   drawLine( x1, y1, x2, y2, paletteId ) {
+    // eslint-disable-next-line no-param-reassign
+    x1 = Math.floor( x1 );
+    // eslint-disable-next-line no-param-reassign
+    y1 = Math.floor( y1 );
+    // eslint-disable-next-line no-param-reassign
+    x2 = Math.floor( x2 );
+    // eslint-disable-next-line no-param-reassign
+    y2 = Math.floor( y2 );
+
     if ( x1 === x2 && y1 === y2 ) {
       // same coordinate, draw a pixel
       this.setPixel( x1, x2, paletteId );
@@ -520,6 +559,15 @@ class Screen {
    * @param {*} paletteId - the palette color to draw
    */
   drawRect( x, y, width, height, paletteId ) {
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
+    // eslint-disable-next-line no-param-reassign
+    width = Math.floor( width );
+    // eslint-disable-next-line no-param-reassign
+    height = Math.floor( height );
+
     if ( x >= this.width ) {
       return;
     }
@@ -572,6 +620,15 @@ class Screen {
    * @param {*} paletteId - the palette color to draw
    */
   drawRectBorder( x, y, width, height, paletteId ) {
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
+    // eslint-disable-next-line no-param-reassign
+    width = Math.floor( width );
+    // eslint-disable-next-line no-param-reassign
+    height = Math.floor( height );
+
     if ( x >= this.width ) {
       return;
     }
@@ -624,6 +681,13 @@ class Screen {
       return;
     }
 
+    // eslint-disable-next-line no-param-reassign
+    centerX = Math.floor( centerX );
+    // eslint-disable-next-line no-param-reassign
+    centerY = Math.floor( centerY );
+    // eslint-disable-next-line no-param-reassign
+    radius = Math.floor( radius );
+
     if ( radius === 1 ) {
       this.drawCircleBorder( centerX, centerY, radius, paletteId );
       this.setPixel( centerX, centerY, paletteId );
@@ -663,6 +727,13 @@ class Screen {
     if ( radius <= 0 ) {
       return;
     }
+
+    // eslint-disable-next-line no-param-reassign
+    centerX = Math.floor( centerX );
+    // eslint-disable-next-line no-param-reassign
+    centerY = Math.floor( centerY );
+    // eslint-disable-next-line no-param-reassign
+    radius = Math.floor( radius );
 
     let x = 0;
     let y = radius;
@@ -721,6 +792,11 @@ class Screen {
     if ( !gid ) {
       return;
     }
+
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
 
     if ( x >= this.width ) {
       return;
@@ -797,6 +873,96 @@ class Screen {
   }
 
   /**
+   * Draw a section of a tile map
+   * @param {number} gid - the gid of bottom left tile in the section
+   * @param {number} width - the width in tiles of the section
+   * @param {number} height - the height in tiles of the section
+   * @param {number} screenX - the x position on the screen
+   * @param {number} screenY - the y position on the screen
+   * @param {number} flip - should we flip the tiles? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} rotate - The number of degrees to rotate. Only 90 degree increments are supported.
+   */
+  drawTileSection( gid, width, height, screenX, screenY, flip = 0, rotate = 0 ) {
+    const tileSectionData = this.tileData.getTileSectionData( gid, width, height );
+    if ( tileSectionData ) {
+      this.drawArray(
+        tileSectionData.data,
+        tileSectionData.width,
+        tileSectionData.height,
+        screenX,
+        screenY,
+        flip,
+        rotate,
+      );
+    }
+  }
+
+  /**
+   * Draw an array
+   * @param {array} arrayData - array of palette data
+   * @param {number} arrayWidth - the width of the array data
+   * @param {number} arrayHeight - the height of the array data
+   * @param {number} screenX - the x position on the screen
+   * @param {number} screenY - the y position on the screen
+   * @param {number} flip - should we flip the tiles? 0: no, 1: x, 2: y, 3: xy
+   * @param {number} rotate - The number of degrees to rotate. Only 90 degree increments are supported.
+   */
+  drawArray( arrayData, arrayWidth, arrayHeight, screenX, screenY, flip = 0, rotate = 0 ) {
+    const flipX = flip === 1 || flip === 3;
+    const flipY = flip === 2 || flip === 3;
+
+    let rotValue = 0;
+    if ( rotate === 90 || rotate === -270 ) {
+      rotValue = 1;
+    }
+    else if ( rotate === 180 || rotate === -180 ) {
+      rotValue = 2;
+    }
+    else if ( rotate === 270 || rotate === -90 ) {
+      rotValue = 3;
+    }
+
+    let xIndex = 0;
+    let yIndex = 0;
+
+    for ( let y = 0; y < arrayHeight; y += 1 ) {
+      for ( let x = 0; x < arrayWidth; x += 1 ) {
+        if ( flipX ) {
+          xIndex = arrayWidth - x - 1;
+        }
+        else {
+          xIndex = x;
+        }
+
+        if ( flipY ) {
+          yIndex = arrayHeight - y - 1;
+        }
+        else {
+          yIndex = y;
+        }
+
+        const paletteId = arrayData[yIndex * arrayWidth + xIndex];
+
+        if ( rotValue === 3 ) {
+          // 270
+          this.setPixel( screenX + arrayHeight - y - 1, screenY + x, paletteId );
+        }
+        else if ( rotValue === 2 ) {
+          // 180
+          this.setPixel( screenX + arrayWidth - x - 1, screenY + arrayHeight - y - 1, paletteId );
+        }
+        else if ( rotValue === 1 ) {
+          // 90
+          this.setPixel( screenX + y, screenY + arrayWidth - x - 1, paletteId );
+        }
+        else {
+          this.setPixel( screenX + x, screenY + y, paletteId );
+        }
+      }
+    }
+  }
+
+  /**
    * Draw a TileMap layer to the screen
    * @param {number} x - origin x position on the TileMap
    * @param {number} y - origin y position on the TileMap
@@ -808,6 +974,11 @@ class Screen {
    * @param {number} layer - the index of the layer to draw
    */
   drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0 ) {
+    // eslint-disable-next-line no-param-reassign
+    screenX = Math.floor( screenX );
+    // eslint-disable-next-line no-param-reassign
+    screenY = Math.floor( screenY );
+
     const tileMap = this.mapData.tileMaps[map];
     const layerData = tileMap.layers[layer];
     const { tileSize } = this.tileData;
@@ -849,6 +1020,11 @@ class Screen {
    * @param {number} font - the index of the font to use
    */
   drawText( text, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
+
     const currentFont = this.fontData.fonts[font];
     let currentX = x;
     for ( let i = 0; i < text.length; i += 1 ) {
@@ -869,6 +1045,11 @@ class Screen {
    * @param {number} font - the index of the font to use
    */
   drawChar( charCode, x, y, paletteId, outlinePaletteId = 0, font = 0 ) {
+    // eslint-disable-next-line no-param-reassign
+    x = Math.floor( x );
+    // eslint-disable-next-line no-param-reassign
+    y = Math.floor( y );
+
     const currentFont = this.fontData.fonts[font];
     const { tileSize, originX, originY } = currentFont;
     const basePosition = currentFont.baseIndexForChar( charCode );
@@ -889,6 +1070,10 @@ class Screen {
    * draw the data from {@link _screenData} to the canvas
    */
   drawScreen() {
+    if ( this.dataOnlyMode ) {
+      return;
+    }
+
     const buffer = new ArrayBuffer( this._imageData.data.length );
     const data8 = new Uint8ClampedArray( buffer );
     const data32 = new Uint32Array( buffer );
