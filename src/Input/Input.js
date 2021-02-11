@@ -1,5 +1,21 @@
 import Keys from './Keys';
 
+const allowDefaultKeys = [
+  27,
+  112,
+  113,
+  114,
+  115,
+  116,
+  117,
+  118,
+  119,
+  120,
+  121,
+  122,
+  123,
+];
+
 /**
  * Handle game input
  */
@@ -82,6 +98,22 @@ class Input {
      */
     this._buttonsToKeys = new Uint8ClampedArray( 32 );
 
+    /**
+     * Maps standard game buttons to alternate keyboard keys
+     */
+    this._buttonsToAltKeys = new Uint8ClampedArray( 32 );
+
+    /**
+     * gamepad button states for the current frame
+     */
+    this._currentJoyButtons = new Uint8ClampedArray( 20 );
+
+    /**
+     * gamepad button states for the last frame
+     */
+    this._lastJoyButtons = new Uint8ClampedArray( 20 );
+
+
     // default button mappings
     this._buttonsToKeys[Input.GAME_LEFT] = Keys.LEFT_ARROW;
     this._buttonsToKeys[Input.GAME_RIGHT] = Keys.RIGHT_ARROW;
@@ -102,8 +134,31 @@ class Input {
     this._buttonsToKeys[Input.MENU_UP] = Keys.UP_ARROW;
     this._buttonsToKeys[Input.MENU_DOWN] = Keys.DOWN_ARROW;
 
-    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;
-    this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.MENU_BACK] = Keys.X_KEY;
+
+    // default alt button mappings
+    this._buttonsToAltKeys[Input.GAME_LEFT] = Keys.J_KEY;
+    this._buttonsToAltKeys[Input.GAME_RIGHT] = Keys.L_KEY;
+    this._buttonsToAltKeys[Input.GAME_UP] = Keys.I_KEY;
+    this._buttonsToAltKeys[Input.GAME_DOWN] = Keys.K_KEY;
+
+    this._buttonsToAltKeys[Input.GAME_ACTION_ONE] = Keys.SPACE;
+    this._buttonsToAltKeys[Input.GAME_ACTION_TWO] = Keys.D_KEY;
+    this._buttonsToAltKeys[Input.GAME_ACTION_THREE] = Keys.C_KEY;
+    this._buttonsToAltKeys[Input.GAME_ACTION_FOUR] = Keys.V_KEY;
+    this._buttonsToAltKeys[Input.GAME_LEFT_TRIGGER] = Keys.SHIFT;
+    this._buttonsToAltKeys[Input.GAME_RIGHT_TRIGGER] = Keys.ALT;
+
+    this._buttonsToAltKeys[Input.GAME_PAUSE] = Keys.ENTER;
+
+    this._buttonsToAltKeys[Input.MENU_LEFT] = Keys.J_KEY;
+    this._buttonsToAltKeys[Input.MENU_RIGHT] = Keys.L_KEY;
+    this._buttonsToAltKeys[Input.MENU_UP] = Keys.I_KEY;
+    this._buttonsToAltKeys[Input.MENU_DOWN] = Keys.K_KEY;
+
+    this._buttonsToAltKeys[Input.MENU_CONFIRM] = Keys.SPACE;
+    this._buttonsToAltKeys[Input.MENU_BACK] = Keys.D_KEY;
 
     /**
      * Standard game button states for the current frame.
@@ -190,18 +245,8 @@ class Input {
    * @param {*} e
    */
   _keyDown( e ) {
-    // prevent default to stop page interactions with certain keys
-    if (
-      e.which === 9 // tab
-      || e.which === 13 // enter
-      || e.which === 18 // alt
-      || e.which === 32 // space
-      || e.which === 37 // left arrow
-      || e.which === 38 // up arrow
-      || e.which === 39 // right arrow
-      || e.which === 40 // down arrow
-
-    ) {
+    // prevent default on all keys but escape and function keys
+    if ( !allowDefaultKeys.includes( e.which ) ) {
       e.preventDefault();
     }
 
@@ -302,10 +347,34 @@ class Input {
    * Called automatically by the Engine.
    */
   pollInput() {
+    for ( let i = 0; i < 20; i += 1 ) {
+      this._lastJoyButtons[i] = this._currentJoyButtons[i];
+      this._currentJoyButtons[i] = 0;
+    }
+
+    try {
+      const gamePads = navigator.getGamepads();
+      for ( let i = 0; i < gamePads.length; i += 1 ) {
+        const gamePad = gamePads[i];
+        if ( gamePad ) {
+          for ( let b = 0; b < gamePad.buttons.length; b += 1 ) {
+            if ( b < 20 && gamePad.buttons[i].pressed ) {
+              this._currentJoyButtons[i] = 1;
+            }
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line no-empty
+    catch ( err ) {}
+
     for ( let i = 0; i < 256; i += 1 ) {
       this._lastKeys[i] = this._currentKeys[i];
       this._currentKeys[i] = this._keysRaw[i];
     }
+    // index 0 is always off
+    this._lastKeys[0] = 0;
+    this._currentKeys[0] = 0;
 
     this._updateButtons();
 
@@ -369,7 +438,12 @@ class Input {
    * @param {number} buttonCode
    */
   getButtonPressed( buttonCode ) {
-    return this.getKeyPressed( this._buttonsToKeys[buttonCode] );
+    const key = this._buttonsToKeys[buttonCode];
+    const altKey = this._buttonsToAltKeys[buttonCode];
+
+    const keyPressed = this._currentKeys[key];
+    const altKeyPressed = this._currentKeys[altKey];
+    return keyPressed || altKeyPressed;
   }
 
   /**
@@ -377,7 +451,21 @@ class Input {
    * @param {number} buttonCode
    */
   getButtonDown( buttonCode ) {
-    return this.getKeyDown( this._buttonsToKeys[buttonCode] );
+    const currentPressed = this.getButtonPressed( buttonCode );
+
+    if ( currentPressed ) {
+      const key = this._buttonsToKeys[buttonCode];
+      const altKey = this._buttonsToAltKeys[buttonCode];
+
+      const lastKeyPressed = this._lastKeys[key];
+      const lastAltKeyPressed = this._lastKeys[altKey];
+
+      if ( !lastKeyPressed && !lastAltKeyPressed ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -385,7 +473,21 @@ class Input {
    * @param {number} buttonCode
    */
   getButtonUp( buttonCode ) {
-    return this.getKeyUp( this._buttonsToKeys[buttonCode] );
+    const currentPressed = this.getButtonPressed( buttonCode );
+
+    if ( !currentPressed ) {
+      const key = this._buttonsToKeys[buttonCode];
+      const altKey = this._buttonsToAltKeys[buttonCode];
+
+      const lastKeyPressed = this._lastKeys[key];
+      const lastAltKeyPressed = this._lastKeys[altKey];
+
+      if ( lastKeyPressed || lastAltKeyPressed ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -421,10 +523,9 @@ class Input {
    * @param {*} index
    */
   _updateButton( name, index ) {
-    const key = this._buttonsToKeys[index];
-    const pressed = this.getKeyPressed( key );
-    const down = this.getKeyDown( key );
-    const up = this.getKeyUp( key );
+    const pressed = this.getButtonPressed( index );
+    const down = this.getButtonDown( index );
+    const up = this.getButtonUp( index );
 
     this[name] = { pressed, down, up };
   }
