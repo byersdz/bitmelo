@@ -104,6 +104,17 @@ class Input {
     this._buttonsToAltKeys = new Uint8ClampedArray( 32 );
 
     /**
+     * Maps standard game buttons to joypad buttons
+     */
+    this._buttonsToJoyButtons = new Int8Array( 32 );
+
+    /**
+     * Maps standard game buttons to alternate joypad buttons
+     */
+    this._buttonsToAltJoyButtons = new Int8Array( 32 );
+    this._buttonsToAltJoyButtons.fill( -1 );
+
+    /**
      * gamepad button states for the current frame
      */
     this._currentJoyButtons = new Uint8ClampedArray( 20 );
@@ -159,6 +170,35 @@ class Input {
 
     this._buttonsToAltKeys[Input.MENU_CONFIRM] = Keys.SPACE;
     this._buttonsToAltKeys[Input.MENU_BACK] = Keys.D_KEY;
+
+    // default joypad button mappings
+    this._buttonsToJoyButtons[Input.GAME_LEFT] = 14;
+    this._buttonsToJoyButtons[Input.GAME_RIGHT] = 15;
+    this._buttonsToJoyButtons[Input.GAME_UP] = 12;
+    this._buttonsToJoyButtons[Input.GAME_DOWN] = 13;
+
+    this._buttonsToJoyButtons[Input.GAME_ACTION_ONE] = 0;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_TWO] = 1;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_THREE] = 2;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_FOUR] = 3;
+    this._buttonsToJoyButtons[Input.GAME_LEFT_TRIGGER] = 4;
+    this._buttonsToJoyButtons[Input.GAME_RIGHT_TRIGGER] = 5;
+
+    this._buttonsToJoyButtons[Input.GAME_PAUSE] = 9;
+
+    this._buttonsToJoyButtons[Input.MENU_LEFT] = 14;
+    this._buttonsToJoyButtons[Input.MENU_RIGHT] = 15;
+    this._buttonsToJoyButtons[Input.MENU_UP] = 12;
+    this._buttonsToJoyButtons[Input.MENU_DOWN] = 13;
+
+    this._buttonsToJoyButtons[Input.MENU_CONFIRM] = 0;
+    this._buttonsToJoyButtons[Input.MENU_BACK] = 1;
+
+    // default joypad alt button mappings
+    this._buttonsToAltJoyButtons[Input.GAME_LEFT_TRIGGER] = 6;
+    this._buttonsToAltJoyButtons[Input.GAME_RIGHT_TRIGGER] = 7;
+
+    this._buttonsToAltJoyButtons[Input.GAME_PAUSE] = 16;
 
     /**
      * Standard game button states for the current frame.
@@ -358,8 +398,8 @@ class Input {
         const gamePad = gamePads[i];
         if ( gamePad ) {
           for ( let b = 0; b < gamePad.buttons.length; b += 1 ) {
-            if ( b < 20 && gamePad.buttons[i].pressed ) {
-              this._currentJoyButtons[i] = 1;
+            if ( b < 20 && gamePad.buttons[b].pressed ) {
+              this._currentJoyButtons[b] = 1;
             }
           }
         }
@@ -434,16 +474,69 @@ class Input {
   }
 
   /**
+   * return true if the joypad button is currently held down
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonPressed
+   * @param {number} buttonIndex
+   */
+  getJoyButtonPressed( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    return this._currentJoyButtons[buttonIndex] > 0;
+  }
+
+  /**
+   * return true if the joypad button was pressed down this frame.
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonDown
+   * @param {number} buttonIndex
+   */
+  getJoyButtonDown( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    const current = this._currentJoyButtons[buttonIndex] > 0;
+    const last = this._lastJoyButtons[buttonIndex] > 0;
+    return current && !last;
+  }
+
+  /**
+   * return true if the joypad button was released this frame.
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonUp
+   * @param {number} buttonIndex
+   */
+  getJoyButtonUp( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    const current = this._currentJoyButtons[buttonIndex] > 0;
+    const last = this._lastJoyButtons[buttonIndex] > 0;
+    return !current && last;
+  }
+
+  /**
    * return true if the standard game button is currently held down
    * @param {number} buttonCode
    */
   getButtonPressed( buttonCode ) {
     const key = this._buttonsToKeys[buttonCode];
     const altKey = this._buttonsToAltKeys[buttonCode];
+    const joyButton = this._buttonsToJoyButtons[buttonCode];
+    const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
 
     const keyPressed = this._currentKeys[key];
     const altKeyPressed = this._currentKeys[altKey];
-    return keyPressed || altKeyPressed;
+    const joyButtonPressed = this._currentJoyButtons[joyButton];
+    const altJoyButtonPressed = this._currentJoyButtons[altJoyButton];
+    return keyPressed || altKeyPressed || joyButtonPressed || altJoyButtonPressed;
   }
 
   /**
@@ -456,11 +549,15 @@ class Input {
     if ( currentPressed ) {
       const key = this._buttonsToKeys[buttonCode];
       const altKey = this._buttonsToAltKeys[buttonCode];
+      const joyButton = this._buttonsToJoyButtons[buttonCode];
+      const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
 
       const lastKeyPressed = this._lastKeys[key];
       const lastAltKeyPressed = this._lastKeys[altKey];
+      const lastJoyButtonPressed = this._lastJoyButtons[joyButton];
+      const lastAltJoyButtonPressed = this._lastJoyButtons[altJoyButton];
 
-      if ( !lastKeyPressed && !lastAltKeyPressed ) {
+      if ( !lastKeyPressed && !lastAltKeyPressed && !lastJoyButtonPressed && !lastAltJoyButtonPressed ) {
         return true;
       }
     }
@@ -478,11 +575,15 @@ class Input {
     if ( !currentPressed ) {
       const key = this._buttonsToKeys[buttonCode];
       const altKey = this._buttonsToAltKeys[buttonCode];
+      const joyButton = this._buttonsToJoyButtons[buttonCode];
+      const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
 
       const lastKeyPressed = this._lastKeys[key];
       const lastAltKeyPressed = this._lastKeys[altKey];
+      const lastJoyButtonPressed = this._lastJoyButtons[joyButton];
+      const lastAltJoyButtonPressed = this._lastJoyButtons[altJoyButton];
 
-      if ( lastKeyPressed || lastAltKeyPressed ) {
+      if ( lastKeyPressed || lastAltKeyPressed || lastJoyButtonPressed || lastAltJoyButtonPressed ) {
         return true;
       }
     }
