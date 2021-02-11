@@ -69,7 +69,8 @@ class Audio {
             pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
             arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
 
-            const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * sound.infiniteVolume;
+            const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] )
+              * Audio.linearToAdjustedVolume( sound.infiniteVolume );
 
             sound.infiniteGain.gain.linearRampToValueAtTime( currentVolume, time );
             sound.infiniteOsc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );
@@ -131,7 +132,7 @@ class Audio {
 
     const gainNode = this.context.createGain();
 
-    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * volume;
+    const initialVolume = Audio.valueForVolume( sound.volumeTics[0] ) * Audio.linearToAdjustedVolume( volume );
     gainNode.gain.setValueAtTime( initialVolume, this.context.currentTime );
 
     osc.detune.setValueAtTime( sound.pitchTics[0] * sound.pitchScale, this.context.currentTime );
@@ -141,7 +142,10 @@ class Audio {
       const volumeTicIndex = Audio.indexAtTic( tic, sound.useVolumeLoop, sound.volumeLoopStart, sound.volumeLoopEnd );
       const pitchTicIndex = Audio.indexAtTic( tic, sound.usePitchLoop, sound.pitchLoopStart, sound.pitchLoopEnd );
       const arpTicIndex = Audio.indexAtTic( tic, sound.useArpLoop, sound.arpLoopStart, sound.arpLoopEnd );
-      const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] ) * volume;
+
+      const currentVolume = Audio.valueForVolume( sound.volumeTics[volumeTicIndex] )
+        * Audio.linearToAdjustedVolume( volume );
+
       gainNode.gain.linearRampToValueAtTime( currentVolume, time );
       osc.detune.linearRampToValueAtTime( sound.pitchTics[pitchTicIndex] * sound.pitchScale, time );
       const currentNote = note + sound.arpTics[arpTicIndex];
@@ -307,6 +311,14 @@ class Audio {
   static valueForVolume( volume ) {
     const normalizedValue = volume / 15;
     return normalizedValue ** 2.5;
+  }
+
+  /**
+   * Adjust a linear volume value to account for human hearing.
+   * @param {*} volume
+   */
+  static linearToAdjustedVolume( volume ) {
+    return volume ** 2.5;
   }
 
   /**
