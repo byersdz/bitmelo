@@ -8,6 +8,7 @@ module.exports = {
   },
   "rules": {
     "no-underscore-dangle": "off",
+    "no-continue": "off",
     "class-methods-use-this": "off",
     "space-in-parens": ["error", "always"],
     "template-curly-spacing": ["error", "never"],

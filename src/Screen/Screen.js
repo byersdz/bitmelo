@@ -1040,8 +1040,8 @@ class Screen {
 
     const { tileSize } = this.tileData;
 
-    for ( let currentY = 0; currentY <= arrayHeight; currentY += 1 ) {
-      for ( let currentX = 0; currentX <= arrayWidth; currentX += 1 ) {
+    for ( let currentY = 0; currentY < arrayHeight; currentY += 1 ) {
+      for ( let currentX = 0; currentX < arrayWidth; currentX += 1 ) {
         let gid = arrayData[currentY * arrayWidth + currentX];
         let flip = 0;
         let rotate = 0;
