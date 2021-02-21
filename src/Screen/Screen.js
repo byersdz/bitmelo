@@ -1024,6 +1024,48 @@ class Screen {
   }
 
   /**
+   * Draw an array of Tile gids to the screen
+   * @param {array} arrayData - array of tile gid data
+   * @param {number} arrayWidth - the width of the array data
+   * @param {number} arrayHeight - the height of the array data
+   * @param {number} screenX - origin x position on the screen
+   * @param {number} screenY - origin y position on the screen
+   * @param {number} onDrawTile - function to override individual tile values, (gid, x, y) => { gid, flip, rotate };
+   */
+  drawMapArray( arrayData, arrayWidth, arrayHeight, screenX = 0, screenY = 0, onDrawTile = null ) {
+    // eslint-disable-next-line no-param-reassign
+    screenX = Math.floor( screenX );
+    // eslint-disable-next-line no-param-reassign
+    screenY = Math.floor( screenY );
+
+    const { tileSize } = this.tileData;
+
+    for ( let currentY = 0; currentY <= arrayHeight; currentY += 1 ) {
+      for ( let currentX = 0; currentX <= arrayWidth; currentX += 1 ) {
+        let gid = arrayData[currentY * arrayWidth + currentX];
+        let flip = 0;
+        let rotate = 0;
+
+        if ( onDrawTile ) {
+          const onDrawResult = onDrawTile( gid, currentX, currentY );
+          gid = get( onDrawResult, 'gid', 0 );
+          flip = get( onDrawResult, 'flip', 0 );
+          rotate = get( onDrawResult, 'rotate', 0 );
+        }
+        if ( gid ) {
+          this.drawTile(
+            gid,
+            screenX + currentX * tileSize,
+            screenY + currentY * tileSize,
+            flip,
+            rotate,
+          );
+        }
+      }
+    }
+  }
+
+  /**
    * Draw a line of text to the screen.
    * Newlines are not supported, this will draw just a single line
    * @param {string} text - the text to draw
