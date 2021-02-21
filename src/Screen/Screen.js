@@ -1,4 +1,6 @@
 
+import get from 'lodash/get';
+
 import standardPalette from './standardPalette';
 
 /**
@@ -972,8 +974,9 @@ class Screen {
    * @param {number} screenY - origin y position on the screen
    * @param {number} map - the index of the tilemap to draw
    * @param {number} layer - the index of the layer to draw
+   * @param {number} onDrawTile - function to override individual tile values, (gid, x, y) => { gid, flip, rotate };
    */
-  drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0 ) {
+  drawMap( x, y, width = -1, height = -1, screenX = 0, screenY = 0, map = 0, layer = 0, onDrawTile = null ) {
     // eslint-disable-next-line no-param-reassign
     screenX = Math.floor( screenX );
     // eslint-disable-next-line no-param-reassign
@@ -997,12 +1000,23 @@ class Screen {
 
     for ( let currentY = y; currentY <= maxY; currentY += 1 ) {
       for ( let currentX = x; currentX <= maxX; currentX += 1 ) {
-        const gid = layerData[currentY * tileMap.width + currentX];
+        let gid = layerData[currentY * tileMap.width + currentX];
+        let flip = 0;
+        let rotate = 0;
+
+        if ( onDrawTile ) {
+          const onDrawResult = onDrawTile( gid, currentX, currentY );
+          gid = get( onDrawResult, 'gid', 0 );
+          flip = get( onDrawResult, 'flip', 0 );
+          rotate = get( onDrawResult, 'rotate', 0 );
+        }
         if ( gid ) {
           this.drawTile(
             gid,
             screenX + currentX * tileSize - offsetX,
             screenY + currentY * tileSize - offsetY,
+            flip,
+            rotate,
           );
         }
       }
