@@ -71,6 +71,40 @@ class TileMap {
     const index = y * this.width + x;
     currentLayer[index] = gid;
   }
+
+  /**
+   * get an array of the layer data, optionally only getting a subsection of the layer
+   * @param {number} layer - The layer
+   * @param {number} startX - The bottom left x position
+   * @param {number} startY - The bottom left y position
+   * @param {number} endX - The top right x position
+   * @param {number} endY - The top right y position
+   */
+  getLayerData( layer = 0, startX = 0, startY = 0, endX = 0, endY = 0 ) {
+    const finishX = endX || this.width;
+    const finishY = endY || this.height;
+
+    const width = finishX - startX;
+    const height = finishY - startY;
+
+    const data = new Array( width * height );
+
+    for ( let y = 0; y < height; y += 1 ) {
+      for ( let x = 0; x < width; x += 1 ) {
+        const targetX = x + startX;
+        const targetY = y + startY;
+
+        if ( targetX < 0 || targetY < 0 || targetX >= this.width || targetY >= this.height ) {
+          data[y * width + x] = 0;
+          continue;
+        }
+
+        data[y * width + x] = this.getTile( targetX, targetY, layer );
+      }
+    }
+
+    return { data, width, height };
+  }
 }
 
 export default TileMap;

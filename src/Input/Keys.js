@@ -5,6 +5,7 @@
  */
 const Keys = {};
 
+Keys.NONE = 0;
 Keys.BACKSPACE = 8;
 Keys.TAB = 9;
 Keys.ENTER = 13;

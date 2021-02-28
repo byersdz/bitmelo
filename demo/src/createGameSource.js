@@ -61,14 +61,9 @@ function createGameSource( projectData, testScript = '' ) {
         const engine = new bitmelo.Engine();
         const projectData = ${ JSON.stringify( projectCopy ) };
         engine.addProjectData( projectData );
-        engine.dataOnlyMode = true;
-        engine.clickToBegin = false;
-        engine._paused = true;
 
         ${ scriptsString }
         engine.begin();
-        engine._advanceFrame();
-        console.log(engine.screen.height);
       </script>
     </body>
   </html>

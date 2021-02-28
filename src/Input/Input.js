@@ -1,5 +1,6 @@
 import Keys from './Keys';
 
+
 /**
  * Handle game input
  */
@@ -82,6 +83,47 @@ class Input {
      */
     this._buttonsToKeys = new Uint8ClampedArray( 32 );
 
+    /**
+     * Maps standard game buttons to alternate keyboard keys
+     */
+    this._buttonsToAltKeys = new Uint8ClampedArray( 32 );
+
+    /**
+     * Maps standard game buttons to joypad buttons
+     */
+    this._buttonsToJoyButtons = new Int8Array( 32 );
+
+    /**
+     * Maps standard game buttons to alternate joypad buttons
+     */
+    this._buttonsToAltJoyButtons = new Int8Array( 32 );
+    this._buttonsToAltJoyButtons.fill( -1 );
+
+    /**
+     * Maps standard game buttons to joypad axes
+     */
+    this._buttonsToJoyAxes = new Int8Array( 32 );
+
+    /**
+     * gamepad button states for the current frame
+     */
+    this._currentJoyButtons = new Uint8ClampedArray( 20 );
+
+    /**
+     * gamepad button states for the last frame
+     */
+    this._lastJoyButtons = new Uint8ClampedArray( 20 );
+
+    /**
+     * gamepad axes states for the current frame
+     */
+    this._currentJoyAxes = new Array( 9 );
+
+    /**
+     * gamepad axes states for the last frame
+     */
+    this._lastJoyAxes = new Array( 9 );
+
     // default button mappings
     this._buttonsToKeys[Input.GAME_LEFT] = Keys.LEFT_ARROW;
     this._buttonsToKeys[Input.GAME_RIGHT] = Keys.RIGHT_ARROW;
@@ -102,18 +144,71 @@ class Input {
     this._buttonsToKeys[Input.MENU_UP] = Keys.UP_ARROW;
     this._buttonsToKeys[Input.MENU_DOWN] = Keys.DOWN_ARROW;
 
-    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.X_KEY;
-    this._buttonsToKeys[Input.MENU_BACK] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.MENU_CONFIRM] = Keys.Z_KEY;
+    this._buttonsToKeys[Input.MENU_BACK] = Keys.X_KEY;
 
-    /**
-     * Standard game button states for the current frame.
-     */
-    this._currentButtons = new Uint8ClampedArray( 32 );
+    // default alt button mappings
+    this._buttonsToAltKeys[Input.GAME_LEFT] = Keys.J_KEY;
+    this._buttonsToAltKeys[Input.GAME_RIGHT] = Keys.L_KEY;
+    this._buttonsToAltKeys[Input.GAME_UP] = Keys.I_KEY;
+    this._buttonsToAltKeys[Input.GAME_DOWN] = Keys.K_KEY;
 
-    /**
-     * Standard game button states for the last frame.
-     */
-    this._lastButtons = new Uint8ClampedArray( 32 );
+    this._buttonsToAltKeys[Input.GAME_ACTION_ONE] = Keys.SPACE;
+    this._buttonsToAltKeys[Input.GAME_ACTION_TWO] = Keys.D_KEY;
+    this._buttonsToAltKeys[Input.GAME_ACTION_THREE] = Keys.C_KEY;
+    this._buttonsToAltKeys[Input.GAME_ACTION_FOUR] = Keys.V_KEY;
+    this._buttonsToAltKeys[Input.GAME_LEFT_TRIGGER] = Keys.SHIFT;
+    this._buttonsToAltKeys[Input.GAME_RIGHT_TRIGGER] = Keys.ALT;
+
+    this._buttonsToAltKeys[Input.GAME_PAUSE] = Keys.ENTER;
+
+    this._buttonsToAltKeys[Input.MENU_LEFT] = Keys.J_KEY;
+    this._buttonsToAltKeys[Input.MENU_RIGHT] = Keys.L_KEY;
+    this._buttonsToAltKeys[Input.MENU_UP] = Keys.I_KEY;
+    this._buttonsToAltKeys[Input.MENU_DOWN] = Keys.K_KEY;
+
+    this._buttonsToAltKeys[Input.MENU_CONFIRM] = Keys.SPACE;
+    this._buttonsToAltKeys[Input.MENU_BACK] = Keys.D_KEY;
+
+    // default joypad button mappings
+    this._buttonsToJoyButtons[Input.GAME_LEFT] = 14;
+    this._buttonsToJoyButtons[Input.GAME_RIGHT] = 15;
+    this._buttonsToJoyButtons[Input.GAME_UP] = 12;
+    this._buttonsToJoyButtons[Input.GAME_DOWN] = 13;
+
+    this._buttonsToJoyButtons[Input.GAME_ACTION_ONE] = 0;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_TWO] = 1;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_THREE] = 2;
+    this._buttonsToJoyButtons[Input.GAME_ACTION_FOUR] = 3;
+    this._buttonsToJoyButtons[Input.GAME_LEFT_TRIGGER] = 4;
+    this._buttonsToJoyButtons[Input.GAME_RIGHT_TRIGGER] = 5;
+
+    this._buttonsToJoyButtons[Input.GAME_PAUSE] = 9;
+
+    this._buttonsToJoyButtons[Input.MENU_LEFT] = 14;
+    this._buttonsToJoyButtons[Input.MENU_RIGHT] = 15;
+    this._buttonsToJoyButtons[Input.MENU_UP] = 12;
+    this._buttonsToJoyButtons[Input.MENU_DOWN] = 13;
+
+    this._buttonsToJoyButtons[Input.MENU_CONFIRM] = 0;
+    this._buttonsToJoyButtons[Input.MENU_BACK] = 1;
+
+    // default joypad alt button mappings
+    this._buttonsToAltJoyButtons[Input.GAME_LEFT_TRIGGER] = 6;
+    this._buttonsToAltJoyButtons[Input.GAME_RIGHT_TRIGGER] = 7;
+
+    this._buttonsToAltJoyButtons[Input.GAME_PAUSE] = 16;
+
+    // default joypad axis mappings
+    this._buttonsToJoyAxes[Input.GAME_LEFT] = -1;
+    this._buttonsToJoyAxes[Input.GAME_RIGHT] = 1;
+    this._buttonsToJoyAxes[Input.GAME_UP] = -2;
+    this._buttonsToJoyAxes[Input.GAME_DOWN] = 2;
+
+    this._buttonsToJoyAxes[Input.MENU_LEFT] = -1;
+    this._buttonsToJoyAxes[Input.MENU_RIGHT] = 1;
+    this._buttonsToJoyAxes[Input.MENU_UP] = -2;
+    this._buttonsToJoyAxes[Input.MENU_DOWN] = 2;
 
     /**
      * Is the left mouse button down this frame?
@@ -145,6 +240,31 @@ class Input {
      * Used for the edge case in which a mouse button is clicked up and down all in the span of one frame.
      */
     this._forceMouseRightDown = false;
+
+    /**
+     * How far from center does an axis need to be to count as pressed?
+     */
+    this._axisThreshold = 0.4;
+
+    /**
+     * Which keys do not cause event.preventDefault to be called on keydown events.
+     * By default this is the escape key and all function keys
+     */
+    this._allowDefaultKeys = [
+      27,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+    ];
 
     /**
      * This mode runs the engine without drawing to a canvas or playing audio.
@@ -190,18 +310,8 @@ class Input {
    * @param {*} e
    */
   _keyDown( e ) {
-    // prevent default to stop page interactions with certain keys
-    if (
-      e.which === 9 // tab
-      || e.which === 13 // enter
-      || e.which === 18 // alt
-      || e.which === 32 // space
-      || e.which === 37 // left arrow
-      || e.which === 38 // up arrow
-      || e.which === 39 // right arrow
-      || e.which === 40 // down arrow
-
-    ) {
+    // prevent default on all keys but escape and function keys
+    if ( !this._allowDefaultKeys.includes( e.which ) ) {
       e.preventDefault();
     }
 
@@ -302,10 +412,44 @@ class Input {
    * Called automatically by the Engine.
    */
   pollInput() {
+    for ( let i = 0; i < 20; i += 1 ) {
+      this._lastJoyButtons[i] = this._currentJoyButtons[i];
+      this._currentJoyButtons[i] = 0;
+    }
+
+    for ( let i = 0; i < 9; i += 1 ) {
+      this._lastJoyAxes[i] = this._currentJoyAxes[i];
+      this._currentJoyAxes[i] = 0;
+    }
+
+    try {
+      const gamePads = navigator.getGamepads();
+      for ( let i = 0; i < gamePads.length; i += 1 ) {
+        const gamePad = gamePads[i];
+        if ( gamePad ) {
+          for ( let b = 0; b < gamePad.buttons.length; b += 1 ) {
+            if ( b < 20 && gamePad.buttons[b].pressed ) {
+              this._currentJoyButtons[b] = 1;
+            }
+          }
+          for ( let a = 0; a < gamePad.axes.length; a += 1 ) {
+            if ( a < 8 ) {
+              this._currentJoyAxes[a + 1] = gamePad.axes[a];
+            }
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line no-empty
+    catch ( err ) {}
+
     for ( let i = 0; i < 256; i += 1 ) {
       this._lastKeys[i] = this._currentKeys[i];
       this._currentKeys[i] = this._keysRaw[i];
     }
+    // index 0 is always off
+    this._lastKeys[0] = 0;
+    this._currentKeys[0] = 0;
 
     this._updateButtons();
 
@@ -365,11 +509,126 @@ class Input {
   }
 
   /**
+   * return true if the joypad button is currently held down
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonPressed
+   * @param {number} buttonIndex
+   */
+  getJoyButtonPressed( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    return this._currentJoyButtons[buttonIndex] > 0;
+  }
+
+  /**
+   * return true if the joypad button was pressed down this frame.
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonDown
+   * @param {number} buttonIndex
+   */
+  getJoyButtonDown( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    const current = this._currentJoyButtons[buttonIndex] > 0;
+    const last = this._lastJoyButtons[buttonIndex] > 0;
+    return current && !last;
+  }
+
+  /**
+   * return true if the joypad button was released this frame.
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonUp
+   * @param {number} buttonIndex
+   */
+  getJoyButtonUp( buttonIndex ) {
+    if ( buttonIndex < 0 || buttonIndex >= 20 ) {
+      return false;
+    }
+
+    const current = this._currentJoyButtons[buttonIndex] > 0;
+    const last = this._lastJoyButtons[buttonIndex] > 0;
+    return !current && last;
+  }
+
+  /**
+   * Helper function for joypad axes
+   * @param {*} axisIndex
+   * @param {*} axisArray
+   */
+  _axisFromArrayIsPressed( axisIndex, axisArray ) {
+    if ( axisIndex === 0 || axisIndex > 8 || axisIndex < -8 ) {
+      return 0;
+    }
+
+    const isNegative = axisIndex < 0;
+    const value = axisArray[Math.abs( axisIndex )];
+
+    return isNegative ? value <= -this._axisThreshold : value >= this._axisThreshold;
+  }
+
+  /**
+   * return true if the joypad axis is currently held down
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonPressed
+   * @param {number} axisIndex
+   */
+  getJoyAxisPressed( axisIndex ) {
+    return this._axisFromArrayIsPressed( axisIndex, this._currentJoyAxes );
+  }
+
+  /**
+   * return true if the joypad axis was pressed down this frame
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonDown
+   * @param {number} axisIndex
+   */
+  getJoyAxisDown( axisIndex ) {
+    const current = this.getJoyAxisPressed( axisIndex );
+    const last = this._axisFromArrayIsPressed( axisIndex, this._lastJoyAxes );
+
+    return current && !last;
+  }
+
+  /**
+   * return true if the joypad axis was released this frame
+   * This is the joypad from the Gamepad API, and generally should only
+   * be used when detecting inputs to remap controls. For normal
+   * gameplay use Input.getButtonUp
+   * @param {number} axisIndex
+   */
+  getJoyAxisUp( axisIndex ) {
+    const current = this.getJoyAxisPressed( axisIndex );
+    const last = this._axisFromArrayIsPressed( axisIndex, this._lastJoyAxes );
+
+    return !current && last;
+  }
+
+  /**
    * return true if the standard game button is currently held down
    * @param {number} buttonCode
    */
   getButtonPressed( buttonCode ) {
-    return this.getKeyPressed( this._buttonsToKeys[buttonCode] );
+    const key = this._buttonsToKeys[buttonCode];
+    const altKey = this._buttonsToAltKeys[buttonCode];
+    const joyButton = this._buttonsToJoyButtons[buttonCode];
+    const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
+    const joyAxis = this._buttonsToJoyAxes[buttonCode];
+
+    const keyPressed = this._currentKeys[key];
+    const altKeyPressed = this._currentKeys[altKey];
+    const joyButtonPressed = this._currentJoyButtons[joyButton];
+    const altJoyButtonPressed = this._currentJoyButtons[altJoyButton];
+    const joyAxisPressed = this._axisFromArrayIsPressed( joyAxis, this._currentJoyAxes );
+    return keyPressed || altKeyPressed || joyButtonPressed || altJoyButtonPressed || joyAxisPressed;
   }
 
   /**
@@ -377,7 +636,33 @@ class Input {
    * @param {number} buttonCode
    */
   getButtonDown( buttonCode ) {
-    return this.getKeyDown( this._buttonsToKeys[buttonCode] );
+    const currentPressed = this.getButtonPressed( buttonCode );
+
+    if ( currentPressed ) {
+      const key = this._buttonsToKeys[buttonCode];
+      const altKey = this._buttonsToAltKeys[buttonCode];
+      const joyButton = this._buttonsToJoyButtons[buttonCode];
+      const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
+      const joyAxis = this._buttonsToJoyAxes[buttonCode];
+
+      const lastKeyPressed = this._lastKeys[key];
+      const lastAltKeyPressed = this._lastKeys[altKey];
+      const lastJoyButtonPressed = this._lastJoyButtons[joyButton];
+      const lastAltJoyButtonPressed = this._lastJoyButtons[altJoyButton];
+      const lastJoyAxisPressed = this._axisFromArrayIsPressed( joyAxis, this._lastJoyAxes );
+
+      if (
+        !lastKeyPressed
+        && !lastAltKeyPressed
+        && !lastJoyButtonPressed
+        && !lastAltJoyButtonPressed
+        && !lastJoyAxisPressed
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -385,7 +670,33 @@ class Input {
    * @param {number} buttonCode
    */
   getButtonUp( buttonCode ) {
-    return this.getKeyUp( this._buttonsToKeys[buttonCode] );
+    const currentPressed = this.getButtonPressed( buttonCode );
+
+    if ( !currentPressed ) {
+      const key = this._buttonsToKeys[buttonCode];
+      const altKey = this._buttonsToAltKeys[buttonCode];
+      const joyButton = this._buttonsToJoyButtons[buttonCode];
+      const altJoyButton = this._buttonsToAltJoyButtons[buttonCode];
+      const joyAxis = this._buttonsToJoyAxes[buttonCode];
+
+      const lastKeyPressed = this._lastKeys[key];
+      const lastAltKeyPressed = this._lastKeys[altKey];
+      const lastJoyButtonPressed = this._lastJoyButtons[joyButton];
+      const lastAltJoyButtonPressed = this._lastJoyButtons[altJoyButton];
+      const lastJoyAxisPressed = this._axisFromArrayIsPressed( joyAxis, this._lastJoyAxes );
+
+      if (
+        lastKeyPressed
+        || lastAltKeyPressed
+        || lastJoyButtonPressed
+        || lastAltJoyButtonPressed
+        || lastJoyAxisPressed
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -421,10 +732,9 @@ class Input {
    * @param {*} index
    */
   _updateButton( name, index ) {
-    const key = this._buttonsToKeys[index];
-    const pressed = this.getKeyPressed( key );
-    const down = this.getKeyDown( key );
-    const up = this.getKeyUp( key );
+    const pressed = this.getButtonPressed( index );
+    const down = this.getButtonDown( index );
+    const up = this.getButtonUp( index );
 
     this[name] = { pressed, down, up };
   }

@@ -18,6 +18,11 @@ class Engine {
     this.containerId = 'bitmelo-container';
 
     /**
+     * Function to be called to add assets and configuration during initialization
+     */
+    this.onConfigure = null;
+
+    /**
      * Function to be called when the engine is initialized
      */
     this.onInit = null;
@@ -195,8 +200,8 @@ class Engine {
   begin() {
     const date = new Date();
     this._initTime = date.getTime();
-    if ( this.onInit ) {
-      this.onInit();
+    if ( this.onConfigure ) {
+      this.onConfigure();
     }
 
     this.screen.dataOnlyMode = this.dataOnlyMode;
@@ -217,6 +222,11 @@ class Engine {
     this.screen.mapData = this.mapData;
     this.screen.fontData = this.fontData;
     this.audio.dataOnlyMode = this.dataOnlyMode;
+    this.audio.init();
+
+    if ( this.onInit ) {
+      this.onInit();
+    }
 
     if ( this._didCrash ) {
       this.screen.clear( 1 );
@@ -243,7 +253,6 @@ class Engine {
           this._hasBegun = true;
           this.screen.hideCursor = screenHidesCursor;
           this.screen._setCanvasStyle();
-          this.audio.init();
           this.input.clearInput();
           requestAnimationFrame( this._update );
         }
@@ -252,7 +261,6 @@ class Engine {
     else {
       this._gameStartTime = date.getTime();
       this._hasBegun = true;
-      this.audio.init();
       requestAnimationFrame( this._update );
     }
     this._didCrash = false;
