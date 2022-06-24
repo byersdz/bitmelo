@@ -28,6 +28,10 @@ class MapData {
    * @param {number} layer - The index of the layer on the tile map you are checking
    */
   getTile( x, y, tileMap = 0, layer = 0 ) {
+    if ( tileMap < 0 || tileMap >= this.tileMaps.length ) {
+      return -1;
+    }
+
     return this.tileMaps[tileMap].getTile( x, y, layer );
   }
 

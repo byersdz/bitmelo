@@ -54,6 +54,18 @@ class TileMap {
    * @param {number} layer - The index of the layer on the tile map you are checking
    */
   getTile( x, y, layer = 0 ) {
+    if ( layer < 0 || layer >= this.layers.length ) {
+      return -1;
+    }
+
+    if ( x < 0 || x >= this.width ) {
+      return -1;
+    }
+
+    if ( y < 0 || y >= this.height ) {
+      return -1;
+    }
+
     const currentLayer = this.layers[layer];
     const index = y * this.width + x;
     return currentLayer[index];
