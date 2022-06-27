@@ -79,6 +79,18 @@ class TileMap {
    * @param {*} layer - The index of the layer on the tile map you are setting
    */
   setTile( gid, x, y, layer = 0 ) {
+    if ( layer < 0 || layer >= this.layers.length ) {
+      return;
+    }
+
+    if ( x < 0 || x >= this.width ) {
+      return;
+    }
+
+    if ( y < 0 || y >= this.height ) {
+      return;
+    }
+
     const currentLayer = this.layers[layer];
     const index = y * this.width + x;
     currentLayer[index] = gid;

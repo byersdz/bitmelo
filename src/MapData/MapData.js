@@ -44,6 +44,10 @@ class MapData {
    * @param {*} layer - The index of the layer on the tile map you are setting
    */
   setTile( gid, x, y, tileMap = 0, layer = 0 ) {
+    if ( tileMap < 0 || tileMap >= this.tileMaps.length ) {
+      return;
+    }
+
     this.tileMaps[tileMap].setTile( gid, x, y, layer );
   }
 }
