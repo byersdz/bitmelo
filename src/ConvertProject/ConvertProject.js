@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 import ConvertData from '../ConvertData/ConvertData';
 
 class ConvertProject {
@@ -116,11 +118,19 @@ class ConvertProject {
         tileset.data.fill( 0 );
       }
 
+      // add the flags
+      let flags = get( currentProjectTileset, 'flags' );
+      if ( !flags || flags.length !== currentProjectTileset.width * currentProjectTileset.height ) {
+        flags = new Array( currentProjectTileset.width * currentProjectTileset.height );
+        flags.fill( 0 );
+      }
+
       tileset.width = currentProjectTileset.width;
       tileset.height = currentProjectTileset.height;
       tileset.format = 'array';
       tileset.name = 'test';
       tileset.tileSize = tileSize;
+      tileset.flags = flags;
 
       tilesets.push( tileset );
     }

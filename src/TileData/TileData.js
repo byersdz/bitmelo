@@ -20,6 +20,11 @@ class TileData {
      * This is whats used by Screen to draw tiles.
      */
     this.data = null;
+    /**
+     * All of the flag data in a single Uint16Array.
+     * Each item is a flag value for each tile.
+     */
+    this.flagData = null;
   }
 
   /**
@@ -32,6 +37,8 @@ class TileData {
       numberOfTiles += currentTileset.width * currentTileset.height;
     }
     this.data = new Uint8ClampedArray( numberOfTiles * this.tileSize * this.tileSize );
+    this.flagData = new Uint16Array( numberOfTiles + 1 );
+    this.flagData.fill( 0 );
 
     let startPosition = 0;
     let firstGid = 1;
@@ -57,11 +64,20 @@ class TileData {
           runPosition += 2;
         }
       }
+
+      const { flags } = currentTileset;
+      for ( let j = 0; j < flags.length; j += 1 ) {
+        this.flagData[firstGid + j] = parseInt( flags[j], 10 );
+      }
+
       firstGid += currentTileset.width * currentTileset.height;
       startPosition += currentTileset.width * currentTileset.height * this.tileSize * this.tileSize;
 
-      // data is not longer needed in the current tileset as it has been added to this.data.
+      // data is no longer needed in the current tileset as it has been added to this.data.
       delete currentTileset.data;
+
+      // flags are no longer needed
+      delete currentTileset.flags;
     }
   }
 
@@ -165,6 +181,10 @@ class TileData {
 
     return { data, width, height };
   }
+
+  // getFlag( gid, flagNumber = 0 ) {
+
+  // }
 }
 
 export default TileData;
