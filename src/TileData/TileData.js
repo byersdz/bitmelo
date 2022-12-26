@@ -1,4 +1,11 @@
 
+const flagValues = [];
+let f = 1;
+for ( let i = 0; i < 16; i += 1 ) {
+  flagValues.push( f );
+  f = f * 2;
+}
+
 /**
  * Holds all of the tile data.
  */
@@ -182,9 +189,23 @@ class TileData {
     return { data, width, height };
   }
 
-  // getFlag( gid, flagNumber = 0 ) {
+  getFlag( gid, flagNumber = -1 ) {
+    if ( gid < 0 || gid >= this.flagData.length ) {
+      return 0;
+    }
 
-  // }
+    const gidFlags = this.flagData[gid];
+
+    if ( flagNumber < 0 || flagNumber >= 16 ) {
+      return gidFlags;
+    }
+
+    if ( flagValues[flagNumber] & gidFlags ) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 export default TileData;
