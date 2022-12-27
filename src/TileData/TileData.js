@@ -1,4 +1,6 @@
 
+import isInteger from 'lodash/isInteger';
+
 const flagValues = [];
 let f = 1;
 for ( let i = 0; i < 16; i += 1 ) {
@@ -189,6 +191,11 @@ class TileData {
     return { data, width, height };
   }
 
+  /**
+   * Get flag for a gid. If the flagNumber is not specified or negative, returns the bit field for a gid
+   * @param {number} gid - the gid of the tile
+   * @param {number} flagNumber - the flag number, 0 - 15. If negative the number of the bit field will be returned
+   */
   getFlag( gid, flagNumber = -1 ) {
     if ( gid < 0 || gid >= this.flagData.length ) {
       return 0;
@@ -205,6 +212,36 @@ class TileData {
     }
 
     return false;
+  }
+
+  /**
+   * Set flag for a gid. If the flagNumber is negative, set the bit field for a gid
+   * @param {number} gid - the gid of the tile
+   * @param {number} flagNumber - the flag number, 0 - 15. Set negative to set the entire bit field for the flags
+   * @param {number | boolean} value - true or false if setting a flag, number if setting the bit field
+   */
+  setFlag( gid, flagNumber, value ) {
+    if ( gid < 0 || gid >= this.flagData.length ) {
+      return;
+    }
+
+    if ( flagNumber < 0 ) {
+      // set the entire bitfield
+      if ( isInteger( value ) && value >= 0 && value <= 65535 ) {
+        this.flagData[gid] = value;
+      }
+    }
+    else if ( isInteger( flagNumber ) && flagNumber >= 0 && flagNumber < 16 ) {
+      const flagValue = flagValues[flagNumber];
+      if ( value ) {
+        // add the flag
+        this.flagData[gid] = this.flagData[gid] | flagValue;
+      }
+      else {
+        // remove the flag
+        this.flagData[gid] = this.flagData[gid] & ~flagValue;
+      }
+    }
   }
 }
 
