@@ -30,18 +30,18 @@
   "devDependencies": {
     "babel-jest": "^24.9.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "css-loader": "^2.1.0",
+    "css-loader": "^6.7.3",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.14.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-loader": "^2.1.2",
+    "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.16.0",
     "jest": "^24.1.0",
-    "style-loader": "^0.23.1",
+    "style-loader": "^3.3.1",
     "wait-on": "^3.3.0",
-    "webpack": "^4.29.3",
-    "webpack-cli": "^3.2.3",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
   },
@@ -58,6 +58,6 @@
   "dependencies": {
     "esprima": "^4.0.1",
     "lodash": "^4.17.20",
-    "raw-loader": "^3.1.0"
+    "raw-loader": "^4.0.2"
   }
 }
