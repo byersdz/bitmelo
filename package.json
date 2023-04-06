@@ -1,6 +1,6 @@
 {
   "name": "bitmelo",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "A game engine for making small pixel art games.",
   "main": "src/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "build-txt": "webpack --config config/webpack.config.lib.txt.js",
     "rename-txt": "node utils/renameTxtLib.js",
     "build-all": "npm run clean-builds && npm run build-txt && npm run rename-txt && npm run build && npm run build-min",
-    "build-docs": "esdoc",
+    "build-docs": "jsdoc -r ./src",
     "demo-start": "webpack-dev-server --open --config demo/config/webpack.demo.dev.js",
     "demo-build": "webpack --config demo/config/webpack.demo.prod.js",
     "prepublishOnly": "npm run build-all"
@@ -31,8 +31,6 @@
     "babel-jest": "^24.9.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "css-loader": "^2.1.0",
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.14.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-loader": "^2.1.2",
@@ -57,7 +55,7 @@
   },
   "dependencies": {
     "esprima": "^4.0.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "raw-loader": "^3.1.0"
   }
 }

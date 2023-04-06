@@ -82,3 +82,4 @@ typings/
 docs/
 demo/dist/bundle.js
 demo/dist/bundle.js.map
+out/

@@ -261,7 +261,7 @@ class Screen {
    *
    * screen.setPalette( palette );
    *
-   * @param {Array.<Array.<number>} palette - The array of colors to be used by the screen.
+   * @param {Array} palette - The array of colors to be used by the screen.
    * Each index should be a color described by an array of 3 integers in rgb order.
    * Each integer has a min value of 0 and a max value of 255.
    */
