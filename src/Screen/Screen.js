@@ -1150,5 +1150,8 @@ class Screen {
 
 Screen.SCALE_CONSTANT = 1;
 Screen.SCALE_FIT_WINDOW = 2;
+Screen.SCALE_INTEGER = 2;
+Screen.SCALE_LETTERBOX = 3;
+Screen.SCALE_STRETCH = 4;
 
 export default Screen;

@@ -138,6 +138,7 @@ class Input {
     this._buttonsToKeys[Input.GAME_RIGHT_TRIGGER] = Keys.W_KEY;
 
     this._buttonsToKeys[Input.GAME_PAUSE] = Keys.P_KEY;
+    this._buttonsToKeys[Input.GAME_VIEW] = Keys.M_KEY;
 
     this._buttonsToKeys[Input.MENU_LEFT] = Keys.LEFT_ARROW;
     this._buttonsToKeys[Input.MENU_RIGHT] = Keys.RIGHT_ARROW;
@@ -161,6 +162,7 @@ class Input {
     this._buttonsToAltKeys[Input.GAME_RIGHT_TRIGGER] = Keys.ALT;
 
     this._buttonsToAltKeys[Input.GAME_PAUSE] = Keys.ENTER;
+    this._buttonsToAltKeys[Input.GAME_VIEW] = Keys.N_KEY;
 
     this._buttonsToAltKeys[Input.MENU_LEFT] = Keys.J_KEY;
     this._buttonsToAltKeys[Input.MENU_RIGHT] = Keys.L_KEY;
@@ -184,6 +186,7 @@ class Input {
     this._buttonsToJoyButtons[Input.GAME_RIGHT_TRIGGER] = 5;
 
     this._buttonsToJoyButtons[Input.GAME_PAUSE] = 9;
+    this._buttonsToJoyButtons[Input.GAME_VIEW] = 8;
 
     this._buttonsToJoyButtons[Input.MENU_LEFT] = 14;
     this._buttonsToJoyButtons[Input.MENU_RIGHT] = 15;
@@ -198,6 +201,7 @@ class Input {
     this._buttonsToAltJoyButtons[Input.GAME_RIGHT_TRIGGER] = 7;
 
     this._buttonsToAltJoyButtons[Input.GAME_PAUSE] = 16;
+    this._buttonsToAltJoyButtons[Input.GAME_PAUSE] = 11;
 
     // default joypad axis mappings
     this._buttonsToJoyAxes[Input.GAME_LEFT] = -1;
@@ -716,6 +720,7 @@ class Input {
     this._updateButton( 'rightTrigger', Input.GAME_RIGHT_TRIGGER );
 
     this._updateButton( 'pause', Input.GAME_PAUSE );
+    this._updateButton( 'view', Input.GAME_VIEW );
 
     this._updateButton( 'menuLeft', Input.MENU_LEFT );
     this._updateButton( 'menuRight', Input.MENU_RIGHT );
@@ -758,5 +763,7 @@ Input.MENU_UP = 13;
 Input.MENU_DOWN = 14;
 Input.MENU_CONFIRM = 15;
 Input.MENU_BACK = 16;
+
+Input.GAME_VIEW = 17;
 
 export default Input;
