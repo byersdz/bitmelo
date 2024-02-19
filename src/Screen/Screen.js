@@ -194,21 +194,31 @@ class Screen {
       return;
     }
 
-    if ( this.scaleMode === Screen.SCALE_FIT_WINDOW ) {
-      const maxWidth = window.innerWidth - this.horizontalScaleCushion;
-      const maxHeight = window.innerHeight - this.verticalScaleCushion;
+    const maxWidth = window.innerWidth - this.horizontalScaleCushion;
+    const maxHeight = window.innerHeight - this.verticalScaleCushion;
 
-      const maxHorizScale = Math.floor( maxWidth / this.width );
-      const maxVerticalScale = Math.floor( maxHeight / this.height );
+    let maxHorizScale = maxWidth / this.width;
+    let maxVerticalScale = maxHeight / this.height;
 
-      this.scale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;
-      if ( this.scale < this.minScale ) {
-        this.scale = this.minScale;
-      }
-      if ( this.maxScale > 0 && this.scale > this.maxScale ) {
-        this.scale = this.maxScale;
-      }
+    if ( this.scaleMode === Screen.SCALE_INTEGER ) {
+      maxHorizScale = Math.floor( maxHorizScale );
+      maxVerticalScale = Math.floor( maxVerticalScale );
     }
+
+    let newScale = maxHorizScale < maxVerticalScale ? maxHorizScale : maxVerticalScale;
+
+    if ( newScale < this.minScale ) {
+      newScale = this.minScale;
+    }
+    if ( this.maxScale > 0 && newScale > this.maxScale ) {
+      newScale = this.maxScale;
+    }
+
+    if ( this.scaleMode === Screen.SCALE_CONSTANT ) {
+      newScale = this.scale;
+    }
+
+    this.scale = newScale;
 
     if ( this.onScaleChange ) {
       this.onScaleChange( this.scale );
@@ -1152,6 +1162,5 @@ Screen.SCALE_CONSTANT = 1;
 Screen.SCALE_FIT_WINDOW = 2;
 Screen.SCALE_INTEGER = 2;
 Screen.SCALE_LETTERBOX = 3;
-Screen.SCALE_STRETCH = 4;
 
 export default Screen;
